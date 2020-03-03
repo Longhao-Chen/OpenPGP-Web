@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>添加密钥</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<script src="js/openpgp.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/storepub.js"></script>
+<script src="js/storepri.js"></script>
+<script>
+function pubinfo(input,msgbox) {
+	(async () => {
+		const key=`${document.getElementById(input).value}`;
+		msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
+		msg=msg+"\n密钥指纹："+((await openpgp.key.readArmored(key)).keys)[0].getFingerprint().toString();
+		msg=msg+"\n创建时间："+((await openpgp.key.readArmored(key)).keys)[0].getCreationTime().toString();
+		document.getElementById(msgbox).value=msg;
+	})();
+	$("#"+msgbox).show("fast");
+}
+</script>
+<script>
+	$(function(){
+		$("#addpubkey").click(function(){
+			$("#addpub").show("slow");
+			$(".menu").hide("slow");
+		});
+		$("#addprikey").click(function(){
+			$("#addpri").show("slow");
+			$(".menu").hide("slow");
+		});
+	});
+	$(function(){
+		$(".notmenu").hide();
+		$("#pubmsg").hide();
+	})
+</script>
+</head>
+<body class="container-fluid">
+	<div class="col menu btn-group-vertical">
+		<button type="button" class="row btn btn-primary btn-lg menu" id="addpubkey">添加公钥</button><hr>
+		<button type="button" class="row btn btn-primary btn-lg menu" id="delpubkey">删除公钥</button><hr>
+		<button type="button" class="row btn btn-danger btn-lg menu" id="delallpubkey">删除所有公钥</button><hr>
+		<button type="button" class="row btn btn-primary btn-lg menu" id="addprikey">添加私钥</button><hr>
+		<button type="button" class="row btn btn-primary btn-lg menu" id="delprikey">删除私钥</button><hr>
+		<button type="button" class="row btn btn-danger btn-lg menu" id="delallprikey">删除所有私钥</button><hr>
+	</div>
+	<div class="notmenu" id="addpub">
+		<textarea id='pubkey' rows="10" cols="30" placeholder="请在此粘贴公钥"></textarea><br>
+		<button type="button" class="btn btn-primary" onclick="pubinfo('pubkey','pubmsg')">查看公钥信息</button><br>
+		<textarea id="pubmsg" rows="4" cols="30" readonly></textarea><br>
+		<form>
+			<input id="pubalias"><br>
+		</form>
+		<button type="button" class="btn btn-primary" onclick="addpub()">确认添加此公钥</button>
+	</div>
+	<div class="notmenu" id="addpri">
+		<textarea id='prikey' rows="10" cols="30" placeholder="请在此粘贴私钥"></textarea><br>
+		<form>
+			<input id="prialias"><br>
+			<input type="checkbox" id="onlocal">持久储存（如果选中此项则使用localStorage储存，否则使用sessionStorage储存<br>
+		</form>
+		<button type="button" class="btn btn-primary" onclick="addpri()">确认添加此私钥</button>
+	</div>
+</body>
+</html>

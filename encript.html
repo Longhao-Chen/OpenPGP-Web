@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>加密</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<script src="js/openpgp.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/storepub.js"></script>
+<script src="js/storepri.js"></script>
+<script src="js/clipboard.min.js"></script>
+</head>
+<body class="container-fluid">
+<script>
+function encrypt(sign,copy){
+	(async () => {
+ 		await openpgp.initWorker({ path: 'js/openpgp.worker.min.js' }); 	// set the relative web worker path
+
+ 		// put keys in backtick (``) to avoid errors caused by spaces or tabs
+		const publicKeyArmored = `${document.getElementById("pub").value}`;
+
+		//判断是否启用签名
+		if(sign){
+			const privateKeyArmored = `${document.getElementById("pri").value}`; // encrypted private key
+			const passphrase = `${document.getElementById("password").value}`; // what the private key is encrypted with
+
+			const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
+			await privateKey.decrypt(passphrase);
+		
+			const { data: encrypted } = await openpgp.encrypt({
+				message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
+				publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// for encryption
+				privateKeys: [privateKey],
+				compression: openpgp.enums.compression.zip	//启用压缩
+    			});
+			document.getElementById("output").value=encrypted;
+		}else{
+			const { data: encrypted } = await openpgp.encrypt({
+				message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
+				publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// for encryption
+				compression: openpgp.enums.compression.zip	//启用压缩
+    			});
+			document.getElementById("output").value=encrypted;
+		}
+    		await openpgp.destroyWorker();
+	})();
+}
+</script>
+<script>
+	//是否进行签名
+	$(function(){
+		if(document.getElementById("nosign").checked){
+			$(".onlysign").hide();
+		}else{
+			$(".onlyencript").hide();
+		}
+		$("#nosign").click(function(){
+			$(".onlysign").toggle("slow");
+			$(".onlyencript").toggle("slow");
+		});
+	});
+	$(function(){
+		$("#pubmsg").hide();
+	})
+</script>
+<script>
+	var clipboard = new ClipboardJS('#copy');
+	clipboard.on('success', function(e) {
+		e.clearSelection();
+	});
+	clipboard.on('error', function(e) {
+		alert('复制失败，您的浏览器不支持！')
+	});
+</script>
+<form>
+	<input type="checkbox" id="nosign">禁用签名<br>
+</form>
+<textarea id='pub' rows="10" cols="30" placeholder="请在此粘贴公钥"></textarea><br>
+<button onclick="pubinfo('pub','pubmsg')">查看公钥信息</button><br>
+<textarea id="pubmsg" readonly rows="2" cols="30"></textarea><br>
+<textarea id='pri' rows="10" cols="30" class="onlysign" placeholder="请在此粘贴你的私钥"></textarea><br class="onlysign">
+<form class="onlysign">
+	<input type="password" id="password"><br>
+</form>
+<textarea id="text" rows="20" cols="30"></textarea><br>
+<div class="row">
+	<button type="button" onclick="encrypt(true,false)" class="onlysign col btn">加密和签名</button>
+	<button type="button" onclick="encrypt(false,false)" class="onlyencript col btn">加密</button>
+	<button data-clipboard-target="#output" id="copy" class="col btn">复制输出</button><br>
+</div>
+<textarea id="output" rows="10" cols="30" readonly></textarea>
+</body>
+ 
+</html>
