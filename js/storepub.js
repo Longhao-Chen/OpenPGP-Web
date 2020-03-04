@@ -20,6 +20,9 @@ function PubSave(name,pub) {
 }
 
 function PubReadIndex(){
+	if(typeof(localStorage.pubkeys)==="undefined"){
+		return [];
+	}
 	if(localStorage.pubkeys.length===0){
 		return [];
 	}
