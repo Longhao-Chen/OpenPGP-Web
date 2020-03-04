@@ -1,74 +1,89 @@
-function sessionSave(name,pri){
+function PriSessSave(name,pri){
 	if(typeof(Storage)!=="undefined"){
 		if(typeof(sessionStorage.prikeys)!=="undefined"){
-			if(sessionStorage.prikeys.includes([name,pri])){
+			if(JSON.parse(sessionStorage.prikeys).includes([name,pri])){ //这一段判断是否重复的代码似乎没有正常工作。
 				window.alert("此私钥已保存");
 			}else{
-				sessionStorage.prikeys.push([name,pri]);
+				data=JSON.parse(sessionStorage.prikeys);
+				len=data.length;
+				data[len]=[name,pri];
+				sessionStorage.prikeys=JSON.stringify(data);
 			}
 		}else{
-			sessionStorage.prikeys=new Array();
-			sessionStorage.prikeys[0]=[name,pri];
+			sessionStorage.prikeys=JSON.stringify(new Array([name,pri]));
 		}
 	}else{
 		window.alert("您的浏览器不支持此功能，请更新浏览器");
 	}
 }
 
-function  localSave(name,pri){
+function  PriLocalSave(name,pri){
 	if(typeof(Storage)!=="undefined"){
 		if(typeof(localStorage.prikeys)!=="undefined"){
-			if(localStorage.prikeys.includes([name,pri])){
+			if(JSON.parse(localStorage.prikeys).includes([name,pri])){ //这一段判断是否重复的代码似乎没有正常工作。
 				window.alert("此私钥已保存");
 			}else{
-				localStorage.prikeys.push([name,pri]);
+				data=JSON.parse(localStorage.prikeys);
+				len=data.length;
+				data[len]=[name,pri];
+				localStorage.prikeys=JSON.stringify(data);
 			}
 		}else{
-			localStorage.prikeys=new Array();
-			localStorage.prikeys[0]=[name,pri];
+			localStorage.prikeys=JSON.stringify(new Array([name,pri]));
 		}
 	}else{
 		window.alert("您的浏览器不支持此功能，请更新浏览器");
 	}
 }
 
-function readIndex(){
-	len=localStorage.prikeys.length;
+function PriReadIndex(){
+	localdata=JSON.parse(localStorage.prikeys);
+	len=localdata.length;
 	res=new Array();
 	for(var i=0;i<len;++i){
-		res[i]=[i,localStorage.prikeys[i][0]];
+		res[i]=[i,localdata[i][0]];
 	}
 	if(typeof(sessionStorage.prikeys)!=="undefined"){
-		sesslen=sessionStorage.prikeys.length;
+		sessdata=JSON.parse(sessionStorage.prikeys);
+		sesslen=sessdata.length;
 		for(var i=len;i<sesslen+len;++i){
-			res[i]=[i,sessionStorage.prikeys[i-len][0]];
+			res[i]=[i,sessdata[i-len][0]];
 		}
 	}
 	return res;
 }
 
-function read(id){
-	len=localStorage.prikeys.length;
+function PriRead(id){
+	data=JSON.parse(localStorage.prikeys);
+	len=data.length;
 	if(id<len){
-		return localStorage.prikeys[id][1];
+		return data[id][1];
 	}else{
-		return sessionStorage.prikeys[id-len][1];
+		return JSON.parse(sessionStorage.prikeys)[id-len][1];
 	}
 }
 
-function del(id){
-	len=localStorage.prikeys.length;
-	if(id<len){
-		localStorage.pubkeys[id]=localStorage.pubkeys[len-1];
-		localStorage.pubkeys.pop();
-	}else{
-		sesslen=sessionStorage.prikeys.length;
-		sessionStorage.prikeys[id-len]=sessionStorage.prikeys[sesslen-1];
-		sessionStorage.prikeys.pop();
+function PriDel(id){
+	if(window.confirm("确认删除此私钥？")){
+		data=JSON.parse(localStorage.prikeys);
+		len=data.length;
+		if(id<len){
+			data[id]=data[len-1];
+			data.pop();
+			localStorage.prikeys=JSON.stringify(data);
+		}else{
+			data=JSON.parse(sessionStorage.prikeys);
+			sesslen=data.length;
+			data[id-len]=data[sesslen-1];
+			data.pop();
+			sessionStorage.prikeys=JSON.stringify(data);
+		}
 	}
 }
 
-function delAll(){
-	localStorage.removeItem("prikeys");
-	sessionStorage.removeItem("prikeys");
+function PriDelAll(){
+	if(window.confirm("确认删除所有私钥？")){
+		localStorage.removeItem("prikeys");
+		sessionStorage.removeItem("prikeys");
+	}
 }
