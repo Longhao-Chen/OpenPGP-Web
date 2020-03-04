@@ -6,11 +6,12 @@
 <link rel="stylesheet" href="css/bootstrap.min.css">
 <script src="js/openpgp.min.js"></script>
 <script src="js/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
 <script src="js/storepub.js"></script>
 <script src="js/storepri.js"></script>
 <script>
+//读取密钥信息的函数
 function pubinfo(input,msgbox) {
 	(async () => {
 		const key=`${document.getElementById(input).value}`;
@@ -23,7 +24,12 @@ function pubinfo(input,msgbox) {
 }
 </script>
 <script>
+//元素的显示和隐藏的处理
 	$(function(){
+		$(".returnmenu").click(function(){
+			$(".menu").show("slow");
+			$(".notmenu").hide("slow");
+		});
 		$("#addpubkey").click(function(){
 			$("#addpub").show("slow");
 			$(".menu").hide("slow");
@@ -32,23 +38,77 @@ function pubinfo(input,msgbox) {
 			$("#addpri").show("slow");
 			$(".menu").hide("slow");
 		});
+		$("#delpubkey").click(function(){
+			$("#delpub").show("slow");
+			$(".menu").hide("slow");
+			pubdelmenu();
+		})
+		$("#delprikey").click(function(){
+			$("#delpri").show("slow");
+			$(".menu").hide("slow");
+			pridelmenu();
+		})
 	});
 	$(function(){
 		$(".notmenu").hide();
 		$("#pubmsg").hide();
 	})
 </script>
+<script>
+//核心的一些处理函数
+	function addpub(){
+		pub=document.getElementById("pubkey").value;
+		name=document.getElementById("pubalias").value;
+		PubSave(name,pub);
+	}
+	function addpri(){
+		pri=document.getElementById("prikey").value;
+		name=document.getElementById("prialias").value;
+		if(document.getElementById("onlocal").checked){
+			PriLocalSave(name,pri);
+		}else{
+			PriSessSave(name,pri);
+		}
+	}
+	function pubdelmenu(){
+		res=PubReadIndex();
+		len=res.length;
+		var msg='';
+		if(len===0){
+			msg='<a class="dropdown-item" >无已保存的公钥</a>'
+		}else{
+			for(var i=0;i<len;++i){
+				msg=msg+'<a class="dropdown-item pubdelreload" onclick="PubDel('+res[i][0]+');pubdelmenu();">'+res[i][1]+'</a>'
+			}
+		}
+		document.getElementById("delpubmenu").innerHTML=msg;
+	}
+	function pridelmenu(){
+		res=PriReadIndex();
+		len=res.length;
+		var msg='';
+		if(len===0){
+			msg='<a class="dropdown-item" >无已保存的私钥</a>'
+		}else{
+			for(var i=0;i<len;++i){
+				msg=msg+'<a class="dropdown-item" onclick="PriDel('+res[i][0]+');pridelmenu();">'+res[i][1]+'</a>'
+			}
+		}
+		document.getElementById("delprimenu").innerHTML=msg;
+	}
+</script>
 </head>
 <body class="container-fluid">
 	<div class="col menu btn-group-vertical">
 		<button type="button" class="row btn btn-primary btn-lg menu" id="addpubkey">添加公钥</button><hr>
 		<button type="button" class="row btn btn-primary btn-lg menu" id="delpubkey">删除公钥</button><hr>
-		<button type="button" class="row btn btn-danger btn-lg menu" id="delallpubkey">删除所有公钥</button><hr>
+		<button type="button" class="row btn btn-danger btn-lg menu" onclick="PubDelAll()">删除所有公钥</button><hr>
 		<button type="button" class="row btn btn-primary btn-lg menu" id="addprikey">添加私钥</button><hr>
 		<button type="button" class="row btn btn-primary btn-lg menu" id="delprikey">删除私钥</button><hr>
-		<button type="button" class="row btn btn-danger btn-lg menu" id="delallprikey">删除所有私钥</button><hr>
+		<button type="button" class="row btn btn-danger btn-lg menu" onclick="PriDelAll()">删除所有私钥</button><hr>
 	</div>
 	<div class="notmenu" id="addpub">
+		<button type="button" class="btn btn-primary returnmenu">返回主界面</button><br>
 		<textarea id='pubkey' rows="10" cols="30" placeholder="请在此粘贴公钥"></textarea><br>
 		<button type="button" class="btn btn-primary" onclick="pubinfo('pubkey','pubmsg')">查看公钥信息</button><br>
 		<textarea id="pubmsg" rows="4" cols="30" readonly></textarea><br>
@@ -58,12 +118,33 @@ function pubinfo(input,msgbox) {
 		<button type="button" class="btn btn-primary" onclick="addpub()">确认添加此公钥</button>
 	</div>
 	<div class="notmenu" id="addpri">
+		<button type="button" class="btn btn-primary returnmenu">返回主界面</button><br>
 		<textarea id='prikey' rows="10" cols="30" placeholder="请在此粘贴私钥"></textarea><br>
 		<form>
 			<input id="prialias"><br>
 			<input type="checkbox" id="onlocal">持久储存（如果选中此项则使用localStorage储存，否则使用sessionStorage储存<br>
 		</form>
 		<button type="button" class="btn btn-primary" onclick="addpri()">确认添加此私钥</button>
+	</div>
+	<div class="notmenu" id="delpub">
+		<div class="dropdown">
+			<button type="button" class="btn btn-primary returnmenu">返回主界面</button><br>
+			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+				请选择要删除的公钥。
+			</button>
+			<div class="dropdown-menu" id="delpubmenu">
+			</div>
+		</div>      
+	</div>
+	<div class="notmenu" id="delpri">
+		<div class="dropdown">
+			<button type="button" class="btn btn-primary returnmenu">返回主界面</button><br>
+			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+				请选择要删除的私钥。
+			</button>
+			<div class="dropdown-menu" id="delprimenu">
+			</div>
+		</div>      
 	</div>
 </body>
 </html>
