@@ -20,6 +20,9 @@ function PubSave(name,pub) {
 }
 
 function PubReadIndex(){
+	if(localStorage.pubkeys.length===0){
+		return [];
+	}
 	data=JSON.parse(localStorage.pubkeys);
 	len=data.length;
 	res=new Array();

@@ -37,20 +37,26 @@ function  PriLocalSave(name,pri){
 }
 
 function PriReadIndex(){
-	localdata=JSON.parse(localStorage.prikeys);
-	len=localdata.length;
-	res=new Array();
-	for(var i=0;i<len;++i){
-		res[i]=[i,localdata[i][0]];
-	}
-	if(typeof(sessionStorage.prikeys)!=="undefined"){
-		sessdata=JSON.parse(sessionStorage.prikeys);
-		sesslen=sessdata.length;
-		for(var i=len;i<sesslen+len;++i){
-			res[i]=[i,sessdata[i-len][0]];
+	if((typeof(localStorage.prikeys)!=="undefined")||(typeof(sessionStorage.prikeys)!=="undefined")){
+		if(localStorage.prikeys.length!==0){
+			localdata=JSON.parse(localStorage.prikeys);
+			len=localdata.length;
+			res=new Array();
+			for(var i=0;i<len;++i){
+				res[i]=[i,localdata[i][0]];
+			}
 		}
+		if((typeof(sessionStorage.prikeys)!=="undefined")&&(sessionStorage.prikeys.length!==0)){
+			sessdata=JSON.parse(sessionStorage.prikeys);
+			sesslen=sessdata.length;
+			for(var i=len;i<sesslen+len;++i){
+				res[i]=[i,sessdata[i-len][0]];
+			}
+		}
+		return res;
+	}else{
+		return [];
 	}
-	return res;
 }
 
 function PriRead(id){
