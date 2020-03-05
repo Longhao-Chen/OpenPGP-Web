@@ -10,6 +10,7 @@
 <script src="js/bootstrap.min.js"></script>
 <script src="js/storepub.js"></script>
 <script src="js/storepri.js"></script>
+<script src="js/clipboard.min.js"></script>
 <script>
 //读取密钥信息的函数
 function pubinfo(input,msgbox) {
@@ -42,16 +43,36 @@ function pubinfo(input,msgbox) {
 			$("#delpub").show("slow");
 			$(".menu").hide("slow");
 			pubdelmenu();
-		})
+		});
 		$("#delprikey").click(function(){
 			$("#delpri").show("slow");
 			$(".menu").hide("slow");
 			pridelmenu();
-		})
+		});
+		$("#genkey").click(function(){
+			$("#gen").show("slow");
+			$(".menu").hide("slow");
+		});
+		$("#gen_gen").click(function(){
+			$(".gen_keys").show("slow");
+		});
+		$("#gen_show_passwd").click(function(){
+			if(document.getElementById("gen_show_passwd").checked){
+				$("#gen_passwd").attr("type","text");
+			}else{
+				$("#gen_passwd").attr("type","password");
+			}
+		});
 	});
 	$(function(){
 		$(".notmenu").hide();
 		$("#pubmsg").hide();
+		$(".gen_keys").hide();
+		if(document.getElementById("gen_show_passwd").checked){
+			$("#gen_passwd").attr("type","text");
+		}else{
+			$("#gen_passwd").attr("type","password");
+		}
 	})
 </script>
 <script>
@@ -96,10 +117,42 @@ function pubinfo(input,msgbox) {
 		}
 		document.getElementById("delprimenu").innerHTML=msg;
 	}
+	function genkey(){
+		(async () => {
+			const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
+				userIds: [{ name: document.getElementById("gen_name").value, email: document.getElementById("gen_mail").value }], // you can pass multiple user IDs
+				rsaBits: 4096,                                              // RSA key size
+				passphrase: document.getElementById("gen_passwd").value           // protects the private key
+			});
+			document.getElementById("gen_pub").value=publicKeyArmored;
+			document.getElementById("gen_pri").value=privateKeyArmored;
+			document.getElementById("gen_rev").value=revocationCertificate;
+		})();
+	}
+	function gen_save(){
+		name=document.getElementById("gen_name").value;
+		pub=document.getElementById("gen_pub").value;
+		pri=document.getElementById("gen_pri").value;
+		PubSave(name,pub);
+		PriLocalSave(name,pri);
+	}
+</script>
+<script>
+//复制部分的代码
+	$(function(){
+		var clipboard = new ClipboardJS('.copy');
+		clipboard.on('success', function(e) {
+			e.clearSelection();
+		});
+		clipboard.on('error', function(e) {
+			alert('复制失败，您的浏览器不支持！')
+		});
+	});
 </script>
 </head>
 <body class="container-fluid">
 	<div class="col menu btn-group-vertical">
+		<button type="button" class="row btn btn-primary btn-lg menu" id="genkey">生成一个密钥对</button><hr>
 		<button type="button" class="row btn btn-primary btn-lg menu" id="addpubkey">添加公钥</button><hr>
 		<button type="button" class="row btn btn-primary btn-lg menu" id="delpubkey">删除公钥</button><hr>
 		<button type="button" class="row btn btn-danger btn-lg menu" onclick="PubDelAll()">删除所有公钥</button><hr>
@@ -107,6 +160,29 @@ function pubinfo(input,msgbox) {
 		<button type="button" class="row btn btn-primary btn-lg menu" id="delprikey">删除私钥</button><hr>
 		<button type="button" class="row btn btn-danger btn-lg menu" onclick="PriDelAll()">删除所有私钥</button><hr>
 	</div>
+
+	<div class="notmenu" id="gen">
+		<button type="button" class="btn btn-primary returnmenu">返回主界面</button>
+		<form>
+			<input id="gen_name" placeholder="姓名"><br>
+			<input id="gen_mail" placeholder="电子邮件（可选）"><br>
+			<input id="gen_passwd" type="password" placeholder="私钥密码（此密码是保护私钥的最后手段）"><br>
+			<input type="checkbox" id="gen_show_passwd">显示密码<br>
+		</form>
+		<button type="button" class="btn btn-primary" onclick="genkey();"id="gen_gen">确认生成此密钥</button>
+		<p>注意：生成密钥需要较长的时间以得到足够的熵，请耐心等待。</p>
+		<p class="gen_keys">生成的公钥:</p>
+		<textarea readonly rows="10" cols="30" class="gen_keys" id="gen_pub"></textarea><br class="gen_keys">
+		<p class="gen_keys">生成的私钥:</p>
+		<textarea readonly rows="10" cols="30" class="gen_keys" id="gen_pri"></textarea><br class="gen_keys">
+		<p class="gen_keys">生成的吊销密钥:</p>
+		<textarea readonly rows="10" cols="30" class="gen_keys" id="gen_rev"></textarea><br class="gen_keys">
+		<button type="button" class="btn btn-primary gen_keys copy" data-clipboard-target="#gen_pub">复制生成的公钥</button>
+		<button type="button" class="btn btn-primary gen_keys copy" data-clipboard-target="#gen_pri">复制生成的私钥</button>
+		<button type="button" class="btn btn-primary gen_keys copy" data-clipboard-target="#gen_rev">复制生成的吊销密钥</button>
+		<button type="button" class="btn btn-primary gen_keys" onclick="gen_save()">将密钥对保存到浏览器（使用localStorage）</button>
+	</div>
+
 	<div class="notmenu" id="addpub">
 		<button type="button" class="btn btn-primary returnmenu">返回主界面</button><br>
 		<textarea id='pubkey' rows="10" cols="30" placeholder="请在此粘贴公钥"></textarea><br>
@@ -117,6 +193,7 @@ function pubinfo(input,msgbox) {
 		</form>
 		<button type="button" class="btn btn-primary" onclick="addpub()">确认添加此公钥</button>
 	</div>
+
 	<div class="notmenu" id="addpri">
 		<button type="button" class="btn btn-primary returnmenu">返回主界面</button><br>
 		<textarea id='prikey' rows="10" cols="30" placeholder="请在此粘贴私钥"></textarea><br>
@@ -126,6 +203,7 @@ function pubinfo(input,msgbox) {
 		</form>
 		<button type="button" class="btn btn-primary" onclick="addpri()">确认添加此私钥</button>
 	</div>
+
 	<div class="notmenu" id="delpub">
 		<button type="button" class="btn btn-primary returnmenu">返回主界面</button><br>
 		<div class="dropdown">
@@ -136,6 +214,7 @@ function pubinfo(input,msgbox) {
 			</div>
 		</div>      
 	</div>
+
 	<div class="notmenu" id="delpri">
 		<button type="button" class="btn btn-primary returnmenu">返回主界面</button><br>
 		<div class="dropdown">
