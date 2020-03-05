@@ -75,13 +75,15 @@
 </script>
 <script>
 //复制部分的代码
-	var clipboard = new ClipboardJS('#copy');
-	clipboard.on('success', function(e) {
-		e.clearSelection();
-	});
-	clipboard.on('error', function(e) {
-		alert('复制失败，您的浏览器不支持！')
-	});
+$(function(){
+		var clipboard = new ClipboardJS('#copy');
+		clipboard.on('success', function(e) {
+			e.clearSelection();
+		});
+		clipboard.on('error', function(e) {
+			alert('复制失败，您的浏览器不支持！')
+		});
+});
 </script>
 <script>
 //密钥选择部分
