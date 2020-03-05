@@ -1,0 +1,160 @@
+<!-- 只完成解密，签名验证未完成 -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>解密</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<script src="js/openpgp.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/storepub.js"></script>
+<script src="js/storepri.js"></script>
+<script src="js/clipboard.min.js"></script>
+</head>
+<body class="container-fluid">
+<script>
+//加密和签名部分
+	function decrypt(sign,copy){
+		(async () => {
+
+			//判断是否选择了密钥
+			if(document.getElementById("pridata").value===''||(sign && document.getElementById("pubdata")==='')){
+				window.alert("请选择密钥！");
+				return -1;
+			}
+			await openpgp.initWorker({ path: 'js/openpgp.worker.min.js' }); 	// set the relative web worker path
+
+			const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`; // 用作解密的私钥
+			const passphrase = `${document.getElementById("password").value}`; // 私钥密码
+
+			const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
+			await privateKey.decrypt(passphrase);
+
+			//判断是否校验签名
+			if(sign){
+				const publicKeyArmored = `${PubRead(document.getElementById("pubdata").value)}`;//签名者的公钥
+
+				const { data: decrypted } = await openpgp.decrypt({
+					message: await openpgp.message.readArmored(document.getElementById("text").value),	// 要解密的信息
+					publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// 验证签名的公钥
+					privateKeys: [privateKey]	//解密用的私钥
+				});
+				document.getElementById("output").value=decrypted;
+			}else{
+				const { data: decrypted } = await openpgp.decrypt({
+					message: await openpgp.message.readArmored(document.getElementById("text").value),	// 要解密的信息
+					privateKeys: [privateKey]	//解密用的私钥
+				});
+				document.getElementById("output").value=decrypted;
+			}
+			await openpgp.destroyWorker();
+		})();
+	}
+</script>
+<script>
+//元素显示和隐藏部分
+	$(function(){
+		if(document.getElementById("nosign").checked){
+			$(".onlysign").hide();
+		}else{
+			$(".onlydecrypt").hide();
+		}
+		$("#nosign").click(function(){
+			$(".onlysign").toggle("slow");
+			$(".onlydecrypt").toggle("slow");
+		});
+	});
+	$(function(){
+		$(".pubmsg").hide();
+		$(".primsg").hide();
+		$("#pubdata").hide();
+		$("#pridata").hide();
+	})
+</script>
+<script>
+//复制部分的代码
+	var clipboard = new ClipboardJS('#copy');
+	clipboard.on('success', function(e) {
+		e.clearSelection();
+	});
+	clipboard.on('error', function(e) {
+		alert('复制失败，您的浏览器不支持！')
+	});
+</script>
+<script>
+//密钥选择部分
+	$(function(){
+		res=PriReadIndex();
+		len=res.length;
+		var msg='';
+		if(len===0){
+			msg='<a class="dropdown-item" >无已保存的私钥，请添加私钥</a>'
+		}else{
+			for(var i=0;i<len;++i){
+				msg=msg+'<a class="dropdown-item" onclick="Pri('+res[i][0]+',\''+res[i][1]+'\');">'+res[i][1]+'</a>'
+			}
+		}
+		document.getElementById("primenu").innerHTML=msg;
+		res=PubReadIndex();
+		len=res.length;
+		msg='';
+		if(len===0){
+			msg='<a class="dropdown-item" >无已保存的公钥，请添加公钥</a>'
+		}else{
+			for(var i=0;i<len;++i){
+				msg=msg+'<a class="dropdown-item" onclick="Pub('+res[i][0]+',\''+res[i][1]+'\');">'+res[i][1]+'</a>'
+			}
+		}
+		document.getElementById("pubmenu").innerHTML=msg;
+	});
+
+	function Pub(id,name){
+		document.getElementById("pubmsg").value=name;
+		document.getElementById("pubdata").value=id;
+		$(".pubmsg").show("fast");
+	}
+	function Pri(id,name){
+		document.getElementById("primsg").value=name;
+		document.getElementById("pridata").value=id;
+		$(".primsg").show("fast");
+	}
+</script>
+<form>
+	<input type="checkbox" id="nosign">不进行签名验证<br>
+</form>
+<div class="dropdown onlysign">
+	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+		请选择用作签名校验的公钥
+	</button>
+	<div class="dropdown-menu" id="pubmenu">
+	</div>
+	<p class="pubmsg" >已选择的公钥：</p>
+	<textarea id="pubmsg" class="pubmsg" readonly rows="1" cols="30"></textarea><br class="pubmsg">
+</div> 
+<div class="dropdown">
+	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+		请选择私钥
+	</button>
+	<div class="dropdown-menu" id="primenu">
+	</div>
+	<p class="primsg">已选择的私钥：</p>
+	<textarea id="primsg" class="primsg" readonly rows="1" cols="30"></textarea><br class="primsg">
+</div> 
+<!-- 下面这两项仅用于保存数据 -->
+<textarea id="pubdata"></textarea>
+<textarea id="pridata"></textarea>
+<form>
+	<input type="password" id="password"><br>
+</form>
+<textarea id="text" rows="20" cols="30"></textarea><br>
+<div class="row">
+	<button type="button" onclick="decrypt(true,false)" class="onlysign col btn btn-primary">解密和验证签名</button>
+	<button type="button" onclick="decrypt(false,false)" class="onlydecrypt col btn btn-primary">解密</button>
+	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button><br>
+</div>
+<textarea id="output" rows="10" cols="30" readonly></textarea>
+</body>
+ 
+</html>
