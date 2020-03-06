@@ -1,0 +1,10 @@
+.textarea-inherit {
+	width: 100%;
+	overflow: auto;
+	word-break: break-all;
+}
+.input-inherit {
+	width: 100%;
+	overflow: auto;
+	word-break: break-all;
+}

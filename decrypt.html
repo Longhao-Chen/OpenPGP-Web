@@ -1,10 +1,15 @@
 <!-- 只完成解密，签名验证未完成 -->
 <!DOCTYPE html>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
+<meta name='apple-mobile-web-app-capable' content='yes'>
+<meta name='apple-mobile-web-app-status-bar-style' content='black'>
+<meta name='format-detection' content='telephone=no'>
 <html>
 <head>
 <meta charset="utf-8">
 <title>解密</title>
-<link rel="stylesheet" href="css/bootstrap.min.css">
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
 <script src="js/openpgp.min.js"></script>
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>
@@ -134,7 +139,7 @@ $(function(){
 	<div class="dropdown-menu" id="pubmenu">
 	</div>
 	<p class="pubmsg" >已选择的公钥：</p>
-	<textarea id="pubmsg" class="pubmsg" readonly rows="1" cols="30"></textarea><br class="pubmsg">
+	<textarea id="pubmsg" class="pubmsg textarea-inherit" readonly rows="1"></textarea><br class="pubmsg">
 </div> 
 <div class="dropdown">
 	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -143,21 +148,21 @@ $(function(){
 	<div class="dropdown-menu" id="primenu">
 	</div>
 	<p class="primsg">已选择的私钥：</p>
-	<textarea id="primsg" class="primsg" readonly rows="1" cols="30"></textarea><br class="primsg">
+	<textarea id="primsg" class="primsg textarea-inherit" readonly rows="1" ></textarea><br class="primsg">
 </div> 
 <!-- 下面这两项仅用于保存数据 -->
 <textarea id="pubdata"></textarea>
 <textarea id="pridata"></textarea>
 <form>
-	<input type="password" id="password" placeholder="私钥密码"><br>
+	<input class="input-inherit" type="password" id="password" placeholder="私钥密码"><br>
 </form>
-<textarea id="text" rows="20" cols="30" placeholder="请粘贴密文"></textarea><br>
+<textarea id="text" rows="20" class="textarea-inherit" placeholder="请粘贴密文"></textarea><br>
 <div class="row">
 	<button type="button" onclick="decrypt(true,false)" class="onlysign col btn btn-primary">解密和验证签名</button>
 	<button type="button" onclick="decrypt(false,false)" class="onlydecrypt col btn btn-primary">解密</button>
 	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button><br>
 </div>
-<textarea id="output" rows="10" cols="30" readonly></textarea>
+<textarea id="output" rows="10" class="textarea-inherit" readonly></textarea>
 </body>
  
 </html>
