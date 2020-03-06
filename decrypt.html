@@ -71,7 +71,7 @@
 		$(".primsg").hide();
 		$("#pubdata").hide();
 		$("#pridata").hide();
-	})
+	});
 </script>
 <script>
 //复制部分的代码
@@ -148,9 +148,9 @@ $(function(){
 <textarea id="pubdata"></textarea>
 <textarea id="pridata"></textarea>
 <form>
-	<input type="password" id="password"><br>
+	<input type="password" id="password" placeholder="私钥密码"><br>
 </form>
-<textarea id="text" rows="20" cols="30"></textarea><br>
+<textarea id="text" rows="20" cols="30" placeholder="请粘贴密文"></textarea><br>
 <div class="row">
 	<button type="button" onclick="decrypt(true,false)" class="onlysign col btn btn-primary">解密和验证签名</button>
 	<button type="button" onclick="decrypt(false,false)" class="onlydecrypt col btn btn-primary">解密</button>
