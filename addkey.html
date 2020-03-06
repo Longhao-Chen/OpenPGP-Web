@@ -25,33 +25,62 @@ function pubinfo(input,msgbox) {
 }
 </script>
 <script>
+//与界面历史记录和返回有关的函数
+	function historyadd(href){
+		history.pushState(null,null,"addkey.html#"+href);
+	}
+
+	window.addEventListener("popstate", function(){
+		$(".menu").show("slow");
+		$(".notmenu").hide("slow");
+	}, false)
+</script>
+<script>
 //元素的显示和隐藏的处理
+	function showaddpubkey(){
+		$("#addpub").show("slow");
+		$(".menu").hide("slow");
+		pubsaved();
+	}
+	function showaddprikey(){
+		$("#addpri").show("slow");
+		$(".menu").hide("slow");
+		prisaved();
+	}
+	function showdelpubkey(){
+		$("#delpub").show("slow");
+		$(".menu").hide("slow");
+		pubdelmenu();
+	}
+	function showdelprikey(){
+		$("#delpri").show("slow");
+		$(".menu").hide("slow");
+		pridelmenu();
+	}
+	function showgenkey(){
+		$("#gen").show("slow");
+		$(".menu").hide("slow");
+	}
 	$(function(){
-		$(".returnmenu").click(function(){
-			$(".menu").show("slow");
-			$(".notmenu").hide("slow");
-		});
 		$("#addpubkey").click(function(){
-			$("#addpub").show("slow");
-			$(".menu").hide("slow");
+			historyadd("addpubkey");
+			showaddpubkey();
 		});
 		$("#addprikey").click(function(){
-			$("#addpri").show("slow");
-			$(".menu").hide("slow");
+			historyadd("addprikey");
+			showaddprikey();
 		});
 		$("#delpubkey").click(function(){
-			$("#delpub").show("slow");
-			$(".menu").hide("slow");
-			pubdelmenu();
+			historyadd("delpubkey");
+			showdelpubkey();
 		});
 		$("#delprikey").click(function(){
-			$("#delpri").show("slow");
-			$(".menu").hide("slow");
-			pridelmenu();
+			historyadd("delprikey");
+			showdelprikey()
 		});
 		$("#genkey").click(function(){
-			$("#gen").show("slow");
-			$(".menu").hide("slow");
+			historyadd("genkey");
+			showgenkey();
 		});
 		$("#gen_gen").click(function(){
 			$(".gen_keys").show("slow");
@@ -68,6 +97,17 @@ function pubinfo(input,msgbox) {
 		$(".notmenu").hide();
 		$("#pubmsg").hide();
 		$(".gen_keys").hide();
+		if(window.location.hash==='#addpubkey')
+			showaddpubkey();
+		if(window.location.hash==='#addprikey')
+			showaddprikey();
+		if(window.location.hash==='#delpubkey')
+			showdelpubkey();
+		if(window.location.hash==='#delprikey')
+			showdelprikey();
+		if(window.location.hash==='#genkey')
+			showgenkey();
+		
 		if(document.getElementById("gen_show_passwd").checked){
 			$("#gen_passwd").attr("type","text");
 		}else{
@@ -136,6 +176,32 @@ function pubinfo(input,msgbox) {
 		PubSave(name,pub);
 		PriLocalSave(name,pri);
 	}
+	function pubsaved(){
+		res=PubReadIndex();
+		len=res.length;
+		var msg='';
+		if(len===0){
+			msg='无已保存的公钥'
+		}else{
+			for(var i=0;i<len;++i){
+				msg=msg+res[i][1]+"\n"
+			}
+		}
+		document.getElementById("pubsaved").value=msg;
+	}
+	function prisaved(){
+		res=PriReadIndex();
+		len=res.length;
+		var msg='';
+		if(len===0){
+			msg='无已保存的私钥'
+		}else{
+			for(var i=0;i<len;++i){
+				msg=msg+res[i][1]+"\n"
+			}
+		}
+		document.getElementById("prisaved").value=msg;
+	}
 </script>
 <script>
 //复制部分的代码
@@ -162,7 +228,6 @@ function pubinfo(input,msgbox) {
 	</div>
 
 	<div class="notmenu" id="gen">
-		<button type="button" class="btn btn-primary returnmenu">返回主界面</button>
 		<form>
 			<input id="gen_name" placeholder="姓名"><br>
 			<input id="gen_mail" placeholder="电子邮件（可选）"><br>
@@ -184,21 +249,23 @@ function pubinfo(input,msgbox) {
 	</div>
 
 	<div class="notmenu" id="addpub">
-		<button type="button" class="btn btn-primary returnmenu">返回主界面</button><br>
+		<p>目前已保存的公钥：</p>
+		<textarea id="pubsaved" rows="5" cols="30" readonly></textarea><br>
 		<textarea id='pubkey' rows="10" cols="30" placeholder="请在此粘贴公钥"></textarea><br>
 		<button type="button" class="btn btn-primary" onclick="pubinfo('pubkey','pubmsg')">查看公钥信息</button><br>
 		<textarea id="pubmsg" rows="4" cols="30" readonly></textarea><br>
 		<form>
-			<input id="pubalias"><br>
+			<input id="pubalias" placeholder="公钥别名"><br>
 		</form>
 		<button type="button" class="btn btn-primary" onclick="addpub()">确认添加此公钥</button>
 	</div>
 
 	<div class="notmenu" id="addpri">
-		<button type="button" class="btn btn-primary returnmenu">返回主界面</button><br>
+		<p>目前已保存的私钥</p>
+		<textarea id="prisaved" rows="5" cols="30" readonly></textarea><br>
 		<textarea id='prikey' rows="10" cols="30" placeholder="请在此粘贴私钥"></textarea><br>
 		<form>
-			<input id="prialias"><br>
+			<input id="prialias" placeholder="私钥别名"><br>
 			<input type="checkbox" id="onlocal">持久储存（如果选中此项则使用localStorage储存，否则使用sessionStorage储存<br>
 		</form>
 		<button type="button" class="btn btn-primary" onclick="addpri()">确认添加此私钥</button>
@@ -216,7 +283,6 @@ function pubinfo(input,msgbox) {
 	</div>
 
 	<div class="notmenu" id="delpri">
-		<button type="button" class="btn btn-primary returnmenu">返回主界面</button><br>
 		<div class="dropdown">
 			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
 				请选择要删除的私钥。
