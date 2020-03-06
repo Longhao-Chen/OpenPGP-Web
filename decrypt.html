@@ -30,7 +30,8 @@
 			const passphrase = `${document.getElementById("password").value}`; // 私钥密码
 
 			const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
-			await privateKey.decrypt(passphrase);
+			if(passphrase!==``)
+				await privateKey.decrypt(passphrase);
 
 			//判断是否校验签名
 			if(sign){
