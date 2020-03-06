@@ -35,7 +35,8 @@
 				const passphrase = `${document.getElementById("password").value}`; // what the private key is encrypted with
 
 				const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
-				await privateKey.decrypt(passphrase);
+				if(passphrase!==``)
+					await privateKey.decrypt(passphrase);
 			
 				const { data: encrypted } = await openpgp.encrypt({
 					message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
