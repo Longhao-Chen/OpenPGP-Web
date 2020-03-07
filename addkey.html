@@ -262,9 +262,11 @@ function pubinfo(input,msgbox) {
 		<textarea readonly rows="10" class="textarea-inherit gen_keys" id="gen_pri"></textarea><br class="gen_keys">
 		<p class="gen_keys">生成的吊销密钥:</p>
 		<textarea readonly rows="10" class="textarea-inherit gen_keys" id="gen_rev"></textarea><br class="gen_keys">
-		<button type="button" class="btn btn-primary gen_keys copy" data-clipboard-target="#gen_pub">复制生成的公钥</button>
-		<button type="button" class="btn btn-primary gen_keys copy" data-clipboard-target="#gen_pri">复制生成的私钥</button>
-		<button type="button" class="btn btn-primary gen_keys copy" data-clipboard-target="#gen_rev">复制生成的吊销密钥</button>
+		<div class="row">
+			<button type="button" class="btn btn-primary col gen_keys copy" data-clipboard-target="#gen_pub">复制生成的公钥</button>
+			<button type="button" class="btn btn-primary col gen_keys copy" data-clipboard-target="#gen_pri">复制生成的私钥</button>
+			<button type="button" class="btn btn-primary col gen_keys copy" data-clipboard-target="#gen_rev">复制生成的吊销密钥</button>
+		</div>
 		<button type="button" class="btn btn-primary gen_keys" onclick="gen_save()">将密钥对保存到浏览器（使用localStorage）</button>
 		<div class="alert alert-success alert-dismissible" id="gen_savealert">
 			<button type="button" class="alertclose" data-dismiss="alert">&times;</button>

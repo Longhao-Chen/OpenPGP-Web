@@ -56,9 +56,9 @@
 				document.getElementById("output").value=decrypted;
 			}
 			await openpgp.destroyWorker();
+			$("#output").show("slow");
+			$("#copy").show("slow");
 		})();
-		$("#output").show("slow");
-		$("#copy").show("slow");
 	}
 </script>
 <script>
