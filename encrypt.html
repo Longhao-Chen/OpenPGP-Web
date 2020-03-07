@@ -59,6 +59,8 @@
 			}
 			await openpgp.destroyWorker();
 		})();
+		$("#output").show("slow");
+		$("#copy").show("slow");
 	}
 </script>
 <script>
@@ -79,6 +81,8 @@
 		$(".primsg").hide();
 		$("#pubdata").hide();
 		$("#pridata").hide();
+		$("#output").hide();
+		$("#copy").hide();
 	})
 </script>
 <script>
@@ -132,7 +136,11 @@ $(function(){
 	}
 </script>
 <form>
-	<input type="checkbox" id="nosign">禁用签名<br>
+	<div class="from-check">
+		<label class="from-check-label">
+			<input type="checkbox" id="nosign">禁用签名<br>
+		</label>
+	</div>
 </form>
 <div class="dropdown">
 	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">

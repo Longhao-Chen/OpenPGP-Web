@@ -57,6 +57,8 @@
 			}
 			await openpgp.destroyWorker();
 		})();
+		$("#output").show("slow");
+		$("#copy").show("slow");
 	}
 </script>
 <script>
@@ -77,6 +79,8 @@
 		$(".primsg").hide();
 		$("#pubdata").hide();
 		$("#pridata").hide();
+		$("#output").hide();
+		$("#copy").hide();
 	});
 </script>
 <script>
@@ -130,7 +134,11 @@ $(function(){
 	}
 </script>
 <form>
-	<input type="checkbox" id="nosign">不进行签名验证<br>
+	<div class="from-check">
+		<label class="from-check-label">
+			<input type="checkbox" id="nosign">不进行签名验证<br>
+		</label>
+	</div>
 </form>
 <div class="dropdown onlysign">
 	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -156,13 +164,13 @@ $(function(){
 <form>
 	<input class="input-inherit" type="password" id="password" placeholder="私钥密码"><br>
 </form>
-<textarea id="text" rows="20" class="textarea-inherit" placeholder="请粘贴密文"></textarea><br>
+<textarea id="text" rows="10" class="textarea-inherit" placeholder="请粘贴密文"></textarea><br>
 <div class="row">
 	<button type="button" onclick="decrypt(true,false)" class="onlysign col btn btn-primary">解密和验证签名</button>
 	<button type="button" onclick="decrypt(false,false)" class="onlydecrypt col btn btn-primary">解密</button>
 	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button><br>
 </div>
-<textarea id="output" rows="10" class="textarea-inherit" readonly></textarea>
+<textarea id="output" rows="20" class="textarea-inherit" readonly></textarea>
 </body>
  
 </html>

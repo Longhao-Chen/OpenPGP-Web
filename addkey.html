@@ -248,16 +248,20 @@ function pubinfo(input,msgbox) {
 			<input class="input-inherit" id="gen_name" placeholder="姓名"><br>
 			<input class="input-inherit" id="gen_mail" placeholder="电子邮件（可选）"><br>
 			<input class="input-inherit" id="gen_passwd" type="password" placeholder="私钥密码（此密码是保护私钥的最后手段）"><br>
-			<input class="input-inherit" type="checkbox" id="gen_show_passwd">显示密码<br>
+			<div class="from-check">
+				<label class="from-check-label">
+					<input type="checkbox" id="gen_show_passwd">显示密码<br>
+				</label>
+			</div>
 		</form>
 		<button type="button" class="btn btn-primary" onclick="genkey();"id="gen_gen">确认生成此密钥</button>
 		<p>注意：生成密钥需要较长的时间以得到足够的熵，请耐心等待。</p>
 		<p class="gen_keys">生成的公钥:</p>
-		<textarea readonly rows="10" class="textarea-inherit" class="gen_keys" id="gen_pub"></textarea><br class="gen_keys">
+		<textarea readonly rows="10" class="textarea-inherit gen_keys" id="gen_pub"></textarea><br class="gen_keys">
 		<p class="gen_keys">生成的私钥:</p>
-		<textarea readonly rows="10" class="textarea-inherit" class="gen_keys" id="gen_pri"></textarea><br class="gen_keys">
+		<textarea readonly rows="10" class="textarea-inherit gen_keys" id="gen_pri"></textarea><br class="gen_keys">
 		<p class="gen_keys">生成的吊销密钥:</p>
-		<textarea readonly rows="10" class="textarea-inherit" class="gen_keys" id="gen_rev"></textarea><br class="gen_keys">
+		<textarea readonly rows="10" class="textarea-inherit gen_keys" id="gen_rev"></textarea><br class="gen_keys">
 		<button type="button" class="btn btn-primary gen_keys copy" data-clipboard-target="#gen_pub">复制生成的公钥</button>
 		<button type="button" class="btn btn-primary gen_keys copy" data-clipboard-target="#gen_pri">复制生成的私钥</button>
 		<button type="button" class="btn btn-primary gen_keys copy" data-clipboard-target="#gen_rev">复制生成的吊销密钥</button>
@@ -291,8 +295,12 @@ function pubinfo(input,msgbox) {
 		<textarea id='prikey' rows="10" class="textarea-inherit" placeholder="请在此粘贴私钥"></textarea><br>
 		<form>
 			<input class="input-inherit" id="prialias" placeholder="私钥别名"><br>
-			<input class="input-inherit" type="checkbox" id="onlocal">持久储存（如果选中此项则使用localStorage储存，否则使用sessionStorage储存<br>
-		</form>
+			<div class="from-check">
+				<label class="from-check-label">
+					<input type="checkbox" id="onlocal">持久储存（如果选中此项则使用localStorage储存，否则使用sessionStorage储存<br>
+				</label>
+			</div>
+			</form>
 		<button type="button" class="btn btn-primary" onclick="addpri()">确认添加此私钥</button>
 		<div class="alert alert-success alert-dismissible" id="priaddalert">
 			<button type="button" class="alertclose" data-dismiss="alert">&times;</button>
