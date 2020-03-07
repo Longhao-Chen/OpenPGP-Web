@@ -32,7 +32,7 @@ function pubinfo(input,msgbox) {
 <script>
 //与界面历史记录和返回有关的函数
 	function historyadd(href){
-		history.pushState(null,null,"addkey.html#"+href);
+		history.pushState(null,null,"keymanage.html#"+href);
 	}
 
 	window.addEventListener("popstate", function(){
@@ -66,6 +66,16 @@ function pubinfo(input,msgbox) {
 		$("#gen").show("slow");
 		$(".menu").hide("slow");
 	}
+	function showexppubkey(){
+		$("#exppub").show("slow");
+		$(".menu").hide("slow");
+		exppubmenu();
+	}
+	function showexpprikey(){
+		$("#exppri").show("slow");
+		$(".menu").hide("slow");
+		exprimenu();
+	}
 	$(function(){
 		$("#addpubkey").click(function(){
 			historyadd("addpubkey");
@@ -87,6 +97,14 @@ function pubinfo(input,msgbox) {
 			historyadd("genkey");
 			showgenkey();
 		});
+		$("#exppubkey").click(function(){
+			historyadd("exppubkey");
+			showexppubkey();
+		});
+		$("#expprikey").click(function(){
+			historyadd("expprikey");
+			showexpprikey();
+		});
 		$("#gen_gen").click(function(){
 			$(".gen_keys").show("slow");
 		});
@@ -106,6 +124,8 @@ function pubinfo(input,msgbox) {
 		$(".alert").hide();
 		$("#pubmsg").hide();
 		$(".gen_keys").hide();
+		$(".exp_prikey").hide();
+		$(".exp_pubkey").hide();
 
 		//保证重新刷新后仍然在原界面
 		if(window.location.hash==='#addpubkey')
@@ -118,7 +138,10 @@ function pubinfo(input,msgbox) {
 			showdelprikey();
 		if(window.location.hash==='#genkey')
 			showgenkey();
-		
+		if(window.location.hash==='#exppubkey')
+			showexppubkey();
+		if(window.location.hash==='#expprikey')
+			showexpprikey();
 		if(document.getElementById("gen_show_passwd").checked){
 			$("#gen_passwd").attr("type","text");
 		}else{
@@ -218,6 +241,40 @@ function pubinfo(input,msgbox) {
 		}
 		document.getElementById("prisaved").value=msg;
 	}
+	function exppubmenu(){
+		res=PubReadIndex();
+		len=res.length;
+		var msg='';
+		if(len===0){
+			msg='<a class="dropdown-item" >无已保存的公钥</a>'
+		}else{
+			for(var i=0;i<len;++i){
+				msg=msg+'<a class="dropdown-item pubdelreload" onclick="exppub('+res[i][0]+');exppubmenu();">'+res[i][1]+'</a>'
+			}
+		}
+		document.getElementById("exppubmenu").innerHTML=msg;
+	}
+	function exprimenu(){
+		res=PriReadIndex();
+		len=res.length;
+		var msg='';
+		if(len===0){
+			msg='<a class="dropdown-item" >无已保存的私钥</a>'
+		}else{
+			for(var i=0;i<len;++i){
+				msg=msg+'<a class="dropdown-item pubdelreload" onclick="exppri('+res[i][0]+');expprimenu();">'+res[i][1]+'</a>'
+			}
+		}
+		document.getElementById("expprimenu").innerHTML=msg;
+	}
+	function exppub(id){
+		document.getElementById("exp_pubkey").value=PubRead(id);
+		$(".exp_pubkey").show("slow");
+	}
+	function exppri(id){
+		document.getElementById("exp_prikey").value=PriRead(id);
+		$(".exp_prikey").show("slow");
+	}
 </script>
 <script>
 //复制部分的代码
@@ -234,12 +291,14 @@ function pubinfo(input,msgbox) {
 </head>
 <body class="container-fluid center">
 	<div class="col menu btn-group-vertical">
-		<button type="button" class="row btn btn-primary btn-lg menu" id="genkey">生成一个密钥对</button><hr>
-		<button type="button" class="row btn btn-primary btn-lg menu" id="addpubkey">添加公钥</button><hr>
-		<button type="button" class="row btn btn-primary btn-lg menu" id="delpubkey">删除公钥</button><hr>
+		<button type="button" class="row btn btn-light btn-lg menu" id="genkey">生成一个密钥对</button><hr>
+		<button type="button" class="row btn btn-light btn-lg menu" id="addpubkey">添加公钥</button><hr>
+		<button type="button" class="row btn btn-light btn-lg menu" id="exppubkey">导出公钥</button><hr>
+		<button type="button" class="row btn btn-light btn-lg menu" id="delpubkey">删除公钥</button><hr>
 		<button type="button" class="row btn btn-danger btn-lg menu" onclick="PubDelAll()">删除所有公钥</button><hr>
-		<button type="button" class="row btn btn-primary btn-lg menu" id="addprikey">添加私钥</button><hr>
-		<button type="button" class="row btn btn-primary btn-lg menu" id="delprikey">删除私钥</button><hr>
+		<button type="button" class="row btn btn-light btn-lg menu" id="addprikey">添加私钥</button><hr>
+		<button type="button" class="row btn btn-warning btn-lg menu" id="expprikey">导出私钥</button><hr>
+		<button type="button" class="row btn btn-light btn-lg menu" id="delprikey">删除私钥</button><hr>
 		<button type="button" class="row btn btn-danger btn-lg menu" onclick="PriDelAll()">删除所有私钥</button><hr>
 	</div>
 
@@ -291,6 +350,30 @@ function pubinfo(input,msgbox) {
 		</div>
 	</div>
 
+	<div class="notmenu" id="exppub">
+		<div class="dropdown">
+			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+				请选择要导出的公钥
+			</button>
+			<div class="dropdown-menu" id="exppubmenu">
+			</div>
+		</div> 
+		<textarea id="exp_pubkey" rows="10" class="textarea-inherit exp_pubkey" readonly></textarea><br class="exp_pubkey">
+		<button class="exp_pubkey copy btn btn-primary" data-clipboard-target="#exp_pubkey">复制密钥</button>
+	</div>
+
+	<div class="notmenu" id="exppri">
+		<div class="dropdown">
+			<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">
+				请选择要导出的私钥
+			</button>
+			<div class="dropdown-menu" id="expprimenu">
+			</div>
+		</div>
+		<textarea id="exp_prikey" rows="10" class="textarea-inherit exp_prikey" readonly></textarea><br class="exp_prikey">
+		<button class="exp_prikey copy btn btn-warning" data-clipboard-target="#exp_prikey">复制密钥</button>
+	</div>
+
 	<div class="notmenu" id="addpri">
 		<p>目前已保存的私钥</p>
 		<textarea id="prisaved" rows="5" class="textarea-inherit" readonly></textarea><br>
@@ -313,7 +396,7 @@ function pubinfo(input,msgbox) {
 	<div class="notmenu" id="delpub">
 		<div class="dropdown">
 			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-				请选择要删除的公钥。
+				请选择要删除的公钥
 			</button>
 			<div class="dropdown-menu" id="delpubmenu">
 			</div>
@@ -323,7 +406,7 @@ function pubinfo(input,msgbox) {
 	<div class="notmenu" id="delpri">
 		<div class="dropdown">
 			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-				请选择要删除的私钥。
+				请选择要删除的私钥
 			</button>
 			<div class="dropdown-menu" id="delprimenu">
 			</div>
