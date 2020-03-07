@@ -8,3 +8,6 @@
 	overflow: auto;
 	word-break: break-all;
 }
+.center {
+	text-align:center;
+}
