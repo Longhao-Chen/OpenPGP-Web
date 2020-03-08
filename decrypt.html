@@ -46,12 +46,26 @@
 				//判断是否校验签名
 				if(sign){
 					const publicKeyArmored = `${PubRead(document.getElementById("pubdata").value)}`;//签名者的公钥
-					const { data: decrypted } = await openpgp.decrypt({
+					const { data: decrypted , signatures:signmsg} = await openpgp.decrypt({
 						message: await openpgp.message.readArmored(document.getElementById("text").value),	// 要解密的信息
 						publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// 验证签名的公钥
 						privateKeys: [privateKey]	//解密用的私钥
 					});
 					document.getElementById("output").value=decrypted;
+					if(signmsg[0].valid)
+						$("#signmsg").show("slow");
+					else if(typeof(signmsg[0].value)==="undefined"){
+						window.alert("未签名");
+						$("#signmsg").hide();
+					}
+					else if(signmsg[0].value===null){
+						window.alert("没有用已知密钥签署的签名");
+						$("#signmsg").hide();
+					}
+					else{
+						window.alert("签名被破坏");
+						$("#signmsg").hide();
+					}
 				}else{
 					const { data: decrypted } = await openpgp.decrypt({
 						message: await openpgp.message.readArmored(document.getElementById("text").value),	// 要解密的信息
@@ -88,8 +102,19 @@
 		$("#pubdata").hide();
 		$("#pridata").hide();
 		$("#output").hide();
+		$("#signmsg").hide();
 		$("#copy").hide();
 	});
+</script>
+<script>
+//清空和隐藏文本框
+	function cleanall(){
+		document.getElementById("text").value='';
+		document.getElementById("output").value=''
+		$("#output").hide();
+		$("#signmsg").hide();
+		$("#copy").hide();
+	}
 </script>
 <script>
 //复制部分的代码
@@ -176,9 +201,13 @@ $(function(){
 <div class="row">
 	<button type="button" onclick="decrypt(true,false)" class="onlysign col btn btn-primary">解密和验证签名</button>
 	<button type="button" onclick="decrypt(false,false)" class="onlydecrypt col btn btn-primary">解密</button>
-	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button><br>
+	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制明文</button>
+	<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
 </div>
 <textarea id="output" rows="20" class="textarea-inherit" readonly></textarea>
+<div class="alert alert-success alert-dismissible" id="signmsg">
+	签名有效
+</div>
 </body>
  
 </html>
