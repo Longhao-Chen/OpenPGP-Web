@@ -288,6 +288,15 @@ function priinfo(input,msgbox) {
 	}
 </script>
 <script>
+//文本框的清理和隐藏
+	function cleanall(){
+		document.getElementById("pubkey").value='';
+		$("#pubmsg").hide();
+		document.getElementById("prikey").value='';
+		$("#primsg").hide();
+	}
+</script>
+<script>
 //复制部分的代码
 	$(function(){
 		var clipboard = new ClipboardJS('.copy');
@@ -348,7 +357,8 @@ function priinfo(input,msgbox) {
 		<p>目前已保存的公钥：</p>
 		<textarea id="pubsaved" rows="5" class="textarea-inherit" readonly></textarea><br>
 		<textarea id='pubkey' rows="10" class="textarea-inherit" placeholder="请在此粘贴公钥"></textarea><br>
-		<button type="button" class="btn btn-primary" onclick="pubinfo('pubkey','pubmsg')">查看公钥信息</button><br>
+		<button type="button" class="btn btn-primary" onclick="pubinfo('pubkey','pubmsg')">查看公钥信息</button>
+		<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
 		<textarea id="pubmsg" rows="4" class="textarea-inherit" readonly></textarea><br>
 		<form>
 			<input class="input-inherit" id="pubalias" placeholder="公钥别名"><br>
@@ -389,7 +399,8 @@ function priinfo(input,msgbox) {
 		<p>目前已保存的私钥</p>
 		<textarea id="prisaved" rows="5" class="textarea-inherit" readonly></textarea><br>
 		<textarea id='prikey' rows="10" class="textarea-inherit" placeholder="请在此粘贴私钥"></textarea><br>
-		<button onclick="priinfo('prikey','primsg')" class="btn btn-primary" >查看私钥信息</button><br>
+		<button onclick="priinfo('prikey','primsg')" class="btn btn-primary" >查看私钥信息</button>
+		<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
 		<textarea id="primsg" rows="4" class="textarea-inherit" readonly ></textarea><br>
 		<form>
 			<input class="input-inherit" id="prialias" placeholder="私钥别名"><br>

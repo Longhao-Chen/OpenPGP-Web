@@ -78,6 +78,15 @@
 	}
 </script>
 <script>
+//清空和隐藏文本框
+	function cleanall(){
+		document.getElementById("text").value='';
+		document.getElementById("output").value=''
+		$("#output").hide();
+		$("#copy").hide();
+	}
+</script>
+<script>
 //元素显示和隐藏部分
 	$(function(){
 		if(document.getElementById("nosign").checked){
@@ -184,7 +193,8 @@ $(function(){
 <div class="row">
 	<button type="button" onclick="encrypt(true,false)" class="onlysign col btn btn-primary">加密和签名</button>
 	<button type="button" onclick="encrypt(false,false)" class="onlyencript col btn btn-primary">加密</button>
-	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button><br>
+	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button>
+	<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
 </div>
 <textarea id="output" rows="10" class="textarea-inherit" readonly></textarea>
 </body>
