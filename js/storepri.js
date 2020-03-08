@@ -1,4 +1,8 @@
 function PriSessSave(name,pri){
+	if(typeof(openpgp.key.readArmored(pub).keys)==="undefined"){
+		window.alert("密钥读取错误，请检查密钥的正确性");
+		return -1;
+	}
 	if(typeof(Storage)!=="undefined"){
 		if(typeof(sessionStorage.prikeys)!=="undefined"){
 			if(JSON.parse(sessionStorage.prikeys).includes([name,pri])){ //这一段判断是否重复的代码似乎没有正常工作。
@@ -18,6 +22,10 @@ function PriSessSave(name,pri){
 }
 
 function  PriLocalSave(name,pri){
+	if(typeof(openpgp.key.readArmored(pub).keys)==="undefined"){
+		window.alert("密钥读取错误，请检查密钥的正确性");
+		return -1;
+	}
 	if(typeof(Storage)!=="undefined"){
 		if(typeof(localStorage.prikeys)!=="undefined"){
 			if(JSON.parse(localStorage.prikeys).includes([name,pri])){ //这一段判断是否重复的代码似乎没有正常工作。

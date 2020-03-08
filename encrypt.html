@@ -40,22 +40,36 @@
 
 				const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
 				if(passphrase!==``)
-					await privateKey.decrypt(passphrase);
-			
-				const { data: encrypted } = await openpgp.encrypt({
-					message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
-					publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// for encryption
-					privateKeys: [privateKey],
-					compression: openpgp.enums.compression.zip	//启用压缩
-				});
-				document.getElementById("output").value=encrypted;
+					try{
+						await privateKey.decrypt(passphrase);
+					}catch(e){
+						window.alert("私钥密码错误！");
+						return -1;
+					}
+				try{
+					const { data: encrypted } = await openpgp.encrypt({
+						message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
+						publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// for encryption
+						privateKeys: [privateKey],
+						compression: openpgp.enums.compression.zip	//启用压缩
+					});
+					document.getElementById("output").value=encrypted;
+				}catch(e){
+					window.alert("加密和签名错误\n错误代码:"+e);
+					return -1;
+				}
 			}else{
-				const { data: encrypted } = await openpgp.encrypt({
-					message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
-					publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// for encryption
-					compression: openpgp.enums.compression.zip	//启用压缩
-				});
-				document.getElementById("output").value=encrypted;
+				try{
+					const { data: encrypted } = await openpgp.encrypt({
+						message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
+						publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// for encryption
+						compression: openpgp.enums.compression.zip	//启用压缩
+					});
+					document.getElementById("output").value=encrypted;
+				}catch(e){
+					window.alert("加密错误\n错误代码:"+e);
+					return -1;
+				}
 			}
 			await openpgp.destroyWorker();
 			$("#output").show("slow");

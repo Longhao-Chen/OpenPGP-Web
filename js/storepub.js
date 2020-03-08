@@ -1,4 +1,8 @@
 function PubSave(name,pub) {
+	if(typeof(openpgp.key.readArmored(pub).keys)==="undefined"){
+		window.alert("密钥读取错误，请检查密钥的正确性");
+		return -1;
+	}
 	if(typeof(Storage)!=="undefined")
 	{
 		if(typeof(localStorage.pubkeys)!=="undefined"){

@@ -36,24 +36,32 @@
 
 			const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
 			if(passphrase!==``)
-				await privateKey.decrypt(passphrase);
-
-			//判断是否校验签名
-			if(sign){
-				const publicKeyArmored = `${PubRead(document.getElementById("pubdata").value)}`;//签名者的公钥
-
-				const { data: decrypted } = await openpgp.decrypt({
-					message: await openpgp.message.readArmored(document.getElementById("text").value),	// 要解密的信息
-					publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// 验证签名的公钥
-					privateKeys: [privateKey]	//解密用的私钥
-				});
-				document.getElementById("output").value=decrypted;
-			}else{
-				const { data: decrypted } = await openpgp.decrypt({
-					message: await openpgp.message.readArmored(document.getElementById("text").value),	// 要解密的信息
-					privateKeys: [privateKey]	//解密用的私钥
-				});
-				document.getElementById("output").value=decrypted;
+				try{
+					await privateKey.decrypt(passphrase);
+				}catch(e){
+					window.alert("私钥密码错误");
+					return -1;
+				}
+			try{
+				//判断是否校验签名
+				if(sign){
+					const publicKeyArmored = `${PubRead(document.getElementById("pubdata").value)}`;//签名者的公钥
+					const { data: decrypted } = await openpgp.decrypt({
+						message: await openpgp.message.readArmored(document.getElementById("text").value),	// 要解密的信息
+						publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// 验证签名的公钥
+						privateKeys: [privateKey]	//解密用的私钥
+					});
+					document.getElementById("output").value=decrypted;
+				}else{
+					const { data: decrypted } = await openpgp.decrypt({
+						message: await openpgp.message.readArmored(document.getElementById("text").value),	// 要解密的信息
+						privateKeys: [privateKey]	//解密用的私钥
+					});
+					document.getElementById("output").value=decrypted;
+				}
+			}catch(e){
+				window.alert("解密错误\n错误代码:"+e);
+				return -1;
 			}
 			await openpgp.destroyWorker();
 			$("#output").show("slow");

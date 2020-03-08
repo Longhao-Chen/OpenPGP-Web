@@ -28,6 +28,16 @@ function pubinfo(input,msgbox) {
 	})();
 	$("#"+msgbox).show("fast");
 }
+function priinfo(input,msgbox) {
+	(async () => {
+		const key=`${document.getElementById(input).value}`;
+		msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
+		msg=msg+"\n密钥指纹："+((await openpgp.key.readArmored(key)).keys)[0].getFingerprint().toString();
+		msg=msg+"\n创建时间："+((await openpgp.key.readArmored(key)).keys)[0].getCreationTime().toString();
+		document.getElementById(msgbox).value=msg;
+	})();
+	$("#"+msgbox).show("fast");
+}
 </script>
 <script>
 //与界面历史记录和返回有关的函数
@@ -74,7 +84,7 @@ function pubinfo(input,msgbox) {
 	function showexpprikey(){
 		$("#exppri").show("slow");
 		$(".menu").hide("slow");
-		exprimenu();
+		expprimenu();
 	}
 	$(function(){
 		$("#addpubkey").click(function(){
@@ -123,6 +133,7 @@ function pubinfo(input,msgbox) {
 		$(".notmenu").hide();
 		$(".alert").hide();
 		$("#pubmsg").hide();
+		$("#primsg").hide();
 		$(".gen_keys").hide();
 		$(".exp_prikey").hide();
 		$(".exp_pubkey").hide();
@@ -254,7 +265,7 @@ function pubinfo(input,msgbox) {
 		}
 		document.getElementById("exppubmenu").innerHTML=msg;
 	}
-	function exprimenu(){
+	function expprimenu(){
 		res=PriReadIndex();
 		len=res.length;
 		var msg='';
@@ -378,6 +389,8 @@ function pubinfo(input,msgbox) {
 		<p>目前已保存的私钥</p>
 		<textarea id="prisaved" rows="5" class="textarea-inherit" readonly></textarea><br>
 		<textarea id='prikey' rows="10" class="textarea-inherit" placeholder="请在此粘贴私钥"></textarea><br>
+		<button onclick="priinfo('prikey','primsg')" class="btn btn-primary" >查看私钥信息</button><br>
+		<textarea id="primsg" rows="4" class="textarea-inherit" readonly ></textarea><br>
 		<form>
 			<input class="input-inherit" id="prialias" placeholder="私钥别名"><br>
 			<div class="from-check">
