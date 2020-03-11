@@ -29,7 +29,6 @@ function encrypt(sign,copy){
 			window.alert("请选择密钥！");
 			return -1;
 		}
-		await openpgp.initWorker({ path: 'js/openpgp.worker.min.js' }); 	// set the relative web worker path
 
 		// put keys in backtick (``) to avoid errors caused by spaces or tabs
 		const publicKeyArmored = `${PubRead(document.getElementById("pubdata").value)}`;

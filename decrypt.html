@@ -29,7 +29,6 @@ function decrypt(sign,copy){
 			window.alert("请选择密钥！");
 			return -1;
 		}
-		await openpgp.initWorker({ path: 'js/openpgp.worker.min.js' }); 	// set the relative web worker path
 
 		const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`; // 用作解密的私钥
 		const passphrase = `${document.getElementById("password").value}`; // 私钥密码
