@@ -52,14 +52,14 @@
 						privateKeys: [privateKey]	//解密用的私钥
 					});
 					document.getElementById("output").value=decrypted;
-					if(signmsg[0].valid)
-						$("#signmsg").show("slow");
-					else if(typeof(signmsg[0].value)==="undefined"){
+					if(typeof(signmsg[0])==="undefined"){	//必须先判断是否有签名
 						window.alert("未签名");
 						$("#signmsg").hide();
 					}
-					else if(signmsg[0].value===null){
-						window.alert("没有用已知密钥签署的签名");
+					else if(signmsg[0].valid)
+						$("#signmsg").show("slow");
+					else if(signmsg[0].valid===null){
+						window.alert("没有用已知密钥签署的签名\n密钥id:"+signmsg[0].keyid.toHex());
 						$("#signmsg").hide();
 					}
 					else{
