@@ -21,100 +21,100 @@
 <body class="container-fluid center">
 <script>
 //加密和签名部分
-	function decrypt(sign,copy){
-		(async () => {
+function decrypt(sign,copy){
+	(async () => {
 
-			//判断是否选择了密钥
-			if(document.getElementById("pridata").value===''||(sign && document.getElementById("pubdata")==='')){
-				window.alert("请选择密钥！");
-				return -1;
-			}
-			await openpgp.initWorker({ path: 'js/openpgp.worker.min.js' }); 	// set the relative web worker path
+		//判断是否选择了密钥
+		if(document.getElementById("pridata").value===''||(sign && document.getElementById("pubdata")==='')){
+			window.alert("请选择密钥！");
+			return -1;
+		}
+		await openpgp.initWorker({ path: 'js/openpgp.worker.min.js' }); 	// set the relative web worker path
 
-			const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`; // 用作解密的私钥
-			const passphrase = `${document.getElementById("password").value}`; // 私钥密码
+		const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`; // 用作解密的私钥
+		const passphrase = `${document.getElementById("password").value}`; // 私钥密码
 
-			const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
-			if(passphrase!==``)
-				try{
-					await privateKey.decrypt(passphrase);
-				}catch(e){
-					window.alert("私钥密码错误");
-					return -1;
-				}
+		const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
+		if(passphrase!==``)
 			try{
-				//判断是否校验签名
-				if(sign){
-					const publicKeyArmored = `${PubRead(document.getElementById("pubdata").value)}`;//签名者的公钥
-					const { data: decrypted , signatures:signmsg} = await openpgp.decrypt({
-						message: await openpgp.message.readArmored(document.getElementById("text").value),	// 要解密的信息
-						publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// 验证签名的公钥
-						privateKeys: [privateKey]	//解密用的私钥
-					});
-					document.getElementById("output").value=decrypted;
-					if(typeof(signmsg[0])==="undefined"){	//必须先判断是否有签名
-						window.alert("未签名");
-						$("#signmsg").hide();
-					}
-					else if(signmsg[0].valid)
-						$("#signmsg").show("slow");
-					else if(signmsg[0].valid===null){
-						window.alert("没有用已知密钥签署的签名\n密钥id:"+signmsg[0].keyid.toHex());
-						$("#signmsg").hide();
-					}
-					else{
-						window.alert("签名被破坏");
-						$("#signmsg").hide();
-					}
-				}else{
-					const { data: decrypted } = await openpgp.decrypt({
-						message: await openpgp.message.readArmored(document.getElementById("text").value),	// 要解密的信息
-						privateKeys: [privateKey]	//解密用的私钥
-					});
-					document.getElementById("output").value=decrypted;
-				}
+				await privateKey.decrypt(passphrase);
 			}catch(e){
-				window.alert("解密错误\n错误代码:"+e);
+				window.alert("私钥密码错误");
 				return -1;
 			}
-			await openpgp.destroyWorker();
-			$("#output").show("slow");
-			$("#copy").show("slow");
-		})();
-	}
+		try{
+			//判断是否校验签名
+			if(sign){
+				const publicKeyArmored = `${PubRead(document.getElementById("pubdata").value)}`;//签名者的公钥
+				const { data: decrypted , signatures:signmsg} = await openpgp.decrypt({
+					message: await openpgp.message.readArmored(document.getElementById("text").value),	// 要解密的信息
+					publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// 验证签名的公钥
+					privateKeys: [privateKey]	//解密用的私钥
+				});
+				document.getElementById("output").value=decrypted;
+				if(typeof(signmsg[0])==="undefined"){	//必须先判断是否有签名
+					window.alert("未签名");
+					$("#signmsg").hide();
+				}
+				else if(signmsg[0].valid)
+					$("#signmsg").show("slow");
+				else if(signmsg[0].valid===null){
+					window.alert("没有用已知密钥签署的签名\n密钥id:"+signmsg[0].keyid.toHex());
+					$("#signmsg").hide();
+				}
+				else{
+					window.alert("签名被破坏");
+					$("#signmsg").hide();
+				}
+			}else{
+				const { data: decrypted } = await openpgp.decrypt({
+					message: await openpgp.message.readArmored(document.getElementById("text").value),	// 要解密的信息
+					privateKeys: [privateKey]	//解密用的私钥
+				});
+				document.getElementById("output").value=decrypted;
+			}
+		}catch(e){
+			window.alert("解密错误\n错误代码:"+e);
+			return -1;
+		}
+		await openpgp.destroyWorker();
+		$("#output").show("slow");
+		$("#copy").show("slow");
+	})();
+}
 </script>
 <script>
 //元素显示和隐藏部分
-	$(function(){
-		if(document.getElementById("nosign").checked){
-			$(".onlysign").hide();
-		}else{
-			$(".onlydecrypt").hide();
-		}
-		$("#nosign").click(function(){
-			$(".onlysign").toggle("slow");
-			$(".onlydecrypt").toggle("slow");
-		});
+$(function(){
+	if(document.getElementById("nosign").checked){
+		$(".onlysign").hide();
+	}else{
+		$(".onlydecrypt").hide();
+	}
+	$("#nosign").click(function(){
+		$(".onlysign").toggle("slow");
+		$(".onlydecrypt").toggle("slow");
 	});
-	$(function(){
-		$(".pubmsg").hide();
-		$(".primsg").hide();
-		$("#pubdata").hide();
-		$("#pridata").hide();
-		$("#output").hide();
-		$("#signmsg").hide();
-		$("#copy").hide();
-	});
+});
+$(function(){
+	$(".pubmsg").hide();
+	$(".primsg").hide();
+	$("#pubdata").hide();
+	$("#pridata").hide();
+	$("#output").hide();
+	$("#signmsg").hide();
+	$("#copy").hide();
+});
 </script>
 <script>
 //清空和隐藏文本框
-	function cleanall(){
-		document.getElementById("text").value='';
-		document.getElementById("output").value=''
-		$("#output").hide();
-		$("#signmsg").hide();
-		$("#copy").hide();
-	}
+function cleanall(){
+	document.getElementById("text").value='';
+	document.getElementById("output").value=''
+	$("#output").hide();
+	$("#signmsg").hide();
+	$("#copy").hide();
+}
 </script>
 <script>
 //复制部分的代码
@@ -130,41 +130,41 @@ $(function(){
 </script>
 <script>
 //密钥选择部分
-	$(function(){
-		res=PriReadIndex();
-		len=res.length;
-		var msg='';
-		if(len===0){
-			msg='<a class="dropdown-item" >无已保存的私钥，请添加私钥</a>'
-		}else{
-			for(var i=0;i<len;++i){
-				msg=msg+'<a class="dropdown-item" onclick="Pri('+res[i][0]+',\''+res[i][1]+'\');">'+res[i][1]+'</a>'
-			}
+$(function(){
+	res=PriReadIndex();
+	len=res.length;
+	var msg='';
+	if(len===0){
+		msg='<a class="dropdown-item" >无已保存的私钥，请添加私钥</a>'
+	}else{
+		for(var i=0;i<len;++i){
+			msg=msg+'<a class="dropdown-item" onclick="Pri('+res[i][0]+',\''+res[i][1]+'\');">'+res[i][1]+'</a>'
 		}
-		document.getElementById("primenu").innerHTML=msg;
-		res=PubReadIndex();
-		len=res.length;
-		msg='';
-		if(len===0){
-			msg='<a class="dropdown-item" >无已保存的公钥，请添加公钥</a>'
-		}else{
-			for(var i=0;i<len;++i){
-				msg=msg+'<a class="dropdown-item" onclick="Pub('+res[i][0]+',\''+res[i][1]+'\');">'+res[i][1]+'</a>'
-			}
+	}
+	document.getElementById("primenu").innerHTML=msg;
+	res=PubReadIndex();
+	len=res.length;
+	msg='';
+	if(len===0){
+		msg='<a class="dropdown-item" >无已保存的公钥，请添加公钥</a>'
+	}else{
+		for(var i=0;i<len;++i){
+			msg=msg+'<a class="dropdown-item" onclick="Pub('+res[i][0]+',\''+res[i][1]+'\');">'+res[i][1]+'</a>'
 		}
-		document.getElementById("pubmenu").innerHTML=msg;
-	});
+	}
+	document.getElementById("pubmenu").innerHTML=msg;
+});
 
-	function Pub(id,name){
-		document.getElementById("pubmsg").value=name;
-		document.getElementById("pubdata").value=id;
-		$(".pubmsg").show("fast");
-	}
-	function Pri(id,name){
-		document.getElementById("primsg").value=name;
-		document.getElementById("pridata").value=id;
-		$(".primsg").show("fast");
-	}
+function Pub(id,name){
+	document.getElementById("pubmsg").value=name;
+	document.getElementById("pubdata").value=id;
+	$(".pubmsg").show("fast");
+}
+function Pri(id,name){
+	document.getElementById("primsg").value=name;
+	document.getElementById("pridata").value=id;
+	$(".primsg").show("fast");
+}
 </script>
 <form>
 	<div class="from-check">
@@ -181,7 +181,7 @@ $(function(){
 	</div>
 	<p class="pubmsg" >已选择的公钥：</p>
 	<textarea id="pubmsg" class="pubmsg textarea-inherit" readonly rows="1"></textarea><br class="pubmsg">
-</div> 
+</div>
 <div class="dropdown">
 	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
 		请选择私钥
@@ -190,7 +190,7 @@ $(function(){
 	</div>
 	<p class="primsg">已选择的私钥：</p>
 	<textarea id="primsg" class="primsg textarea-inherit" readonly rows="1" ></textarea><br class="primsg">
-</div> 
+</div>
 <!-- 下面这两项仅用于保存数据 -->
 <textarea id="pubdata"></textarea>
 <textarea id="pridata"></textarea>
@@ -209,5 +209,5 @@ $(function(){
 	签名有效
 </div>
 </body>
- 
+
 </html>

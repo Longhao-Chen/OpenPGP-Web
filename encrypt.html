@@ -21,93 +21,93 @@
 <body class="container-fluid center">
 <script>
 //加密和签名部分
-	function encrypt(sign,copy){
-		(async () => {
+function encrypt(sign,copy){
+	(async () => {
 
-			//判断是否选择了密钥
-			if(document.getElementById("pubdata").value===''||(sign && document.getElementById("pridata")==='')){
-				window.alert("请选择密钥！");
+		//判断是否选择了密钥
+		if(document.getElementById("pubdata").value===''||(sign && document.getElementById("pridata")==='')){
+			window.alert("请选择密钥！");
+			return -1;
+		}
+		await openpgp.initWorker({ path: 'js/openpgp.worker.min.js' }); 	// set the relative web worker path
+
+		// put keys in backtick (``) to avoid errors caused by spaces or tabs
+		const publicKeyArmored = `${PubRead(document.getElementById("pubdata").value)}`;
+
+		//判断是否启用签名
+		if(sign){
+			const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`; // encrypted private key
+			const passphrase = `${document.getElementById("password").value}`; // what the private key is encrypted with
+
+			const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
+			if(passphrase!==``)
+				try{
+					await privateKey.decrypt(passphrase);
+				}catch(e){
+					window.alert("私钥密码错误！");
+					return -1;
+				}
+			try{
+				const { data: encrypted } = await openpgp.encrypt({
+					message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
+					publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// for encryption
+					privateKeys: [privateKey],
+					compression: openpgp.enums.compression.zip	//启用压缩
+				});
+				document.getElementById("output").value=encrypted;
+			}catch(e){
+				window.alert("加密和签名错误\n错误代码:"+e);
 				return -1;
 			}
-			await openpgp.initWorker({ path: 'js/openpgp.worker.min.js' }); 	// set the relative web worker path
-
-			// put keys in backtick (``) to avoid errors caused by spaces or tabs
-			const publicKeyArmored = `${PubRead(document.getElementById("pubdata").value)}`;
-
-			//判断是否启用签名
-			if(sign){
-				const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`; // encrypted private key
-				const passphrase = `${document.getElementById("password").value}`; // what the private key is encrypted with
-
-				const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
-				if(passphrase!==``)
-					try{
-						await privateKey.decrypt(passphrase);
-					}catch(e){
-						window.alert("私钥密码错误！");
-						return -1;
-					}
-				try{
-					const { data: encrypted } = await openpgp.encrypt({
-						message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
-						publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// for encryption
-						privateKeys: [privateKey],
-						compression: openpgp.enums.compression.zip	//启用压缩
-					});
-					document.getElementById("output").value=encrypted;
-				}catch(e){
-					window.alert("加密和签名错误\n错误代码:"+e);
-					return -1;
-				}
-			}else{
-				try{
-					const { data: encrypted } = await openpgp.encrypt({
-						message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
-						publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// for encryption
-						compression: openpgp.enums.compression.zip	//启用压缩
-					});
-					document.getElementById("output").value=encrypted;
-				}catch(e){
-					window.alert("加密错误\n错误代码:"+e);
-					return -1;
-				}
+		}else{
+			try{
+				const { data: encrypted } = await openpgp.encrypt({
+					message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
+					publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// for encryption
+					compression: openpgp.enums.compression.zip	//启用压缩
+				});
+				document.getElementById("output").value=encrypted;
+			}catch(e){
+				window.alert("加密错误\n错误代码:"+e);
+				return -1;
 			}
-			await openpgp.destroyWorker();
-			$("#output").show("slow");
-			$("#copy").show("slow");
-		})();
-	}
+		}
+		await openpgp.destroyWorker();
+		$("#output").show("slow");
+		$("#copy").show("slow");
+	})();
+}
 </script>
 <script>
 //清空和隐藏文本框
-	function cleanall(){
-		document.getElementById("text").value='';
-		document.getElementById("output").value=''
-		$("#output").hide();
-		$("#copy").hide();
-	}
+function cleanall(){
+	document.getElementById("text").value='';
+	document.getElementById("output").value=''
+	$("#output").hide();
+	$("#copy").hide();
+}
 </script>
 <script>
 //元素显示和隐藏部分
-	$(function(){
-		if(document.getElementById("nosign").checked){
-			$(".onlysign").hide();
-		}else{
-			$(".onlyencript").hide();
-		}
-		$("#nosign").click(function(){
-			$(".onlysign").toggle("slow");
-			$(".onlyencript").toggle("slow");
-		});
+$(function(){
+	if(document.getElementById("nosign").checked){
+		$(".onlysign").hide();
+	}else{
+		$(".onlyencript").hide();
+	}
+	$("#nosign").click(function(){
+		$(".onlysign").toggle("slow");
+		$(".onlyencript").toggle("slow");
 	});
-	$(function(){
-		$(".pubmsg").hide();
-		$(".primsg").hide();
-		$("#pubdata").hide();
-		$("#pridata").hide();
-		$("#output").hide();
-		$("#copy").hide();
-	})
+});
+$(function(){
+	$(".pubmsg").hide();
+	$(".primsg").hide();
+	$("#pubdata").hide();
+	$("#pridata").hide();
+	$("#output").hide();
+	$("#copy").hide();
+})
 </script>
 <script>
 //复制部分的代码
@@ -123,41 +123,41 @@ $(function(){
 </script>
 <script>
 //密钥选择部分
-	$(function(){
-		res=PriReadIndex();
-		len=res.length;
-		var msg='';
-		if(len===0){
-			msg='<a class="dropdown-item" >无已保存的私钥，请添加私钥</a>'
-		}else{
-			for(var i=0;i<len;++i){
-				msg=msg+'<a class="dropdown-item" onclick="Pri('+res[i][0]+',\''+res[i][1]+'\');">'+res[i][1]+'</a>'
-			}
+$(function(){
+	res=PriReadIndex();
+	len=res.length;
+	var msg='';
+	if(len===0){
+		msg='<a class="dropdown-item" >无已保存的私钥，请添加私钥</a>'
+	}else{
+		for(var i=0;i<len;++i){
+			msg=msg+'<a class="dropdown-item" onclick="Pri('+res[i][0]+',\''+res[i][1]+'\');">'+res[i][1]+'</a>'
 		}
-		document.getElementById("primenu").innerHTML=msg;
-		res=PubReadIndex();
-		len=res.length;
-		msg='';
-		if(len===0){
-			msg='<a class="dropdown-item" >无已保存的公钥，请添加公钥</a>'
-		}else{
-			for(var i=0;i<len;++i){
-				msg=msg+'<a class="dropdown-item" onclick="Pub('+res[i][0]+',\''+res[i][1]+'\');">'+res[i][1]+'</a>'
-			}
+	}
+	document.getElementById("primenu").innerHTML=msg;
+	res=PubReadIndex();
+	len=res.length;
+	msg='';
+	if(len===0){
+		msg='<a class="dropdown-item" >无已保存的公钥，请添加公钥</a>'
+	}else{
+		for(var i=0;i<len;++i){
+			msg=msg+'<a class="dropdown-item" onclick="Pub('+res[i][0]+',\''+res[i][1]+'\');">'+res[i][1]+'</a>'
 		}
-		document.getElementById("pubmenu").innerHTML=msg;
-	});
+	}
+	document.getElementById("pubmenu").innerHTML=msg;
+});
 
-	function Pub(id,name){
-		document.getElementById("pubmsg").value=name;
-		document.getElementById("pubdata").value=id;
-		$(".pubmsg").show("fast");
-	}
-	function Pri(id,name){
-		document.getElementById("primsg").value=name;
-		document.getElementById("pridata").value=id;
-		$(".primsg").show("fast");
-	}
+function Pub(id,name){
+	document.getElementById("pubmsg").value=name;
+	document.getElementById("pubdata").value=id;
+	$(".pubmsg").show("fast");
+}
+function Pri(id,name){
+	document.getElementById("primsg").value=name;
+	document.getElementById("pridata").value=id;
+	$(".primsg").show("fast");
+}
 </script>
 <form>
 	<div class="from-check">
@@ -174,7 +174,7 @@ $(function(){
 	</div>
 	<p class="pubmsg" >已选择的公钥：</p>
 	<textarea id="pubmsg" class="pubmsg textarea-inherit" readonly rows="1" ></textarea><br class="pubmsg">
-</div> 
+</div>
 <div class="dropdown onlysign">
 	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
 		请选择私钥
@@ -183,7 +183,7 @@ $(function(){
 	</div>
 	<p class="primsg">已选择的私钥：</p>
 	<textarea id="primsg" class="primsg textarea-inherit" readonly rows="1" ></textarea><br class="primsg">
-</div> 
+</div>
 <!-- 下面这两项仅用于保存数据 -->
 <textarea id="pubdata"></textarea>
 <textarea id="pridata"></textarea>
@@ -199,5 +199,4 @@ $(function(){
 </div>
 <textarea id="output" rows="10" class="textarea-inherit" readonly></textarea>
 </body>
- 
 </html>

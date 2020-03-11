@@ -42,272 +42,272 @@ function priinfo(input,msgbox) {
 </script>
 <script>
 //与界面历史记录和返回有关的函数
-	function historyadd(href){
-		history.pushState(null,null,"keymanage.html#"+href);
-	}
+function historyadd(href){
+	history.pushState(null,null,"keymanage.html#"+href);
+}
 
-	window.addEventListener("popstate", function(){
-		$(".menu").show("slow");
-		$(".notmenu").hide("slow");
-	}, false)
+window.addEventListener("popstate", function(){
+	$(".menu").show("slow");
+	$(".notmenu").hide("slow");
+}, false)
 </script>
 <script>
 //元素的显示和隐藏的处理
-	function showaddpubkey(){
-		$("#addpub").show("slow");
-		$(".menu").hide("slow");
-		pubsaved();
-	}
-	function showaddprikey(){
-		$("#addpri").show("slow");
-		$(".menu").hide("slow");
-		prisaved();
-	}
-	function showdelpubkey(){
-		$("#delpub").show("slow");
-		$(".menu").hide("slow");
-		pubdelmenu();
-	}
-	function showdelprikey(){
-		$("#delpri").show("slow");
-		$(".menu").hide("slow");
-		pridelmenu();
-	}
-	function showgenkey(){
-		$("#gen").show("slow");
-		$(".menu").hide("slow");
-	}
-	function showexppubkey(){
-		$("#exppub").show("slow");
-		$(".menu").hide("slow");
-		exppubmenu();
-	}
-	function showexpprikey(){
-		$("#exppri").show("slow");
-		$(".menu").hide("slow");
-		expprimenu();
-	}
-	$(function(){
-		$("#addpubkey").click(function(){
-			historyadd("addpubkey");
-			showaddpubkey();
-		});
-		$("#addprikey").click(function(){
-			historyadd("addprikey");
-			showaddprikey();
-		});
-		$("#delpubkey").click(function(){
-			historyadd("delpubkey");
-			showdelpubkey();
-		});
-		$("#delprikey").click(function(){
-			historyadd("delprikey");
-			showdelprikey()
-		});
-		$("#genkey").click(function(){
-			historyadd("genkey");
-			showgenkey();
-		});
-		$("#exppubkey").click(function(){
-			historyadd("exppubkey");
-			showexppubkey();
-		});
-		$("#expprikey").click(function(){
-			historyadd("expprikey");
-			showexpprikey();
-		});
-		$("#gen_gen").click(function(){
-			$(".gen_keys").show("slow");
-		});
-		$("#gen_show_passwd").click(function(){
-			if(document.getElementById("gen_show_passwd").checked){
-				$("#gen_passwd").attr("type","text");
-			}else{
-				$("#gen_passwd").attr("type","password");
-			}
-		});
-		$(".alertclose").click(function(){
-			$(".alert").hide("slow");
-		})
+function showaddpubkey(){
+	$("#addpub").show("slow");
+	$(".menu").hide("slow");
+	pubsaved();
+}
+function showaddprikey(){
+	$("#addpri").show("slow");
+	$(".menu").hide("slow");
+	prisaved();
+}
+function showdelpubkey(){
+	$("#delpub").show("slow");
+	$(".menu").hide("slow");
+	pubdelmenu();
+}
+function showdelprikey(){
+	$("#delpri").show("slow");
+	$(".menu").hide("slow");
+	pridelmenu();
+}
+function showgenkey(){
+	$("#gen").show("slow");
+	$(".menu").hide("slow");
+}
+function showexppubkey(){
+	$("#exppub").show("slow");
+	$(".menu").hide("slow");
+	exppubmenu();
+}
+function showexpprikey(){
+	$("#exppri").show("slow");
+	$(".menu").hide("slow");
+	expprimenu();
+}
+$(function(){
+	$("#addpubkey").click(function(){
+		historyadd("addpubkey");
+		showaddpubkey();
 	});
-	$(function(){
-		$(".notmenu").hide();
-		$(".alert").hide();
-		$("#pubmsg").hide();
-		$("#primsg").hide();
-		$(".gen_keys").hide();
-		$(".exp_prikey").hide();
-		$(".exp_pubkey").hide();
-
-		//保证重新刷新后仍然在原界面
-		if(window.location.hash==='#addpubkey')
-			showaddpubkey();
-		if(window.location.hash==='#addprikey')
-			showaddprikey();
-		if(window.location.hash==='#delpubkey')
-			showdelpubkey();
-		if(window.location.hash==='#delprikey')
-			showdelprikey();
-		if(window.location.hash==='#genkey')
-			showgenkey();
-		if(window.location.hash==='#exppubkey')
-			showexppubkey();
-		if(window.location.hash==='#expprikey')
-			showexpprikey();
+	$("#addprikey").click(function(){
+		historyadd("addprikey");
+		showaddprikey();
+	});
+	$("#delpubkey").click(function(){
+		historyadd("delpubkey");
+		showdelpubkey();
+	});
+	$("#delprikey").click(function(){
+		historyadd("delprikey");
+		showdelprikey()
+	});
+	$("#genkey").click(function(){
+		historyadd("genkey");
+		showgenkey();
+	});
+	$("#exppubkey").click(function(){
+		historyadd("exppubkey");
+		showexppubkey();
+	});
+	$("#expprikey").click(function(){
+		historyadd("expprikey");
+		showexpprikey();
+	});
+	$("#gen_gen").click(function(){
+		$(".gen_keys").show("slow");
+	});
+	$("#gen_show_passwd").click(function(){
 		if(document.getElementById("gen_show_passwd").checked){
 			$("#gen_passwd").attr("type","text");
 		}else{
 			$("#gen_passwd").attr("type","password");
 		}
+	});
+	$(".alertclose").click(function(){
+		$(".alert").hide("slow");
 	})
+});
+$(function(){
+	$(".notmenu").hide();
+	$(".alert").hide();
+	$("#pubmsg").hide();
+	$("#primsg").hide();
+	$(".gen_keys").hide();
+	$(".exp_prikey").hide();
+	$(".exp_pubkey").hide();
+
+	//保证重新刷新后仍然在原界面
+	if(window.location.hash==='#addpubkey')
+		showaddpubkey();
+	if(window.location.hash==='#addprikey')
+		showaddprikey();
+	if(window.location.hash==='#delpubkey')
+		showdelpubkey();
+	if(window.location.hash==='#delprikey')
+		showdelprikey();
+	if(window.location.hash==='#genkey')
+		showgenkey();
+	if(window.location.hash==='#exppubkey')
+		showexppubkey();
+	if(window.location.hash==='#expprikey')
+		showexpprikey();
+	if(document.getElementById("gen_show_passwd").checked){
+		$("#gen_passwd").attr("type","text");
+	}else{
+		$("#gen_passwd").attr("type","password");
+	}
+})
 </script>
 <script>
 //核心的一些处理函数
-	function addpub(){
-		pub=document.getElementById("pubkey").value;
-		name=document.getElementById("pubalias").value;
-		PubSave(name,pub);
-		$("#pubaddalert").show("slow");
-	}
-	function addpri(){
-		pri=document.getElementById("prikey").value;
-		name=document.getElementById("prialias").value;
-		if(document.getElementById("onlocal").checked){
-			PriLocalSave(name,pri);
-		}else{
-			PriSessSave(name,pri);
-		}
-		$("#priaddalert").show("slow");
-	}
-	function pubdelmenu(){
-		res=PubReadIndex();
-		len=res.length;
-		var msg='';
-		if(len===0){
-			msg='<a class="dropdown-item" >无已保存的公钥</a>'
-		}else{
-			for(var i=0;i<len;++i){
-				msg=msg+'<a class="dropdown-item pubdelreload" onclick="PubDel('+res[i][0]+');pubdelmenu();">'+res[i][1]+'</a>'
-			}
-		}
-		document.getElementById("delpubmenu").innerHTML=msg;
-	}
-	function pridelmenu(){
-		res=PriReadIndex();
-		len=res.length;
-		var msg='';
-		if(len===0){
-			msg='<a class="dropdown-item" >无已保存的私钥</a>'
-		}else{
-			for(var i=0;i<len;++i){
-				msg=msg+'<a class="dropdown-item" onclick="PriDel('+res[i][0]+');pridelmenu();">'+res[i][1]+'</a>'
-			}
-		}
-		document.getElementById("delprimenu").innerHTML=msg;
-	}
-	function genkey(){
-		(async () => {
-			const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
-				userIds: [{ name: document.getElementById("gen_name").value, email: document.getElementById("gen_mail").value }], // you can pass multiple user IDs
-				rsaBits: 2048,                                              // RSA key size，2030年之前被认为是安全的，过大的尺寸速度比较慢
-				passphrase: document.getElementById("gen_passwd").value           // protects the private key
-			});
-			document.getElementById("gen_pub").value=publicKeyArmored;
-			document.getElementById("gen_pri").value=privateKeyArmored;
-			document.getElementById("gen_rev").value=revocationCertificate;
-		})();
-	}
-
-	//保存生成的密钥
-	function gen_save(){
-		name=document.getElementById("gen_name").value;
-		pub=document.getElementById("gen_pub").value;
-		pri=document.getElementById("gen_pri").value;
-		PubSave(name,pub);
+function addpub(){
+	pub=document.getElementById("pubkey").value;
+	name=document.getElementById("pubalias").value;
+	PubSave(name,pub);
+	$("#pubaddalert").show("slow");
+}
+function addpri(){
+	pri=document.getElementById("prikey").value;
+	name=document.getElementById("prialias").value;
+	if(document.getElementById("onlocal").checked){
 		PriLocalSave(name,pri);
-		$("#gen_savealert").show("slow");
+	}else{
+		PriSessSave(name,pri);
 	}
-	function pubsaved(){
-		res=PubReadIndex();
-		len=res.length;
-		var msg='';
-		if(len===0){
-			msg='无已保存的公钥'
-		}else{
-			for(var i=0;i<len;++i){
-				msg=msg+res[i][1]+"\n"
-			}
+	$("#priaddalert").show("slow");
+}
+function pubdelmenu(){
+	res=PubReadIndex();
+	len=res.length;
+	var msg='';
+	if(len===0){
+		msg='<a class="dropdown-item" >无已保存的公钥</a>'
+	}else{
+		for(var i=0;i<len;++i){
+			msg=msg+'<a class="dropdown-item pubdelreload" onclick="PubDel('+res[i][0]+');pubdelmenu();">'+res[i][1]+'</a>'
 		}
-		document.getElementById("pubsaved").value=msg;
 	}
-	function prisaved(){
-		res=PriReadIndex();
-		len=res.length;
-		var msg='';
-		if(len===0){
-			msg='无已保存的私钥'
-		}else{
-			for(var i=0;i<len;++i){
-				msg=msg+res[i][1]+"\n"
-			}
+	document.getElementById("delpubmenu").innerHTML=msg;
+}
+function pridelmenu(){
+	res=PriReadIndex();
+	len=res.length;
+	var msg='';
+	if(len===0){
+		msg='<a class="dropdown-item" >无已保存的私钥</a>'
+	}else{
+		for(var i=0;i<len;++i){
+			msg=msg+'<a class="dropdown-item" onclick="PriDel('+res[i][0]+');pridelmenu();">'+res[i][1]+'</a>'
 		}
-		document.getElementById("prisaved").value=msg;
 	}
-	function exppubmenu(){
-		res=PubReadIndex();
-		len=res.length;
-		var msg='';
-		if(len===0){
-			msg='<a class="dropdown-item" >无已保存的公钥</a>'
-		}else{
-			for(var i=0;i<len;++i){
-				msg=msg+'<a class="dropdown-item pubdelreload" onclick="exppub('+res[i][0]+');exppubmenu();">'+res[i][1]+'</a>'
-			}
+	document.getElementById("delprimenu").innerHTML=msg;
+}
+function genkey(){
+	(async () => {
+		const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
+			userIds: [{ name: document.getElementById("gen_name").value, email: document.getElementById("gen_mail").value }], // you can pass multiple user IDs
+			rsaBits: 2048,                                              // RSA key size，2030年之前被认为是安全的，过大的尺寸速度比较慢
+			passphrase: document.getElementById("gen_passwd").value           // protects the private key
+		});
+		document.getElementById("gen_pub").value=publicKeyArmored;
+		document.getElementById("gen_pri").value=privateKeyArmored;
+		document.getElementById("gen_rev").value=revocationCertificate;
+	})();
+}
+
+//保存生成的密钥
+function gen_save(){
+	name=document.getElementById("gen_name").value;
+	pub=document.getElementById("gen_pub").value;
+	pri=document.getElementById("gen_pri").value;
+	PubSave(name,pub);
+	PriLocalSave(name,pri);
+	$("#gen_savealert").show("slow");
+}
+function pubsaved(){
+	res=PubReadIndex();
+	len=res.length;
+	var msg='';
+	if(len===0){
+		msg='无已保存的公钥'
+	}else{
+		for(var i=0;i<len;++i){
+			msg=msg+res[i][1]+"\n"
 		}
-		document.getElementById("exppubmenu").innerHTML=msg;
 	}
-	function expprimenu(){
-		res=PriReadIndex();
-		len=res.length;
-		var msg='';
-		if(len===0){
-			msg='<a class="dropdown-item" >无已保存的私钥</a>'
-		}else{
-			for(var i=0;i<len;++i){
-				msg=msg+'<a class="dropdown-item pubdelreload" onclick="exppri('+res[i][0]+');expprimenu();">'+res[i][1]+'</a>'
-			}
+	document.getElementById("pubsaved").value=msg;
+}
+function prisaved(){
+	res=PriReadIndex();
+	len=res.length;
+	var msg='';
+	if(len===0){
+		msg='无已保存的私钥'
+	}else{
+		for(var i=0;i<len;++i){
+			msg=msg+res[i][1]+"\n"
 		}
-		document.getElementById("expprimenu").innerHTML=msg;
 	}
-	function exppub(id){
-		document.getElementById("exp_pubkey").value=PubRead(id);
-		$(".exp_pubkey").show("slow");
+	document.getElementById("prisaved").value=msg;
+}
+function exppubmenu(){
+	res=PubReadIndex();
+	len=res.length;
+	var msg='';
+	if(len===0){
+		msg='<a class="dropdown-item" >无已保存的公钥</a>'
+	}else{
+		for(var i=0;i<len;++i){
+			msg=msg+'<a class="dropdown-item pubdelreload" onclick="exppub('+res[i][0]+');exppubmenu();">'+res[i][1]+'</a>'
+		}
 	}
-	function exppri(id){
-		document.getElementById("exp_prikey").value=PriRead(id);
-		$(".exp_prikey").show("slow");
+	document.getElementById("exppubmenu").innerHTML=msg;
+}
+function expprimenu(){
+	res=PriReadIndex();
+	len=res.length;
+	var msg='';
+	if(len===0){
+		msg='<a class="dropdown-item" >无已保存的私钥</a>'
+	}else{
+		for(var i=0;i<len;++i){
+			msg=msg+'<a class="dropdown-item pubdelreload" onclick="exppri('+res[i][0]+');expprimenu();">'+res[i][1]+'</a>'
+		}
 	}
+	document.getElementById("expprimenu").innerHTML=msg;
+}
+function exppub(id){
+	document.getElementById("exp_pubkey").value=PubRead(id);
+	$(".exp_pubkey").show("slow");
+}
+function exppri(id){
+	document.getElementById("exp_prikey").value=PriRead(id);
+	$(".exp_prikey").show("slow");
+}
 </script>
 <script>
 //文本框的清理和隐藏
-	function cleanall(){
-		document.getElementById("pubkey").value='';
-		$("#pubmsg").hide();
-		document.getElementById("prikey").value='';
-		$("#primsg").hide();
-	}
+function cleanall(){
+	document.getElementById("pubkey").value='';
+	$("#pubmsg").hide();
+	document.getElementById("prikey").value='';
+	$("#primsg").hide();
+}
 </script>
 <script>
 //复制部分的代码
-	$(function(){
-		var clipboard = new ClipboardJS('.copy');
-		clipboard.on('success', function(e) {
-			e.clearSelection();
-		});
-		clipboard.on('error', function(e) {
-			alert('复制失败，您的浏览器不支持！')
-		});
+$(function(){
+	var clipboard = new ClipboardJS('.copy');
+	clipboard.on('success', function(e) {
+		e.clearSelection();
 	});
+	clipboard.on('error', function(e) {
+		alert('复制失败，您的浏览器不支持！')
+	});
+});
 </script>
 </head>
 <body class="container-fluid center">
@@ -379,7 +379,7 @@ function priinfo(input,msgbox) {
 			</button>
 			<div class="dropdown-menu" id="exppubmenu">
 			</div>
-		</div> 
+		</div>
 		<textarea id="exp_pubkey" rows="10" class="textarea-inherit exp_pubkey" readonly></textarea><br class="exp_pubkey">
 		<button class="exp_pubkey copy btn btn-primary" data-clipboard-target="#exp_pubkey">复制密钥</button>
 	</div>
@@ -425,7 +425,7 @@ function priinfo(input,msgbox) {
 			</button>
 			<div class="dropdown-menu" id="delpubmenu">
 			</div>
-		</div> 
+		</div>
 	</div>
 
 	<div class="notmenu" id="delpri">
@@ -435,7 +435,7 @@ function priinfo(input,msgbox) {
 			</button>
 			<div class="dropdown-menu" id="delprimenu">
 			</div>
-		</div>      
+		</div>
 	</div>
 </body>
 </html>
