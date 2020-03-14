@@ -1,5 +1,5 @@
 function PriSessSave(name,pri){
-	if(typeof(openpgp.key.readArmored(pub).keys)==="undefined"){
+	if(typeof(openpgp.key.readArmored(pri).keys)==="undefined"){
 		window.alert("密钥读取错误，请检查密钥的正确性");
 		return -1;
 	}
