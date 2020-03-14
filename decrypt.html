@@ -20,8 +20,8 @@
 </head>
 <body class="container-fluid center">
 <script>
-//加密和签名部分
-function decrypt(sign,copy){
+//解密和签名部分
+function decrypt(sign){
 	(async () => {
 
 		//判断是否选择了密钥
@@ -199,8 +199,8 @@ function Pri(id,name){
 </form>
 <textarea id="text" rows="10" class="textarea-inherit" placeholder="请粘贴密文"></textarea><br>
 <div class="row">
-	<button type="button" onclick="decrypt(true,false)" class="onlysign col btn btn-primary">解密和验证签名</button>
-	<button type="button" onclick="decrypt(false,false)" class="onlydecrypt col btn btn-primary">解密</button>
+	<button type="button" onclick="decrypt(true)" class="onlysign col btn btn-primary">解密和验证签名</button>
+	<button type="button" onclick="decrypt(false)" class="onlydecrypt col btn btn-primary">解密</button>
 	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制明文</button>
 	<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
 </div>

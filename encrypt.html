@@ -21,7 +21,7 @@
 <body class="container-fluid center">
 <script>
 //加密和签名部分
-function encrypt(sign,copy){
+function encrypt(sign){
 	(async () => {
 
 		//判断是否选择了密钥
@@ -192,8 +192,8 @@ function Pri(id,name){
 </form>
 <textarea id="text" rows="20" class="textarea-inherit" placeholder="请输入要加密的信息"></textarea><br>
 <div class="row">
-	<button type="button" onclick="encrypt(true,false)" class="onlysign col btn btn-primary">加密和签名</button>
-	<button type="button" onclick="encrypt(false,false)" class="onlyencript col btn btn-primary">加密</button>
+	<button type="button" onclick="encrypt(true)" class="onlysign col btn btn-primary">加密和签名</button>
+	<button type="button" onclick="encrypt(false)" class="onlyencript col btn btn-primary">加密</button>
 	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button>
 	<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
 </div>
