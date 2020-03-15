@@ -1,13 +1,23 @@
 .textarea-inherit {
-	width: 100%;
+	width: 95%;
 	overflow: auto;
 	word-break: break-all;
 }
 .input-inherit {
-	width: 100%;
+	width: 250px;
 	overflow: auto;
 	word-break: break-all;
+	text-align: center;
 }
 .center {
 	text-align:center;
+}
+input {
+	border-radius: 25px;
+}
+textarea {
+	border-radius: 10px;
+}
+.btn {
+	border-radius: 25px;
 }
