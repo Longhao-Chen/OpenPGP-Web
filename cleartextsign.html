@@ -70,7 +70,6 @@ $(function(){
 <script>
 //元素显示和隐藏
 $(function(){
-	$(".primsg").hide();
 	$("#pridata").hide();
 	$("#output").hide();
 	$("#copy").hide();
@@ -101,20 +100,17 @@ $(function(){
 	document.getElementById("primenu").innerHTML=msg;
 });
 function Pri(id,name){
-	document.getElementById("primsg").value=name;
+	document.getElementById("primsg").innerHTML=name;
 	document.getElementById("pridata").value=id;
-	$(".primsg").show("fast");
 }
 </script>
 <h1>创建明文签名</h1>
 <div class="dropdown">
-	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="primsg">
 		请选择私钥
 	</button>
 	<div class="dropdown-menu" id="primenu">
 	</div>
-	<p class="primsg">已选择的私钥：</p>
-	<textarea id="primsg" class="primsg textarea-inherit" readonly rows="1" ></textarea><br class="primsg">
 </div>
 <!-- 下面仅用于保存数据 -->
 <textarea id="pridata"></textarea>
@@ -122,7 +118,7 @@ function Pri(id,name){
 	<input class="input-inherit" type="password" id="password" placeholder="私钥密码"><br>
 </form>
 <textarea id="text" rows="20" class="textarea-inherit" placeholder="请输入要签名的信息"></textarea><br>
-<div class="row">
+<div class="row ma-auto" style="width: 95%;">
 	<button type="button" onclick="sign()" class="col btn btn-primary">签名</button>
 	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button>
 	<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>

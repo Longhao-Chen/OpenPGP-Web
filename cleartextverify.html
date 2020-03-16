@@ -51,7 +51,6 @@ function verify(){
 <script>
 //元素显示和隐藏
 $(function(){
-	$(".pubmsg").hide();
 	$("#pubdata").hide();
 	$("#signmsg").hide();
 })
@@ -80,25 +79,22 @@ $(function(){
 });
 
 function Pub(id,name){
-	document.getElementById("pubmsg").value=name;
+	document.getElementById("pubmsg").innerHTML=name;
 	document.getElementById("pubdata").value=id;
-	$(".pubmsg").show("fast");
 }
 </script>
 <h1>验证明文签名</h1>
 <div class="dropdown">
-	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="pubmsg">
 		请选择公钥
 	</button>
 	<div class="dropdown-menu" id="pubmenu">
 	</div>
-	<p class="pubmsg">已选择的公钥：</p>
-	<textarea id="pubmsg" class="pubmsg textarea-inherit" readonly rows="1" ></textarea><br class="pubmsg">
 </div>
 <!-- 下面仅用于保存数据 -->
 <textarea id="pubdata"></textarea>
 <textarea id="text" rows="20" class="textarea-inherit" placeholder="请粘贴签名信息"></textarea><br>
-<div class="row">
+<div class="row mx-auto" style="width: 95%;">
 	<button type="button" onclick="verify()" class="col btn btn-primary">验证</button>
 	<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
 </div>

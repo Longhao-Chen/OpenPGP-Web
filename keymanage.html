@@ -117,7 +117,7 @@ $(function(){
 		showexpprikey();
 	});
 	$("#gen_gen").click(function(){
-		$(".gen_keys").show("slow");
+		$("#gen_alert").show("slow");
 	});
 	$("#gen_show_passwd").click(function(){
 		if(document.getElementById("gen_show_passwd").checked){
@@ -214,7 +214,8 @@ function genkey(){
 		});
 		document.getElementById("gen_pub").value=publicKeyArmored;
 		document.getElementById("gen_pri").value=privateKeyArmored;
-		document.getElementById("gen_rev").value=revocationCertificate;
+		$(".gen_keys").show("slow");
+		$("#gen_alert").hide("slow");
 	})();
 }
 
@@ -313,16 +314,16 @@ $(function(){
 </head>
 <body class="container-fluid center">
 	<h1>密钥管理</h1>
-	<div class="col menu btn-group-vertical">
-		<button type="button" class="row btn btn-light btn-lg menu" id="genkey">生成一个密钥对</button><hr>
-		<button type="button" class="row btn btn-light btn-lg menu" id="addpubkey">添加公钥</button><hr>
-		<button type="button" class="row btn btn-light btn-lg menu" id="exppubkey">导出公钥</button><hr>
-		<button type="button" class="row btn btn-light btn-lg menu" id="delpubkey">删除公钥</button><hr>
-		<button type="button" class="row btn btn-danger btn-lg menu" onclick="PubDelAll()">删除所有公钥</button><hr>
-		<button type="button" class="row btn btn-light btn-lg menu" id="addprikey">添加私钥</button><hr>
-		<button type="button" class="row btn btn-warning btn-lg menu" id="expprikey">导出私钥</button><hr>
-		<button type="button" class="row btn btn-light btn-lg menu" id="delprikey">删除私钥</button><hr>
-		<button type="button" class="row btn btn-danger btn-lg menu" onclick="PriDelAll()">删除所有私钥</button><hr>
+	<div class="row menu mx-auto" style="width: 100%;">
+		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-light btn-lg menu" id="genkey">生成一个密钥对</button>
+		<button type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-light btn-lg menu" id="addpubkey">添加公钥</button>
+		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-light btn-lg menu" id="exppubkey">导出公钥</button>
+		<button type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-light btn-lg menu" id="delpubkey">删除公钥</button>
+		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-danger btn-lg menu" onclick="PubDelAll()">删除所有公钥</button>
+		<button type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-light btn-lg menu" id="addprikey">添加私钥</button>
+		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-warning btn-lg menu" id="expprikey">导出私钥</button>
+		<button type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-light btn-lg menu" id="delprikey">删除私钥</button>
+		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-danger btn-lg menu" onclick="PriDelAll()">删除所有私钥</button>
 	</div>
 
 	<div class="notmenu" id="gen">
@@ -337,21 +338,20 @@ $(function(){
 			</div>
 		</form>
 		<button type="button" class="btn btn-primary" onclick="genkey();"id="gen_gen">确认生成此密钥</button>
-		<p>注意：生成密钥需要较长的时间以得到足够的熵，请耐心等待。</p>
+		<div class="alert alert-success alert-dismissible" id="gen_alert">
+			<p>注意：生成密钥需要较长的时间以得到足够的熵，请耐心等待。</p>
+		</div>
 		<p class="gen_keys">生成的公钥:</p>
 		<textarea readonly rows="10" class="textarea-inherit gen_keys" id="gen_pub"></textarea><br class="gen_keys">
 		<p class="gen_keys">生成的私钥:</p>
 		<textarea readonly rows="10" class="textarea-inherit gen_keys" id="gen_pri"></textarea><br class="gen_keys">
-		<p class="gen_keys">生成的吊销密钥:</p>
-		<textarea readonly rows="10" class="textarea-inherit gen_keys" id="gen_rev"></textarea><br class="gen_keys">
 		<div class="row">
 			<button type="button" class="btn btn-primary col gen_keys copy" data-clipboard-target="#gen_pub">复制生成的公钥</button>
 			<button type="button" class="btn btn-primary col gen_keys copy" data-clipboard-target="#gen_pri">复制生成的私钥</button>
-			<button type="button" class="btn btn-primary col gen_keys copy" data-clipboard-target="#gen_rev">复制生成的吊销密钥</button>
 		</div>
 		<button type="button" class="btn btn-primary gen_keys" onclick="gen_save()">将密钥对保存到浏览器（使用localStorage）</button>
 		<div class="alert alert-success alert-dismissible" id="gen_savealert">
-			<button type="button" class="alertclose" data-dismiss="alert">&times;</button>
+			<button type="button" class="alertclose btn" data-dismiss="alert">&times;</button>
 			<strong>成功!</strong> 密钥对保存成功。
 		</div>
 	</div>
@@ -366,12 +366,11 @@ $(function(){
 		<form>
 			<input class="input-inherit" id="pubalias" placeholder="公钥别名"><br>
 		</form>
-		<button type="button" class="btn btn-primary" onclick="addpub()">确认添加此公钥</button>
-
 		<div class="alert alert-success alert-dismissible" id="pubaddalert">
-			<button type="button" class="alertclose" data-dismiss="alert">&times;</button>
+			<button type="button" class="alertclose btn" data-dismiss="alert">&times;</button>
 			<strong>成功!</strong> 此公钥添加成功。
 		</div>
+		<button type="button" class="btn btn-primary" onclick="addpub()">确认添加此公钥</button>
 	</div>
 
 	<div class="notmenu" id="exppub">
@@ -413,11 +412,11 @@ $(function(){
 				</label>
 			</div>
 			</form>
-		<button type="button" class="btn btn-primary" onclick="addpri()">确认添加此私钥</button>
 		<div class="alert alert-success alert-dismissible" id="priaddalert">
-			<button type="button" class="alertclose" data-dismiss="alert">&times;</button>
+			<button type="button" class="alertclose btn" data-dismiss="alert">&times;</button>
 			<strong>成功!</strong> 此私钥添加成功。
 		</div>
+		<button type="button" class="btn btn-primary" onclick="addpri()">确认添加此私钥</button>
 	</div>
 
 	<div class="notmenu" id="delpub">

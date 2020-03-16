@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>加密</title>
+<title>文本加密</title>
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" type="text/css" />
 <script src="https://cdn.staticfile.org/openpgp/4.6.2/openpgp.min.js"></script>
@@ -100,8 +100,6 @@ $(function(){
 	});
 });
 $(function(){
-	$(".pubmsg").hide();
-	$(".primsg").hide();
 	$("#pubdata").hide();
 	$("#pridata").hide();
 	$("#output").hide();
@@ -149,14 +147,12 @@ $(function(){
 });
 
 function Pub(id,name){
-	document.getElementById("pubmsg").value=name;
+	document.getElementById("pubmsg").innerHTML=name;
 	document.getElementById("pubdata").value=id;
-	$(".pubmsg").show("fast");
 }
 function Pri(id,name){
-	document.getElementById("primsg").value=name;
+	document.getElementById("primsg").innerHTML=name;
 	document.getElementById("pridata").value=id;
-	$(".primsg").show("fast");
 }
 </script>
 <h1>文本加密</h1>
@@ -168,22 +164,18 @@ function Pri(id,name){
 	</div>
 </form>
 <div class="dropdown">
-	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="pubmsg">
 		请选择公钥
 	</button>
 	<div class="dropdown-menu" id="pubmenu">
 	</div>
-	<p class="pubmsg" >已选择的公钥：</p>
-	<textarea id="pubmsg" class="pubmsg textarea-inherit" readonly rows="1" ></textarea><br class="pubmsg">
 </div>
 <div class="dropdown onlysign">
-	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="primsg">
 		请选择私钥
 	</button>
 	<div class="dropdown-menu" id="primenu">
 	</div>
-	<p class="primsg">已选择的私钥：</p>
-	<textarea id="primsg" class="primsg textarea-inherit" readonly rows="1" ></textarea><br class="primsg">
 </div>
 <!-- 下面这两项仅用于保存数据 -->
 <textarea id="pubdata"></textarea>
@@ -192,7 +184,7 @@ function Pri(id,name){
 	<input class="input-inherit" type="password" id="password" placeholder="私钥密码"><br>
 </form>
 <textarea id="text" rows="20" class="textarea-inherit" placeholder="请输入要加密的信息"></textarea><br>
-<div class="row">
+<div class="row mx-auto" style="width: 95%;">
 	<button type="button" onclick="encrypt(true)" class="onlysign col btn btn-primary">加密和签名</button>
 	<button type="button" onclick="encrypt(false)" class="onlyencript col btn btn-primary">加密</button>
 	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button>
