@@ -1,0 +1,43 @@
+***********************
+OpenPGP-Web 的目录结构
+***********************
+
+一级目录结构
+------------
+.. code-block:: none
+
+    .
+    |-cleartextsign.html    创建明文签名模块
+    |-cleartextverify.html  验证明文签名模块
+    |-css/   放置大部分独立的css文件
+    |-decrypt.html  解密模块
+    |-doc/   文档
+    |-encrypt.html  加密模块
+    |-index.html    首页
+    |-js/   放置大部分独立的JavaScript文件
+    |-keymanage.html    密钥管理模块
+    |-LICENSE   许可证
+    |-Makefile  Makefile文件，目前用来编译文档
+    |-README.md 项目的简单介绍
+
+二级及更高目录结构
+------------------
+css/
+^^^^
+.. code-block:: none
+
+    css/
+       |-style.css 全局样式文件，几乎所有的界面都会包含这个文件
+
+doc/
+^^^^
+这个目录主要就是一些文档，使用 Sphinx ，主题为 sphinx_rtd_theme
+
+js/
+^^^
+.. code-block:: none
+
+    js/
+      |-config.js   配置文件
+      |-storepri.js 对私钥的读取 储存 删除有关的函数
+      |-storepub.js 对公钥的读取 储存 删除有关的函数
