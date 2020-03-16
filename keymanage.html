@@ -166,18 +166,30 @@ $(function(){
 function addpub(){
 	pub=document.getElementById("pubkey").value;
 	name=document.getElementById("pubalias").value;
-	PubSave(name,pub);
-	$("#pubaddalert").show("slow");
+	if(name===''){
+		alert("公钥别名不能为空！");
+	}else if(pub===''){
+		alert("公钥输入不能为空！");
+	} else {
+		PubSave(name,pub);
+		$("#pubaddalert").show("slow");
+	}
 }
 function addpri(){
 	pri=document.getElementById("prikey").value;
 	name=document.getElementById("prialias").value;
-	if(document.getElementById("onlocal").checked){
-		PriLocalSave(name,pri);
-	}else{
-		PriSessSave(name,pri);
+	if(name===''){
+		alert("私钥别名不能为空！");
+	} else if(pri===''){
+		alert("私钥输入不能为空！");
+	} else {
+		if(document.getElementById("onlocal").checked){
+			PriLocalSave(name,pri);
+		}else{
+			PriSessSave(name,pri);
+		}
+		$("#priaddalert").show("slow");
 	}
-	$("#priaddalert").show("slow");
 }
 function pubdelmenu(){
 	res=PubReadIndex();
@@ -206,27 +218,35 @@ function pridelmenu(){
 	document.getElementById("delprimenu").innerHTML=msg;
 }
 function genkey(){
-	(async () => {
-		const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
-			userIds: [{ name: document.getElementById("gen_name").value, email: document.getElementById("gen_mail").value }], // you can pass multiple user IDs
-			rsaBits: 2048,                                              // RSA key size，2030年之前被认为是安全的，过大的尺寸速度比较慢
-			passphrase: document.getElementById("gen_passwd").value           // protects the private key
-		});
-		document.getElementById("gen_pub").value=publicKeyArmored;
-		document.getElementById("gen_pri").value=privateKeyArmored;
-		$(".gen_keys").show("slow");
-		$("#gen_alert").hide("slow");
-	})();
+	if(document.getElementById("gen_name").value===''){
+		alert("姓名不能为空！");
+	}else{
+		(async () => {
+			const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
+				userIds: [{ name: document.getElementById("gen_name").value, email: document.getElementById("gen_mail").value }], // you can pass multiple user IDs
+				rsaBits: 2048,                                              // RSA key size，2030年之前被认为是安全的，过大的尺寸速度比较慢
+				passphrase: document.getElementById("gen_passwd").value           // protects the private key
+			});
+			document.getElementById("gen_pub").value=publicKeyArmored;
+			document.getElementById("gen_pri").value=privateKeyArmored;
+			$(".gen_keys").show("slow");
+			$("#gen_alert").hide("slow");
+		})();
+	}
 }
 
 //保存生成的密钥
 function gen_save(){
 	name=document.getElementById("gen_name").value;
-	pub=document.getElementById("gen_pub").value;
-	pri=document.getElementById("gen_pri").value;
-	PubSave(name,pub);
-	PriLocalSave(name,pri);
-	$("#gen_savealert").show("slow");
+	if(name===''){
+		alert("姓名不能为空！");
+	}else{
+		pub=document.getElementById("gen_pub").value;
+		pri=document.getElementById("gen_pri").value;
+		PubSave(name,pub);
+		PriLocalSave(name,pri);
+		$("#gen_savealert").show("slow");
+	}
 }
 function pubsaved(){
 	res=PubReadIndex();
@@ -349,11 +369,11 @@ $(function(){
 			<button type="button" class="btn btn-primary col gen_keys copy" data-clipboard-target="#gen_pub">复制生成的公钥</button>
 			<button type="button" class="btn btn-primary col gen_keys copy" data-clipboard-target="#gen_pri">复制生成的私钥</button>
 		</div>
-		<button type="button" class="btn btn-primary gen_keys" onclick="gen_save()">将密钥对保存到浏览器（使用localStorage）</button>
 		<div class="alert alert-success alert-dismissible" id="gen_savealert">
 			<button type="button" class="alertclose btn" data-dismiss="alert">&times;</button>
 			<strong>成功!</strong> 密钥对保存成功。
 		</div>
+		<button type="button" class="btn btn-primary gen_keys" onclick="gen_save()">将密钥对保存到浏览器（使用localStorage）</button>
 	</div>
 
 	<div class="notmenu" id="addpub">
