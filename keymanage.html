@@ -20,24 +20,32 @@
 <script>
 //读取密钥信息的函数
 function pubinfo(input,msgbox) {
-	(async () => {
-		const key=`${document.getElementById(input).value}`;
-		msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
-		msg=msg+"\n密钥指纹："+((await openpgp.key.readArmored(key)).keys)[0].getFingerprint().toString();
-		msg=msg+"\n创建时间："+((await openpgp.key.readArmored(key)).keys)[0].getCreationTime().toString();
-		document.getElementById(msgbox).value=msg;
-	})();
-	$("#"+msgbox).show("fast");
+	try{
+		(async () => {
+			const key=`${document.getElementById(input).value}`;
+			msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
+			msg=msg+"\n密钥指纹："+((await openpgp.key.readArmored(key)).keys)[0].getFingerprint().toString();
+			msg=msg+"\n创建时间："+((await openpgp.key.readArmored(key)).keys)[0].getCreationTime().toString();
+			document.getElementById(msgbox).value=msg;
+		})();
+		$("#"+msgbox).show("fast");
+	}catch(e){
+		alert("出错："+e);
+	}
 }
 function priinfo(input,msgbox) {
-	(async () => {
-		const key=`${document.getElementById(input).value}`;
-		msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
-		msg=msg+"\n密钥指纹："+((await openpgp.key.readArmored(key)).keys)[0].getFingerprint().toString();
-		msg=msg+"\n创建时间："+((await openpgp.key.readArmored(key)).keys)[0].getCreationTime().toString();
-		document.getElementById(msgbox).value=msg;
-	})();
-	$("#"+msgbox).show("fast");
+	try{
+		(async () => {
+			const key=`${document.getElementById(input).value}`;
+			msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
+			msg=msg+"\n密钥指纹："+((await openpgp.key.readArmored(key)).keys)[0].getFingerprint().toString();
+			msg=msg+"\n创建时间："+((await openpgp.key.readArmored(key)).keys)[0].getCreationTime().toString();
+			document.getElementById(msgbox).value=msg;
+		})();
+		$("#"+msgbox).show("fast");
+	}catch(e){
+		alert("出错："+e);
+	}
 }
 </script>
 <script>
@@ -126,6 +134,13 @@ $(function(){
 			$("#gen_passwd").attr("type","password");
 		}
 	});
+	$("#gen_show_adv").click(function(){
+		if(document.getElementById("gen_show_adv").checked){
+			$("#gen_adv").show("fast");
+		}else{
+			$("#gen_adv").hide("fast");
+		}
+	});
 	$(".alertclose").click(function(){
 		$(".alert").hide("slow");
 	})
@@ -138,6 +153,7 @@ $(function(){
 	$(".gen_keys").hide();
 	$(".exp_prikey").hide();
 	$(".exp_pubkey").hide();
+	$("#gen_adv").hide();
 
 	//保证重新刷新后仍然在原界面
 	if(window.location.hash==='#addpubkey')
@@ -158,6 +174,11 @@ $(function(){
 		$("#gen_passwd").attr("type","text");
 	}else{
 		$("#gen_passwd").attr("type","password");
+	}
+	if(document.getElementById("gen_show_adv").checked){
+		$("#gen_adv").show("fast");
+	}else{
+		$("#gen_adv").hide("fast");
 	}
 })
 </script>
@@ -221,18 +242,27 @@ function genkey(){
 	if(document.getElementById("gen_name").value===''){
 		alert("姓名不能为空！");
 	}else{
-		(async () => {
-			const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
-				userIds: [{ name: document.getElementById("gen_name").value, email: document.getElementById("gen_mail").value }], // you can pass multiple user IDs
-				rsaBits: 2048,                                              // RSA key size，2030年之前被认为是安全的，过大的尺寸速度比较慢
-				passphrase: document.getElementById("gen_passwd").value           // protects the private key
-			});
-			document.getElementById("gen_pub").value=publicKeyArmored;
-			document.getElementById("gen_pri").value=privateKeyArmored;
-			$(".gen_keys").show("slow");
+		try{
+			(async () => {
+				const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
+					userIds: [{ name: document.getElementById("gen_name").value, email: document.getElementById("gen_mail").value }], // you can pass multiple user IDs
+					rsaBits: document.getElementById("keybit").innerHTML,                                              // RSA key size
+					passphrase: document.getElementById("gen_passwd").value           // protects the private key
+				});
+				document.getElementById("gen_pub").value=publicKeyArmored;
+				document.getElementById("gen_pri").value=privateKeyArmored;
+				$(".gen_keys").show("slow");
+				$("#gen_alert").hide("slow");
+			})();
+		}catch(e){
 			$("#gen_alert").hide("slow");
-		})();
+			alert("出错："+e);
+		}
 	}
+}
+
+function setbit(bit){
+	document.getElementById("keybit").innerHTML=bit;
 }
 
 //保存生成的密钥
@@ -355,8 +385,25 @@ $(function(){
 				<label class="from-check-label">
 					<input type="checkbox" id="gen_show_passwd">显示密码<br>
 				</label>
+				<label class="from-check-label">
+					<input type="checkbox" id="gen_show_adv">显示高级设置<br>
+				</label>
 			</div>
 		</form>
+		<div id="gen_adv">
+			<p>密钥尺寸（位）：</p>
+			<div class="dropdown">
+				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="keybit">
+					2048
+				</button>
+				<div class="dropdown-menu" id="delprimenu">
+					<a class="dropdown-item" onclick="setbit(2048)">2048</a>
+					<a class="dropdown-item" onclick="setbit(3072)">3072</a>
+					<a class="dropdown-item" onclick="setbit(4096)">4096</a>
+				</div>
+			</div>
+			<p>关于密钥尺寸请参考说明文档。</p>
+		</div>
 		<button type="button" class="btn btn-primary" onclick="genkey();"id="gen_gen">确认生成此密钥</button>
 		<div class="alert alert-success alert-dismissible" id="gen_alert">
 			<p>注意：生成密钥需要较长的时间以得到足够的熵，请耐心等待。</p>
