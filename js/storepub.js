@@ -110,7 +110,7 @@ function PubSearchId(input){
 		PubGenIndex();
 	data=JSON.parse(localStorage.pubkeysidindex);
 	for(i=0;i<input.length;++i){
-		for(ii=0;i<data.length;++ii){
+		for(ii=0;ii<data.length;++ii){
 			if(data[ii][0].includes(input[i]))
 				return data[ii][1];
 		}
