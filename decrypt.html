@@ -150,11 +150,13 @@ $(function(){
 <script>
 //清空和隐藏文本框
 function cleanall(){
-	document.getElementById("text").value='';
-	document.getElementById("output").value=''
-	$("#output").hide();
-	$("#signmsg").hide();
-	$("#copy").hide();
+	if(window.confirm("确认清空文本框？")){
+		document.getElementById("text").value='';
+		document.getElementById("output").value=''
+		$("#output").hide();
+		$("#signmsg").hide();
+		$("#copy").hide();
+	}
 }
 </script>
 <script>
@@ -176,6 +178,7 @@ $(function(){
 	<button type="button" onclick="decrypt(true)" class="onlysign col btn btn-primary">解密或验证签名</button>
 	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制明文</button>
 	<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
+	<a type="button" class="btn btn-light col-sm-3" href="encrypt.html">跳转到加密</a><br>
 </div>
 <div class="alert alert-success alert-dismissible" id="signmsg">
 </div>
