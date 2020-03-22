@@ -38,6 +38,28 @@ function encrypt(sign){
 			const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`; // encrypted private key
 			const passphrase = `${document.getElementById("password").value}`; // what the private key is encrypted with
 
+			//是否加密到签名者
+			if(document.getElementById("entosigner").checked){
+				var keyidlen=(await openpgp.key.readArmored(privateKeyArmored)).keys[0].getKeyIds().length;
+				var keyid=new Array();
+				for(var ii=0;ii<keyidlen;++ii)
+					keyid[ii]=(await openpgp.key.readArmored(privateKeyArmored)).keys[0].getKeyIds()[ii].toHex();
+				var pubid=PubSearchId(keyid);	//搜索签名者的公钥
+				if(pubid===-1){
+					alert("没有找到签名者的公钥\n信息将不会加密到签名者");
+					var pubkeytmp=[`${publicKeyArmored}`];
+				}else{
+					var pubkeytmp=[`${publicKeyArmored}`,`${PubRead(pubid)}`];
+				}
+			}else{
+				var pubkeytmp=[`${publicKeyArmored}`];
+			}
+
+			//这一段是按照官方文档来的
+			const pubkey = await Promise.all(pubkeytmp.map(async (key) => {
+				return (await openpgp.key.readArmored(key)).keys[0];
+			}));
+
 			const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
 			if(passphrase!==``)
 				try{
@@ -49,7 +71,7 @@ function encrypt(sign){
 			try{
 				const { data: encrypted } = await openpgp.encrypt({
 					message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
-					publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// for encryption
+					publicKeys: pubkey,	// for encryption
 					privateKeys: [privateKey],
 					compression: openpgp.enums.compression.zip	//启用压缩
 				});
@@ -80,10 +102,12 @@ function encrypt(sign){
 <script>
 //清空和隐藏文本框
 function cleanall(){
-	document.getElementById("text").value='';
-	document.getElementById("output").value=''
-	$("#output").hide();
-	$("#copy").hide();
+	if(window.confirm("确认清空文本框？")){
+		document.getElementById("text").value='';
+		document.getElementById("output").value=''
+		$("#output").hide();
+		$("#copy").hide();
+	}
 }
 </script>
 <script>
@@ -161,6 +185,9 @@ function Pri(id,name){
 		<label class="from-check-label">
 			<input type="checkbox" id="nosign">禁用签名<br>
 		</label>
+		<label class="from-check-label onlysign">
+			<input type="checkbox" id="entosigner">加密到签名者<br>
+		</label>
 	</div>
 </form>
 <div class="dropdown">
@@ -189,6 +216,7 @@ function Pri(id,name){
 	<button type="button" onclick="encrypt(false)" class="onlyencript col btn btn-primary">加密</button>
 	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button>
 	<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
+	<a type="button" class="btn btn-light col-sm-3" href="decrypt.html">跳转到解密或验证</a><br>
 </div>
 <textarea id="output" rows="10" class="textarea-inherit" readonly></textarea>
 </body>
