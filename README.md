@@ -8,7 +8,7 @@ GnuPG-Web 是一个完全运行在浏览器中的GPG加密程序，所以的操�
 * 加密，加密和签名（目前仅能选择单个密钥）
 * 解密，解密和签名验证
 * 密钥生成
-* 密钥的保存（使用 `localStorage` 和 `localStorage`）
+* 密钥的保存（使用 `localStorage` 和 `sessionStorage`）
 * 创建和验证明文签名
 
 ## 下一步准备实现的功能：
