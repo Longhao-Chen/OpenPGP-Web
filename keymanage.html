@@ -23,7 +23,7 @@ function pubinfo(input,msgbox) {
 	try{
 		(async () => {
 			const key=`${document.getElementById(input).value}`;
-			msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
+			var msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
 			msg=msg+"\n密钥指纹："+((await openpgp.key.readArmored(key)).keys)[0].getFingerprint().toString();
 			msg=msg+"\n创建时间："+((await openpgp.key.readArmored(key)).keys)[0].getCreationTime().toString();
 			document.getElementById(msgbox).value=msg;
@@ -37,7 +37,7 @@ function priinfo(input,msgbox) {
 	try{
 		(async () => {
 			const key=`${document.getElementById(input).value}`;
-			msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
+			var msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
 			msg=msg+"\n密钥指纹："+((await openpgp.key.readArmored(key)).keys)[0].getFingerprint().toString();
 			msg=msg+"\n创建时间："+((await openpgp.key.readArmored(key)).keys)[0].getCreationTime().toString();
 			document.getElementById(msgbox).value=msg;
@@ -185,8 +185,8 @@ $(function(){
 <script>
 //核心的一些处理函数
 function addpub(){
-	pub=document.getElementById("pubkey").value;
-	name=document.getElementById("pubalias").value;
+	var pub=document.getElementById("pubkey").value;
+	var name=document.getElementById("pubalias").value;
 	if(name===''){
 		alert("公钥别名不能为空！");
 	}else if(pub===''){
@@ -197,8 +197,8 @@ function addpub(){
 	}
 }
 function addpri(){
-	pri=document.getElementById("prikey").value;
-	name=document.getElementById("prialias").value;
+	var pri=document.getElementById("prikey").value;
+	var name=document.getElementById("prialias").value;
 	if(name===''){
 		alert("私钥别名不能为空！");
 	} else if(pri===''){
@@ -213,8 +213,8 @@ function addpri(){
 	}
 }
 function pubdelmenu(){
-	res=PubReadIndex();
-	len=res.length;
+	var res=PubReadIndex();
+	var len=res.length;
 	var msg='';
 	if(len===0){
 		msg='<a class="dropdown-item" >无已保存的公钥</a>'
@@ -226,8 +226,8 @@ function pubdelmenu(){
 	document.getElementById("delpubmenu").innerHTML=msg;
 }
 function pridelmenu(){
-	res=PriReadIndex();
-	len=res.length;
+	var res=PriReadIndex();
+	var len=res.length;
 	var msg='';
 	if(len===0){
 		msg='<a class="dropdown-item" >无已保存的私钥</a>'
@@ -239,6 +239,7 @@ function pridelmenu(){
 	document.getElementById("delprimenu").innerHTML=msg;
 }
 function genkey(){
+	$("#gen_savealert").hide();
 	if(document.getElementById("gen_name").value===''){
 		alert("姓名不能为空！");
 	}else{
@@ -267,20 +268,20 @@ function setbit(bit){
 
 //保存生成的密钥
 function gen_save(){
-	name=document.getElementById("gen_name").value;
+	var name=document.getElementById("gen_name").value;
 	if(name===''){
 		alert("姓名不能为空！");
 	}else{
-		pub=document.getElementById("gen_pub").value;
-		pri=document.getElementById("gen_pri").value;
+		var pub=document.getElementById("gen_pub").value;
+		var pri=document.getElementById("gen_pri").value;
 		PubSave(name,pub);
 		PriLocalSave(name,pri);
 		$("#gen_savealert").show("slow");
 	}
 }
 function pubsaved(){
-	res=PubReadIndex();
-	len=res.length;
+	var res=PubReadIndex();
+	var len=res.length;
 	var msg='';
 	if(len===0){
 		msg='无已保存的公钥'
@@ -292,8 +293,8 @@ function pubsaved(){
 	document.getElementById("pubsaved").value=msg;
 }
 function prisaved(){
-	res=PriReadIndex();
-	len=res.length;
+	var res=PriReadIndex();
+	var len=res.length;
 	var msg='';
 	if(len===0){
 		msg='无已保存的私钥'
@@ -305,8 +306,8 @@ function prisaved(){
 	document.getElementById("prisaved").value=msg;
 }
 function exppubmenu(){
-	res=PubReadIndex();
-	len=res.length;
+	var res=PubReadIndex();
+	var len=res.length;
 	var msg='';
 	if(len===0){
 		msg='<a class="dropdown-item" >无已保存的公钥</a>'
@@ -318,8 +319,8 @@ function exppubmenu(){
 	document.getElementById("exppubmenu").innerHTML=msg;
 }
 function expprimenu(){
-	res=PriReadIndex();
-	len=res.length;
+	var res=PriReadIndex();
+	var len=res.length;
 	var msg='';
 	if(len===0){
 		msg='<a class="dropdown-item" >无已保存的私钥</a>'

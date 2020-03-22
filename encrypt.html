@@ -122,8 +122,8 @@ $(function(){
 <script>
 //密钥选择部分
 $(function(){
-	res=PriReadIndex();
-	len=res.length;
+	var res=PriReadIndex();
+	var len=res.length;
 	var msg='';
 	if(len===0){
 		msg='<a class="dropdown-item" >无已保存的私钥，请添加私钥</a>'
