@@ -1,44 +1,41 @@
-function PubSave(name,pub) {
-	(async () => {
-		if(typeof(Storage)!=="undefined")
-		{
-			try{
-				if(typeof(localStorage.pubkeys)!=="undefined"){
-					if(JSON.parse(localStorage.getItem('pubkeys')).includes([name,pub])){ //这一段判断是否重复的代码似乎没有正常工作。
-						window.alert("此公钥已保存");
-					}else{
-						if(typeof(localStorage.pubkeysidindex)==="undefined")
-							PubGenIndex();
-						var data=JSON.parse(localStorage.pubkeys);
-						var keysindex=JSON.parse(localStorage.pubkeysidindex);
-						var len=data.length;
-						data[len]=[name,pub];
-						var keyids=(await openpgp.key.readArmored(pub)).keys[0].getKeyIds();
-						var keyidlen=keyids.length;
-						var keyid=new Array();
-						for(ii=0;ii<keyidlen;++ii)
-							keyid[ii]=keyids[ii].toHex();
-						keysindex[len]=[keyid,len];
-						localStorage.pubkeys=JSON.stringify(data);
-						localStorage.pubkeysidindex=JSON.stringify(keysindex);
-					}
+async function PubSave(name,pub) {
+	if(typeof(Storage)!=="undefined")
+	{
+		try{
+			if(typeof(localStorage.pubkeys)!=="undefined"){
+				if(JSON.parse(localStorage.getItem('pubkeys')).includes([name,pub])){ //这一段判断是否重复的代码似乎没有正常工作。
+					window.alert("此公钥已保存");
 				}else{
-					localStorage.pubkeys=JSON.stringify(new Array([name,pub]));
+					if(typeof(localStorage.pubkeysidindex)==="undefined")
+						await PubGenIndex();
+					var data=JSON.parse(localStorage.pubkeys);
+					var keysindex=JSON.parse(localStorage.pubkeysidindex);
+					var len=data.length;
+					data[len]=[name,pub];
 					var keyids=(await openpgp.key.readArmored(pub)).keys[0].getKeyIds();
 					var keyidlen=keyids.length;
 					var keyid=new Array();
 					for(ii=0;ii<keyidlen;++ii)
 						keyid[ii]=keyids[ii].toHex();
-					localStorage.pubkeysidindex=JSON.stringify(new Array([keyid,0]));
+					keysindex[len]=[keyid,len];
+					localStorage.pubkeys=JSON.stringify(data);
+					localStorage.pubkeysidindex=JSON.stringify(keysindex);
 				}
-			}catch(e){
-				alert("出错：\n调用函数：PubSave("+name+','+pub+")\n错误代码："+e);
-				throw new Error(e);
+			}else{
+				localStorage.pubkeys=JSON.stringify(new Array([name,pub]));
+				var keyids=(await openpgp.key.readArmored(pub)).keys[0].getKeyIds();
+				var keyidlen=keyids.length;
+				var keyid=new Array();
+				for(ii=0;ii<keyidlen;++ii)
+					keyid[ii]=keyids[ii].toHex();
+				localStorage.pubkeysidindex=JSON.stringify(new Array([keyid,0]));
 			}
-		} else {
-			window.alert("您的浏览器不支持此功能，请更新浏览器");
+		}catch(e){
+			alert("出错：\n调用函数：PubSave("+name+','+pub+")\n错误代码："+e);
 		}
-	})();
+	} else {
+		window.alert("您的浏览器不支持此功能，请更新浏览器");
+	}
 }
 
 function PubReadIndex(){
@@ -62,7 +59,6 @@ function PubRead(id){
 		return JSON.parse(localStorage.pubkeys)[id][1];
 	}catch(e){
 		alert("出错：\n调用函数：PubRead("+id+")\n错误代码："+e);
-		throw new Error(e);
 	}
 }
 
@@ -72,7 +68,6 @@ function PubReadName(id){
 		return data[id][0];
 	}catch(e){
 		alert("出错：\n调用函数：PubReadName("+id+")\n错误代码："+e);
-		throw new Error(e);
 	}
 }
 
@@ -98,32 +93,28 @@ function PubDelAll(){
 }
 
 //生成密钥id到保存id的索引
-function PubGenIndex(){
-	(async () => {
-		if(typeof(Storage)!=="undefined"){
-			try{
-				var len=PubReadIndex().length;	//获取持久存储的大小
-				var Index=new Array();
-				for(i=0;i<len;++i){
-					var key=PubRead(i);
-					var keyids=(await openpgp.key.readArmored(key)).keys[0].getKeyIds();
-					var keyidlen=keyids.length;
-					var keyid=new Array();
-					for(ii=0;ii<keyidlen;++ii){
-						keyid[ii]=keyids[ii].toHex();
-					}
-					Index[i]=[keyid,i];
+async function PubGenIndex(){
+	if(typeof(Storage)!=="undefined"){
+		try{
+			var len=PubReadIndex().length;	//获取持久存储的大小
+			var Index=new Array();
+			for(i=0;i<len;++i){
+				var key=PubRead(i);
+				var keyids=(await openpgp.key.readArmored(key)).keys[0].getKeyIds();
+				var keyidlen=keyids.length;
+				var keyid=new Array();
+				for(ii=0;ii<keyidlen;++ii){
+					keyid[ii]=keyids[ii].toHex();
 				}
-				localStorage.pubkeysidindex=JSON.stringify(Index);
-
-			}catch(e){
-				alert("出错：\n调用函数：PubGenIndex()\n错误代码："+e);
-				throw new Error(e);
+				Index[i]=[keyid,i];
 			}
-		}else{
-			window.alert("您的浏览器不支持此功能，请更新浏览器");
+			localStorage.pubkeysidindex=JSON.stringify(Index);
+		}catch(e){
+			alert("出错：\n调用函数：PubGenIndex()\n错误代码："+e);
 		}
-	})();
+	}else{
+		window.alert("您的浏览器不支持此功能，请更新浏览器");
+	}
 }
 
 //从密钥id搜索保存id
