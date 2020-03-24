@@ -27,7 +27,9 @@ function sign(){
 			return -1;
 		}
 		const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`;
-		const passphrase = `${document.getElementById("password").value}`;
+		var keyname=PriReadName(document.getElementById("pridata").value);
+		var pass=window.prompt("请输入密钥："+keyname+"的密码");
+		const passphrase = `${pass}`; // 私钥密码
 
 		const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
 		if(passphrase!=='')
@@ -114,9 +116,6 @@ function Pri(id,name){
 </div>
 <!-- 下面仅用于保存数据 -->
 <textarea id="pridata"></textarea>
-<form>
-	<input class="input-inherit" type="password" id="password" placeholder="私钥密码"><br>
-</form>
 <textarea id="text" rows="20" class="textarea-inherit" placeholder="请输入要签名的信息"></textarea><br>
 <div class="row mx-auto" style="width: 95%;">
 	<button type="button" onclick="sign()" class="col btn btn-primary">签名</button>
