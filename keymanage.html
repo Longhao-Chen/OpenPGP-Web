@@ -95,6 +95,11 @@ function showexpprikey(){
 	$(".menu").hide("slow");
 	expprimenu();
 }
+function showsavedkeys(){
+	savedkeystable();
+	$("#Showsavedkeys").show("slow");
+	$(".menu").hide("slow");
+}
 $(function(){
 	$("#addpubkey").click(function(){
 		historyadd("addpubkey");
@@ -123,6 +128,10 @@ $(function(){
 	$("#expprikey").click(function(){
 		historyadd("expprikey");
 		showexpprikey();
+	});
+	$("#showsavedkeys").click(function(){
+		historyadd("showsavedkeys");
+		showsavedkeys();
 	});
 	$("#gen_gen").click(function(){
 		$("#gen_alert").show("slow");
@@ -170,6 +179,8 @@ $(function(){
 		showexppubkey();
 	if(window.location.hash==='#expprikey')
 		showexpprikey();
+	if(window.location.hash==='#showsavedkeys')
+		showsavedkeys();
 	if(document.getElementById("gen_show_passwd").checked){
 		$("#gen_passwd").attr("type","text");
 	}else{
@@ -184,6 +195,24 @@ $(function(){
 </script>
 <script>
 //核心的一些处理函数
+async function savedkeystable(){
+	var index=PubReadIndex();
+	var msg="";
+	var key;
+	for(var i=0;i<index.length;++i){
+		key=(await openpgp.key.readArmored(PubRead(index[i][0]))).keys[0];
+		msg=msg+"<tr><td>"+index[i][1]+"</td><td>"+key.users[0].userId.name+"</td><td>"+key.users[0].userId.email+"</td><td>"+key.getCreationTime().toString()+"</td><td>"+key.getKeyId().toHex()+"</td><td>"+key.getFingerprint()+"</td></tr>";
+	}
+	document.getElementById("pubsavedkeystable").innerHTML=msg;
+
+	index=PriReadIndex();
+	msg="";
+	for(var i=0;i<index.length;++i){
+		key=(await openpgp.key.readArmored(PriRead(index[i][0]))).keys[0];
+		msg=msg+"<tr><td>"+index[i][1]+"</td><td>"+key.users[0].userId.name+"</td><td>"+key.users[0].userId.email+"</td><td>"+key.getCreationTime().toString()+"</td><td>"+key.getKeyId().toHex()+"</td><td>"+key.getFingerprint()+"</td></tr>";
+	}
+	document.getElementById("prisavedkeystable").innerHTML=msg;
+}
 function addpub(){
 	var pub=document.getElementById("pubkey").value;
 	var name=document.getElementById("pubalias").value;
@@ -368,14 +397,15 @@ $(function(){
 	<h1>密钥管理</h1>
 	<div class="row menu mx-auto" style="width: 100%;">
 		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-light btn-lg menu" id="genkey">生成一个密钥对</button>
-		<button type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-light btn-lg menu" id="addpubkey">添加公钥</button>
-		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-light btn-lg menu" id="exppubkey">导出公钥</button>
-		<button type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-light btn-lg menu" id="delpubkey">删除公钥</button>
-		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-danger btn-lg menu" onclick="PubDelAll()">删除所有公钥</button>
+		<button type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-light btn-lg menu" id="showsavedkeys">查看已保存的密钥信息</button>
+		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-light btn-lg menu" id="addpubkey">添加公钥</button>
 		<button type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-light btn-lg menu" id="addprikey">添加私钥</button>
-		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-warning btn-lg menu" id="expprikey">导出私钥</button>
-		<button type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-light btn-lg menu" id="delprikey">删除私钥</button>
-		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-danger btn-lg menu" onclick="PriDelAll()">删除所有私钥</button>
+		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-warning btn-lg menu" id="exppubkey">导出公钥</button>
+		<button type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-warning btn-lg menu" id="expprikey">导出私钥</button>
+		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-danger btn-lg menu" id="delpubkey">删除公钥</button>
+		<button type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-danger btn-lg menu" id="delprikey">删除私钥</button>
+		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-danger btn-lg menu" onclick="PubDelAll()">删除所有公钥</button>
+		<button type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-danger btn-lg menu" onclick="PriDelAll()">删除所有私钥</button>
 	</div>
 
 	<div class="notmenu" id="gen">
@@ -423,6 +453,40 @@ $(function(){
 			<strong>成功!</strong> 密钥对保存成功。
 		</div>
 		<button type="button" class="btn btn-primary gen_keys" onclick="gen_save()">将密钥对保存到浏览器（使用localStorage）</button>
+	</div>
+
+	<div class="notmenu" id="Showsavedkeys">
+		<h2>已保存的公钥</h2>
+		<table class="table table-striped table-bordered table-responsive-md">
+			<thead>
+				<tr>
+					<th>保存的别名</th>
+					<th>姓名</th>
+					<th>邮件</th>
+					<th>创建日期</th>
+					<th>密钥Id</th>
+					<th>密钥指纹</th>
+				</tr>
+			</thead>
+			<tbody id="pubsavedkeystable">
+			</tbody>
+		</table>
+		<hr>
+		<h2>已保存的私钥</h2>
+		<table class="table table-striped table-bordered table-responsive-md">
+			<thead>
+				<tr>
+					<th>保存的别名</th>
+					<th>姓名</th>
+					<th>邮件</th>
+					<th>创建日期</th>
+					<th>密钥Id</th>
+					<th>密钥指纹</th>
+				</tr>
+			</thead>
+			<tbody id="prisavedkeystable">
+			</tbody>
+		</table>
 	</div>
 
 	<div class="notmenu" id="addpub">
