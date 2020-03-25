@@ -14,7 +14,7 @@ js/storepri.js
     =============================   =============================  ==========================================
      PriSessSave(name,pri)           保存私钥到临时存储               ``name`` 为私钥别名， ``pri`` 为私钥数据
      PriLocalSave(name,pri)          保存私钥数据到长期储存            ``name`` 为私钥别名， ``pri`` 为私钥数据
-     PriReadIndex()                  返回私钥索引                     ``res[0]`` 为名称， ``res[1]`` 为id号
+     PriReadIndex()                  返回私钥索引                      ``res[0]`` 为id号， ``res[1]`` 为名称
      PriRead(id)                     返回指定的私钥数据                ``id`` 为id号
      PriDel(id)                      删除指定的私钥                    ``id`` 为id号
      PriDelAll()                     删除所有的私钥
@@ -30,7 +30,7 @@ js/storepub.js
      函数原型                         用途                           说明             
     =============================   =============================  ==========================================
      PubSave(name,pub)               保存公钥到长期存储               ``name`` 为公钥别名， ``pub`` 为公钥数据
-     PubReadIndex()                  返回公钥索引                     ``res[0]`` 为名称， ``res[1]`` 为id号
+     PubReadIndex()                  返回公钥索引                     ``res[0]`` 为id号， ``res[1]`` 为名称
      PubRead(id)                     返回指定的公钥数据                ``id`` 为id号
      PubDel(id)                      删除指定的公钥                    ``id`` 为id号
      PubDelAll()                     删除所有的公钥
