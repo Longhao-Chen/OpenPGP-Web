@@ -61,8 +61,9 @@ function sign(){
 $(function(){
 		var clipboard = new ClipboardJS('#copy');
 		clipboard.on('success', function(e) {
-			alert('复制成功');
 			e.clearSelection();
+			document.getElementById("copy").innerHTML="已复制";
+			setTimeout(function(){document.getElementById("copy").innerHTML="复制输出";},2000);
 		});
 		clipboard.on('error', function(e) {
 			alert('复制失败，您的浏览器不支持！');
