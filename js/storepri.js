@@ -192,23 +192,26 @@ async function PriGenIndex(){
 
 //从密钥id搜索保存id
 function PriSearchId(input){
-	if(typeof(localStorage.prikeysidindex)==="undefined"){
-		PriGenIndex();
-	}
-	var data=JSON.parse(localStorage.prikeysidindex);
-	for(var i=0;i<input.length;++i){
-		for(var ii=0;ii<data.length;++ii){
-			if(data[ii][0].includes(input[i]))
-				return data[ii][1];
+	if(typeof(localStorage.prikeys)!=="undefined"||typeof(sessionStorage.prikeys)!=="undefined"){
+		if(typeof(localStorage.prikeysidindex)==="undefined"){
+			PriGenIndex();
 		}
-		if(typeof(sessionStorage.prikeysidindex)!=="undefined"){
-			data=JSON.parse(sessionStorage.prikeysidindex);
-			for(var ii=0;i<data.length;++ii){
-				if(data[ii][0].includes(input[i])){
+		var data=JSON.parse(localStorage.prikeysidindex);
+		for(var i=0;i<input.length;++i){
+			for(var ii=0;ii<data.length;++ii){
+				if(data[ii][0].includes(input[i]))
 					return data[ii][1];
+			}
+			if(typeof(sessionStorage.prikeysidindex)!=="undefined"){
+				data=JSON.parse(sessionStorage.prikeysidindex);
+				for(var ii=0;i<data.length;++ii){
+					if(data[ii][0].includes(input[i])){
+						return data[ii][1];
+					}
 				}
 			}
 		}
-	}
-	return -1;
+		return -1;
+	}else
+		return -1;
 }
