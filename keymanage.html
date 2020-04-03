@@ -19,32 +19,30 @@
 <script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script>
 <script>
 //读取密钥信息的函数
-function pubinfo(input,msgbox) {
+async function pubinfo(input,msgbox) {
 	try{
-		(async () => {
-			const key=`${document.getElementById(input).value}`;
-			var msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
-			msg=msg+"\n密钥指纹："+((await openpgp.key.readArmored(key)).keys)[0].getFingerprint().toString();
-			msg=msg+"\n创建时间："+((await openpgp.key.readArmored(key)).keys)[0].getCreationTime().toString();
-			document.getElementById(msgbox).value=msg;
-		})();
+		const key=`${document.getElementById(input).value}`;
+		var msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
+		msg=msg+"\n密钥指纹："+((await openpgp.key.readArmored(key)).keys)[0].getFingerprint().toString();
+		msg=msg+"\n创建时间："+((await openpgp.key.readArmored(key)).keys)[0].getCreationTime().toString();
+		document.getElementById(msgbox).value=msg;
 		$("#"+msgbox).show("fast");
 	}catch(e){
 		alert("出错："+e);
+		throw new Error(e);
 	}
 }
-function priinfo(input,msgbox) {
+async function priinfo(input,msgbox) {
 	try{
-		(async () => {
-			const key=`${document.getElementById(input).value}`;
-			var msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
-			msg=msg+"\n密钥指纹："+((await openpgp.key.readArmored(key)).keys)[0].getFingerprint().toString();
-			msg=msg+"\n创建时间："+((await openpgp.key.readArmored(key)).keys)[0].getCreationTime().toString();
-			document.getElementById(msgbox).value=msg;
-		})();
+		const key=`${document.getElementById(input).value}`;
+		var msg="用户标识："+((await openpgp.key.readArmored(key)).keys)[0].getUserIds().toString();
+		msg=msg+"\n密钥指纹："+((await openpgp.key.readArmored(key)).keys)[0].getFingerprint().toString();
+		msg=msg+"\n创建时间："+((await openpgp.key.readArmored(key)).keys)[0].getCreationTime().toString();
+		document.getElementById(msgbox).value=msg;
 		$("#"+msgbox).show("fast");
 	}catch(e){
 		alert("出错："+e);
+		throw new Error(e);
 	}
 }
 </script>
@@ -275,27 +273,26 @@ function pridelmenu(){
 	}
 	document.getElementById("delprimenu").innerHTML=msg;
 }
-function genkey(){
+async function genkey(){
 	$("#gen_savealert").hide();
 	$(".gen_keys").hide("fast");
 	if(document.getElementById("gen_name").value===''){
 		alert("姓名不能为空！");
 	}else{
 		try{
-			(async () => {
-				const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
-					userIds: [{ name: document.getElementById("gen_name").value, email: document.getElementById("gen_mail").value }], // you can pass multiple user IDs
-					rsaBits: document.getElementById("keybit").innerHTML,                                              // RSA key size
-					passphrase: document.getElementById("gen_passwd").value           // protects the private key
-				});
-				document.getElementById("gen_pub").value=publicKeyArmored;
-				document.getElementById("gen_pri").value=privateKeyArmored;
-				$(".gen_keys").show("slow");
-				$("#gen_alert").hide("slow");
-			})();
+			const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
+				userIds: [{ name: document.getElementById("gen_name").value, email: document.getElementById("gen_mail").value }], // you can pass multiple user IDs
+				rsaBits: document.getElementById("keybit").innerHTML,                                              // RSA key size
+				passphrase: document.getElementById("gen_passwd").value           // protects the private key
+			});
+			document.getElementById("gen_pub").value=publicKeyArmored;
+			document.getElementById("gen_pri").value=privateKeyArmored;
+			$(".gen_keys").show("slow");
+			$("#gen_alert").hide("slow");
 		}catch(e){
 			$("#gen_alert").hide("slow");
 			alert("出错："+e);
+			throw new Error(e);
 		}
 	}
 }

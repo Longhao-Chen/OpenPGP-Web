@@ -71,11 +71,14 @@ async function decrypt(){
 					signkeyids[i]=decrypted.signatures[i].keyid.toHex();
 				pubid=PubSearchId(signkeyids);	//第一个找到的已知公钥id
 				if(pubid!==-1){
-					for(i=0;i<decrypted.signatures.length;++i){	//可能存在多个签名
+					var msg=openpgp.cleartext.fromText(decrypted.data);
+					var pub=(await openpgp.key.readArmored(PubRead(pubid))).keys;
+
+					for(var i=0;i<decrypted.signatures.length;++i){	//可能存在多个签名
 						verified = await openpgp.verify({
-							message: openpgp.cleartext.fromText(decrypted.data),
+							message: msg,
 							signature: decrypted.signatures[i].signature,
-							publicKeys: (await openpgp.key.readArmored(PubRead(pubid))).keys // for verification
+							publicKeys: pub // for verification
 						});
 						var valid=false;
 						valid = verified.signatures[0].valid;
@@ -105,7 +108,7 @@ async function decrypt(){
 
 	}else if(msgdata.getEncryptionKeyIds().length!==0){
 		alert("错误：没有找到解密的私钥.\n请导入私钥.");
-		return -1;
+		throw new Error("错误：没有找到解密的私钥.\n请导入私钥.");
 	}else if(msgdata.getEncryptionKeyIds().length===0 && msgdata.getSigningKeyIds().length!==0){	//未加密，仅进行了签名
 		if(pubid!=-1){
 			const publicKeyArmored = `${PubRead(pubid)}`;
@@ -124,18 +127,18 @@ async function decrypt(){
 				}
 			}catch(e){
 				window.alert("明文签名验证错误\n错误代码:"+e);
-				return -1;
+				throw new Error(e);
 			}
 			await openpgp.destroyWorker();
 		}else{
 			alert("错误：没有找到验证签名的公钥。\n请导入公钥。");
-			return -1;
+			throw new Error("错误：没有找到验证签名的公钥。\n请导入公钥。");
 		}
 	}else if(msgdata.getEncryptionKeyIds().length===0 && msgdata.getSigningKeyIds().length===0){	//使用密码加密
 		const password = [window.prompt("请输入密码")];
 		try{
 			const { data: decrypted } = await openpgp.decrypt({
-				message: await openpgp.message.readArmored((document.getElementById("text").value)),	// input as Message object
+				message: msgdata,	// input as Message object
 				passwords: password
 			});
 			document.getElementById("output").value=decrypted;
@@ -146,14 +149,14 @@ async function decrypt(){
 				window.alert("密码错误或密文被篡改");
 			else
 				window.alert("解密错误\n错误代码:"+e);
-			return -1;
+			throw new Error(e);
 		}
 		await openpgp.destroyWorker();
 		$("#output").show("slow");
 		$("#copy").show("slow");
 	}else{
 		alert("未知错误");
-		return -1;
+		throw new Error("未知错误");
 	}
 }
 </script>

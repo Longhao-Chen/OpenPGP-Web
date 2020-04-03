@@ -20,54 +20,52 @@
 </head>
 <body class="container-fluid center">
 <script>
-function sign(){
-	(async () => {
-		if(document.getElementById("pridata").value===''){
-			window.alert("请选择密钥！");
-			return -1;
-		}
-		const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`;
-		var keyname=PriReadName(document.getElementById("pridata").value);
-		var pass=window.prompt("请输入密钥："+keyname+"的密码");
-		const passphrase = `${pass}`; // 私钥密码
+async function sign(){
+	if(document.getElementById("pridata").value===''){
+		window.alert("请选择密钥！");
+		throw new Error("请选择密钥！");
+	}
+	const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`;
+	var keyname=PriReadName(document.getElementById("pridata").value);
+	var pass=window.prompt("请输入密钥："+keyname+"的密码");
+	const passphrase = `${pass}`; // 私钥密码
 
-		const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
-		if(passphrase!=='')
-			try{
-				await privateKey.decrypt(passphrase);
-			}catch(e){
-				window.alert("私钥密码错误！");
-				return -1;
-			}
-
+	const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
+	if(passphrase!=='')
 		try{
-			const { data: cleartext } = await openpgp.sign({
-				message: openpgp.cleartext.fromText(document.getElementById("text").value), // CleartextMessage or Message object
-				privateKeys: [privateKey]                             // for signing
-			});
-			document.getElementById("output").value=cleartext;
+			await privateKey.decrypt(passphrase);
 		}catch(e){
-			window.alert("签名错误\n错误代码:"+e);
-			return -1;
+			window.alert("私钥密码错误！");
+			throw new Error(e);
 		}
-		await openpgp.destroyWorker();
-		$("#output").show("slow");
-		$("#copy").show("slow");
-	})();
+
+	try{
+		const { data: cleartext } = await openpgp.sign({
+			message: openpgp.cleartext.fromText(document.getElementById("text").value), // CleartextMessage or Message object
+			privateKeys: [privateKey]                             // for signing
+		});
+		document.getElementById("output").value=cleartext;
+	}catch(e){
+		window.alert("签名错误\n错误代码:"+e);
+		throw new Error(e);
+	}
+	await openpgp.destroyWorker();
+	$("#output").show("slow");
+	$("#copy").show("slow");
 }
 </script>
 <script>
 //复制部分的代码
 $(function(){
-		var clipboard = new ClipboardJS('#copy');
-		clipboard.on('success', function(e) {
-			e.clearSelection();
-			document.getElementById("copy").innerHTML="已复制";
-			setTimeout(function(){document.getElementById("copy").innerHTML="复制输出";},2000);
-		});
-		clipboard.on('error', function(e) {
-			alert('复制失败，您的浏览器不支持！');
-		});
+	var clipboard = new ClipboardJS('#copy');
+	clipboard.on('success', function(e) {
+		e.clearSelection();
+		document.getElementById("copy").innerHTML="已复制";
+		setTimeout(function(){document.getElementById("copy").innerHTML="复制输出";},2000);
+	});
+	clipboard.on('error', function(e) {
+		alert('复制失败，您的浏览器不支持！');
+	});
 });
 </script>
 <script>

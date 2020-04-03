@@ -2,23 +2,19 @@ async function PriSessSave(name,pri){
 	if(typeof(Storage)!=="undefined"){
 		try{
 			if(typeof(sessionStorage.prikeys)!=="undefined"){
-				if(JSON.parse(sessionStorage.prikeys).includes([name,pri])){ //这一段判断是否重复的代码似乎没有正常工作。
-					window.alert("此私钥已保存");
-				}else{
-					if(typeof(sessionStorage.prikeysidindex)==="undefined")
-						await PriGenIndex();
-					var data=JSON.parse(sessionStorage.prikeys);
-					var keysindex=JSON.parse(sessionStorage.prikeysidindex);
-					var len=data.length;
-					data[len]=[name,pri];
-					var keyidlen=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds().length;
-					var keyid=new Array();
-					for(ii=0;ii<keyidlen;++ii)
-						keyid[ii]=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds()[ii].toHex();
-					keysindex[len]=[keyid,len];
-					sessionStorage.prikeys=JSON.stringify(data);
-					sessionStorage.prikeysidindex=JSON.stringify(keysindex);
-				}
+				if(typeof(sessionStorage.prikeysidindex)==="undefined")
+					await PriGenIndex();
+				var data=JSON.parse(sessionStorage.prikeys);
+				var keysindex=JSON.parse(sessionStorage.prikeysidindex);
+				var len=data.length;
+				data[len]=[name,pri];
+				var keyidlen=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds().length;
+				var keyid=new Array();
+				for(ii=0;ii<keyidlen;++ii)
+					keyid[ii]=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds()[ii].toHex();
+				keysindex[len]=[keyid,len];
+				sessionStorage.prikeys=JSON.stringify(data);
+				sessionStorage.prikeysidindex=JSON.stringify(keysindex);
 			}else{
 				sessionStorage.prikeys=JSON.stringify(new Array([name,pri]));
 				var keyidlen=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds().length;
@@ -40,23 +36,19 @@ async function  PriLocalSave(name,pri){
 	if(typeof(Storage)!=="undefined"){
 		try{
 			if(typeof(localStorage.prikeys)!=="undefined"){
-				if(JSON.parse(localStorage.prikeys).includes([name,pri])){ //这一段判断是否重复的代码似乎没有正常工作。
-					window.alert("此私钥已保存");
-				}else{
-					if(typeof(localStorage.prikeysidindex)==="undefined")
-						await PriGenIndex();
-					var data=JSON.parse(localStorage.prikeys);
-					var keysindex=JSON.parse(localStorage.prikeysidindex);
-					var len=data.length;
-					data[len]=[name,pri];
-					var keyidlen=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds().length;
-					var keyid=new Array();
-					for(ii=0;ii<keyidlen;++ii)
-						keyid[ii]=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds()[ii].toHex();
-					keysindex[len]=[keyid,len];
-					localStorage.prikeys=JSON.stringify(data);
-					localStorage.prikeysidindex=JSON.stringify(keysindex);
-				}
+				if(typeof(localStorage.prikeysidindex)==="undefined")
+					await PriGenIndex();
+				var data=JSON.parse(localStorage.prikeys);
+				var keysindex=JSON.parse(localStorage.prikeysidindex);
+				var len=data.length;
+				data[len]=[name,pri];
+				var keyidlen=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds().length;
+				var keyid=new Array();
+				for(ii=0;ii<keyidlen;++ii)
+					keyid[ii]=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds()[ii].toHex();
+				keysindex[len]=[keyid,len];
+				localStorage.prikeys=JSON.stringify(data);
+				localStorage.prikeysidindex=JSON.stringify(keysindex);
 			}else{
 				localStorage.prikeys=JSON.stringify(new Array([name,pri]));
 				var keyidlen=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds().length;
@@ -149,6 +141,7 @@ function PriDelAll(){
 		sessionStorage.removeItem("prikeys");
 		localStorage.removeItem("prikeysidindex");
 		sessionStorage.removeItem("prikeysidindex");
+		alert("已删除所有私钥");
 	}
 }
 

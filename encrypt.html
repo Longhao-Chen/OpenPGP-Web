@@ -21,84 +21,81 @@
 <body class="container-fluid center">
 <script>
 //加密和签名部分
-function encrypt(sign){
-	(async () => {
+await function encrypt(sign){
+	//判断是否选择了密钥
+	if(document.getElementById("pubdata").value===''||(sign && document.getElementById("pridata")==='')){
+		window.alert("请选择密钥！");
+		throw new Error("请选择密钥！");
+	}
 
-		//判断是否选择了密钥
-		if(document.getElementById("pubdata").value===''||(sign && document.getElementById("pridata")==='')){
-			window.alert("请选择密钥！");
-			return -1;
-		}
+	// put keys in backtick (``) to avoid errors caused by spaces or tabs
+	const publicKeyArmored = `${PubRead(document.getElementById("pubdata").value)}`;
 
-		// put keys in backtick (``) to avoid errors caused by spaces or tabs
-		const publicKeyArmored = `${PubRead(document.getElementById("pubdata").value)}`;
+	//判断是否启用签名
+	if(sign){
+		const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`; // encrypted private key
+		var keyname=PriReadName(document.getElementById("pridata").value);
+		var pass=window.prompt("请输入密钥："+keyname+"的密码");
+		const passphrase = `${pass}`; // 私钥密码
 
-		//判断是否启用签名
-		if(sign){
-			const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`; // encrypted private key
-			var keyname=PriReadName(document.getElementById("pridata").value);
-			var pass=window.prompt("请输入密钥："+keyname+"的密码");
-			const passphrase = `${pass}`; // 私钥密码
-
-			//是否加密到签名者
-			if(document.getElementById("entosigner").checked){
-				var keyidlen=(await openpgp.key.readArmored(privateKeyArmored)).keys[0].getKeyIds().length;
-				var keyid=new Array();
-				for(var ii=0;ii<keyidlen;++ii)
-					keyid[ii]=(await openpgp.key.readArmored(privateKeyArmored)).keys[0].getKeyIds()[ii].toHex();
-				var pubid=PubSearchId(keyid);	//搜索签名者的公钥
-				if(pubid===-1){
-					alert("没有找到签名者的公钥\n信息将不会加密到签名者");
-					var pubkeytmp=[`${publicKeyArmored}`];
-				}else{
-					var pubkeytmp=[`${publicKeyArmored}`,`${PubRead(pubid)}`];
-				}
-			}else{
+		//是否加密到签名者
+		if(document.getElementById("entosigner").checked){
+			var keyidlen=(await openpgp.key.readArmored(privateKeyArmored)).keys[0].getKeyIds().length;
+			var keyid=new Array();
+			for(var ii=0;ii<keyidlen;++ii)
+				keyid[ii]=(await openpgp.key.readArmored(privateKeyArmored)).keys[0].getKeyIds()[ii].toHex();
+			var pubid=PubSearchId(keyid);	//搜索签名者的公钥
+			if(pubid===-1){
+				alert("没有找到签名者的公钥\n信息将不会加密到签名者");
 				var pubkeytmp=[`${publicKeyArmored}`];
-			}
-
-			//这一段是按照官方文档来的
-			const pubkey = await Promise.all(pubkeytmp.map(async (key) => {
-				return (await openpgp.key.readArmored(key)).keys[0];
-			}));
-
-			const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
-			if(passphrase!==``)
-				try{
-					await privateKey.decrypt(passphrase);
-				}catch(e){
-					window.alert("私钥密码错误！");
-					return -1;
-				}
-			try{
-				const { data: encrypted } = await openpgp.encrypt({
-					message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
-					publicKeys: pubkey,	// for encryption
-					privateKeys: [privateKey],
-					compression: openpgp.enums.compression.zip	//启用压缩
-				});
-				document.getElementById("output").value=encrypted;
-			}catch(e){
-				window.alert("加密和签名错误\n错误代码:"+e);
-				return -1;
+			}else{
+				var pubkeytmp=[`${publicKeyArmored}`,`${PubRead(pubid)}`];
 			}
 		}else{
-			try{
-				const { data: encrypted } = await openpgp.encrypt({
-					message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
-					publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// for encryption
-					compression: openpgp.enums.compression.zip	//启用压缩
-				});
-				document.getElementById("output").value=encrypted;
-			}catch(e){
-				window.alert("加密错误\n错误代码:"+e);
-				return -1;
-			}
+			var pubkeytmp=[`${publicKeyArmored}`];
 		}
-		await openpgp.destroyWorker();
-		$("#output").show("slow");
-		$("#copy").show("slow");
-	})();
+
+		//这一段是按照官方文档来的
+		const pubkey = await Promise.all(pubkeytmp.map(async (key) => {
+			return (await openpgp.key.readArmored(key)).keys[0];
+		}));
+
+		const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
+		if(passphrase!==``)
+			try{
+				await privateKey.decrypt(passphrase);
+			}catch(e){
+				window.alert("私钥密码错误！");
+				throw new Error(e);
+			}
+		try{
+			const { data: encrypted } = await openpgp.encrypt({
+				message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
+				publicKeys: pubkey,	// for encryption
+				privateKeys: [privateKey],
+				compression: openpgp.enums.compression.zip	//启用压缩
+			});
+			document.getElementById("output").value=encrypted;
+		}catch(e){
+			window.alert("加密和签名错误\n错误代码:"+e);
+			throw new Error(e);
+		}
+	}else{
+		try{
+			const { data: encrypted } = await openpgp.encrypt({
+				message: openpgp.message.fromText(document.getElementById("text").value),	// input as Message object
+				publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys,	// for encryption
+				compression: openpgp.enums.compression.zip	//启用压缩
+			});
+			document.getElementById("output").value=encrypted;
+		}catch(e){
+			window.alert("加密错误\n错误代码:"+e);
+			throw new Error(e);
+		}
+	}
+	await openpgp.destroyWorker();
+	$("#output").show("slow");
+	$("#copy").show("slow");
 }
 </script>
 <script>
@@ -135,15 +132,15 @@ $(function(){
 <script>
 //复制部分的代码
 $(function(){
-		var clipboard = new ClipboardJS('#copy');
-		clipboard.on('success', function(e) {
-			e.clearSelection();
-			document.getElementById("copy").innerHTML="已复制";
-			setTimeout(function(){document.getElementById("copy").innerHTML="复制输出";},2000);
-		});
-		clipboard.on('error', function(e) {
-			alert('复制失败，您的浏览器不支持！');
-		});
+	var clipboard = new ClipboardJS('#copy');
+	clipboard.on('success', function(e) {
+		e.clearSelection();
+		document.getElementById("copy").innerHTML="已复制";
+		setTimeout(function(){document.getElementById("copy").innerHTML="复制输出";},2000);
+	});
+	clipboard.on('error', function(e) {
+		alert('复制失败，您的浏览器不支持！');
+	});
 });
 </script>
 <script>

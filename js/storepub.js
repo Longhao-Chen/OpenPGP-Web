@@ -3,24 +3,20 @@ async function PubSave(name,pub) {
 	{
 		try{
 			if(typeof(localStorage.pubkeys)!=="undefined"){
-				if(JSON.parse(localStorage.getItem('pubkeys')).includes([name,pub])){ //这一段判断是否重复的代码似乎没有正常工作。
-					window.alert("此公钥已保存");
-				}else{
-					if(typeof(localStorage.pubkeysidindex)==="undefined")
-						await PubGenIndex();
-					var data=JSON.parse(localStorage.pubkeys);
-					var keysindex=JSON.parse(localStorage.pubkeysidindex);
-					var len=data.length;
-					data[len]=[name,pub];
-					var keyids=(await openpgp.key.readArmored(pub)).keys[0].getKeyIds();
-					var keyidlen=keyids.length;
-					var keyid=new Array();
-					for(ii=0;ii<keyidlen;++ii)
-						keyid[ii]=keyids[ii].toHex();
-					keysindex[len]=[keyid,len];
-					localStorage.pubkeys=JSON.stringify(data);
-					localStorage.pubkeysidindex=JSON.stringify(keysindex);
-				}
+				if(typeof(localStorage.pubkeysidindex)==="undefined")
+					await PubGenIndex();
+				var data=JSON.parse(localStorage.pubkeys);
+				var keysindex=JSON.parse(localStorage.pubkeysidindex);
+				var len=data.length;
+				data[len]=[name,pub];
+				var keyids=(await openpgp.key.readArmored(pub)).keys[0].getKeyIds();
+				var keyidlen=keyids.length;
+				var keyid=new Array();
+				for(ii=0;ii<keyidlen;++ii)
+					keyid[ii]=keyids[ii].toHex();
+				keysindex[len]=[keyid,len];
+				localStorage.pubkeys=JSON.stringify(data);
+				localStorage.pubkeysidindex=JSON.stringify(keysindex);
 			}else{
 				localStorage.pubkeys=JSON.stringify(new Array([name,pub]));
 				var keyids=(await openpgp.key.readArmored(pub)).keys[0].getKeyIds();
@@ -89,6 +85,7 @@ function PubDelAll(){
 	if(window.confirm("确认删除所有公钥？")){
 		localStorage.removeItem("pubkeys");
 		localStorage.removeItem("pubkeysidindex");
+		alert("已删除所有公钥");
 	}
 }
 
