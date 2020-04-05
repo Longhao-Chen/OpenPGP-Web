@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
+<meta name='apple-mobile-web-app-capable' content='yes'>
+<meta name='apple-mobile-web-app-status-bar-style' content='black'>
+<meta name='format-detection' content='telephone=no'>
+<html>
+<head>
+<meta charset="utf-8">
+<title>导出密钥</title>
+<link href="../css/style.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://cdn.staticfile.org/openpgp/4.6.2/openpgp.min.js" integrity="sha384-Y30HgcudZZNgdz+jIC/qf5wAUlGbAaP3xl3WYjunpHRhKOks614DbusUh7xwolxY" crossorigin="anonymous"></script>
+<script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.bundle.js" integrity="sha384-FhLadiSx562CHg1MeZgAwnrYbHS58gnpCpvPQn6Sv7SqLRCyEKRXE1if+Zx36XNm" crossorigin="anonymous"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="../js/storepub.js"></script>
+<script src="../js/storepri.js"></script>
+<script src="../js/config.js"></script>
+<script src="js/export.js"></script>
+<script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" integrity="sha384-x6nRSkfSsKGBsvlLFHHNju+buS3zYUztVnTRz/0JKgOIk3ulS6bNce/vHOvYE2eY" crossorigin="anonymous"></script>
+<script src="js/keymanage.js"></script>
+</head>
+<body class="container-fluid center">
+	<h1>导出密钥</h1>
+	<div class="dropdown">
+		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+			请选择要导出的公钥
+		</button>
+		<div class="dropdown-menu" id="exppubmenu">
+		</div>
+	</div>
+	<textarea id="exp_pubkey" rows="10" class="textarea-inherit exp_pubkey" readonly></textarea><br class="exp_pubkey">
+	<button class="exp_pubkey copy btn btn-primary" data-clipboard-target="#exp_pubkey">复制密钥</button>
+	<hr>
+	<div class="dropdown">
+		<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">
+			请选择要导出的私钥
+		</button>
+		<div class="dropdown-menu" id="expprimenu">
+		</div>
+	</div>
+	<textarea id="exp_prikey" rows="10" class="textarea-inherit exp_prikey" readonly></textarea><br class="exp_prikey">
+	<button class="exp_prikey copy btn btn-warning" data-clipboard-target="#exp_prikey">复制密钥</button>
+</body>
+</html>

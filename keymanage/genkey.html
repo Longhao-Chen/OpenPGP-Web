@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
+<meta name='apple-mobile-web-app-capable' content='yes'>
+<meta name='apple-mobile-web-app-status-bar-style' content='black'>
+<meta name='format-detection' content='telephone=no'>
+<html>
+<head>
+<meta charset="utf-8">
+<title>生成一个密钥对</title>
+<link href="../css/style.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://cdn.staticfile.org/openpgp/4.6.2/openpgp.min.js" integrity="sha384-Y30HgcudZZNgdz+jIC/qf5wAUlGbAaP3xl3WYjunpHRhKOks614DbusUh7xwolxY" crossorigin="anonymous"></script>
+<script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
+<script src="../js/storepub.js"></script>
+<script src="../js/storepri.js"></script>
+<script src="../js/config.js"></script>
+<script src="js/genkey.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.bundle.js" integrity="sha384-FhLadiSx562CHg1MeZgAwnrYbHS58gnpCpvPQn6Sv7SqLRCyEKRXE1if+Zx36XNm" crossorigin="anonymous"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" integrity="sha384-x6nRSkfSsKGBsvlLFHHNju+buS3zYUztVnTRz/0JKgOIk3ulS6bNce/vHOvYE2eY" crossorigin="anonymous"></script>
+<script src="js/keymanage.js"></script>
+</head>
+<body class="container-fluid center">
+	<h1>生成一个密钥对</h1>
+	<form>
+		<input class="input-inherit" id="gen_name" placeholder="姓名"><br>
+		<input class="input-inherit" id="gen_mail" placeholder="电子邮件（可选）"><br>
+		<input class="input-inherit" id="gen_passwd" type="password" placeholder="私钥密码（此密码是保护私钥的最后手段）"><br>
+		<div class="from-check">
+			<label class="from-check-label">
+				<input type="checkbox" id="gen_show_passwd">显示密码<br>
+			</label>
+			<label class="from-check-label">
+				<input type="checkbox" id="gen_show_adv">显示高级设置<br>
+			</label>
+		</div>
+	</form>
+	<div id="gen_adv">
+		<p>密钥尺寸（位）：</p>
+		<div class="dropdown">
+			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="keybit">
+				2048
+			</button>
+			<div class="dropdown-menu">
+				<a class="dropdown-item" onclick="setbit(2048)">2048</a>
+				<a class="dropdown-item" onclick="setbit(3072)">3072</a>
+				<a class="dropdown-item" onclick="setbit(4096)">4096</a>
+			</div>
+		</div>
+		<p>关于密钥尺寸请参考说明文档。</p>
+	</div>
+	<button type="button" class="btn btn-primary" onclick="genkey();"id="gen_gen">确认生成此密钥</button>
+	<div class="alert alert-success alert-dismissible" id="gen_alert">
+		<p>注意：生成密钥需要较长的时间以得到足够的熵，请耐心等待。</p>
+	</div>
+	<p class="gen_keys">生成的公钥:</p>
+	<textarea readonly rows="10" class="textarea-inherit gen_keys" id="gen_pub"></textarea><br class="gen_keys">
+	<p class="gen_keys">生成的私钥:</p>
+	<textarea readonly rows="10" class="textarea-inherit gen_keys" id="gen_pri"></textarea><br class="gen_keys">
+	<div class="row">
+		<button type="button" class="btn btn-primary col gen_keys copy" data-clipboard-target="#gen_pub">复制生成的公钥</button>
+		<button type="button" class="btn btn-primary col gen_keys copy" data-clipboard-target="#gen_pri">复制生成的私钥</button>
+	</div>
+	<div class="alert alert-success alert-dismissible" id="gen_savealert">
+		<button type="button" class="btn" onclick="$('#gen_savealert').hide('fast')">&times;</button>
+		<strong>成功!</strong> 密钥对保存成功。
+	</div>
+	<button type="button" class="btn btn-primary gen_keys" onclick="gen_save()">将密钥对保存到浏览器（使用localStorage）</button>
+</body>
+</html>

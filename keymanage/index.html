@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
+<meta name='apple-mobile-web-app-capable' content='yes'>
+<meta name='apple-mobile-web-app-status-bar-style' content='black'>
+<meta name='format-detection' content='telephone=no'>
+<html>
+<head>
+<meta charset="utf-8">
+<title>密钥管理</title>
+<link href="../css/style.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="../js/storepub.js"></script>
+<script src="../js/storepri.js"></script>
+</head>
+<body class="container-fluid center">
+	<h1>密钥管理</h1>
+	<div class="row menu mx-auto" style="width: 100%;">
+		<a type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-light btn-lg menu" href="genkey.html">生成一个密钥对</a>
+		<a type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-light btn-lg menu" href="showsavedkeys.html">查看已保存的密钥信息</a>
+		<a type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-light btn-lg menu" href="addpubkey.html">添加公钥</a>
+		<a type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-light btn-lg menu" href="addprikey.html">添加私钥</a>
+		<a type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-warning btn-lg menu" href="export.html">导出密钥</a>
+		<a type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-danger btn-lg menu" href="delkey.html">删除密钥</a>
+		<button type="button" class="col-sm-4 offset-sm-1 col-10 offset-1 btn btn-danger btn-lg menu" onclick="PubDelAll()">删除所有公钥</button>
+		<button type="button" class="col-sm-4 offset-sm-2 col-10 offset-1 btn btn-danger btn-lg menu" onclick="PriDelAll()">删除所有私钥</button>
+	</div>
+</body>
+</html>
