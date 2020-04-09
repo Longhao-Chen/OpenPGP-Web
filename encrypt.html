@@ -21,7 +21,7 @@
 <body class="container-fluid center">
 <script>
 //加密和签名部分
-await function encrypt(sign){
+async function encrypt(sign){
 	//判断是否选择了密钥
 	if(document.getElementById("pubdata").value===''||(sign && document.getElementById("pridata")==='')){
 		window.alert("请选择密钥！");
