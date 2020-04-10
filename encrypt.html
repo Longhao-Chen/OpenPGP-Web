@@ -13,6 +13,7 @@
 <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
 <script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.bundle.js" integrity="sha384-FhLadiSx562CHg1MeZgAwnrYbHS58gnpCpvPQn6Sv7SqLRCyEKRXE1if+Zx36XNm" crossorigin="anonymous"></script>
 <script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="js/dark.js"></script>
 <script src="js/storepub.js"></script>
 <script src="js/storepri.js"></script>
 <script src="js/config.js"></script>
@@ -207,7 +208,7 @@ function Pri(id,name){
 <!-- 下面这两项仅用于保存数据 -->
 <textarea id="pubdata"></textarea>
 <textarea id="pridata"></textarea>
-<textarea id="text" rows="20" class="textarea-inherit" placeholder="请输入要加密的信息"></textarea><br>
+<textarea id="text" rows="10" class="textarea-inherit" placeholder="请输入要加密的信息"></textarea><br>
 <div class="row mx-auto" style="width: 95%;">
 	<button type="button" onclick="encrypt(true)" class="onlysign col btn btn-primary">加密和签名</button>
 	<button type="button" onclick="encrypt(false)" class="onlyencript col btn btn-primary">加密</button>
