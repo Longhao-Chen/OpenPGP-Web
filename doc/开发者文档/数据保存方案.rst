@@ -1,0 +1,28 @@
+*************
+数据保存方案
+*************
+密钥的保存
+^^^^^^^^^^^
+公钥
+------
+公钥的保存使用的是浏览器提供的 ``localStorage`` ，具体结构如下：
+
+.. code-block:: none
+
+    localStorage.pubkeys:
+    [["第一个公钥别名","第一个公钥的数据"],["第二个公钥的别名","第二个公钥的数据"],...]
+
+    localStorage.pubkeysidindex:
+    [[["子密钥id","子密钥id",...],[索引]],[["子密钥id","子密钥id",...],[索引]],...]
+
+.. note::
+    ``localStorage.pubkeysidindex`` 中的索引为 ``localStorage.pubkeys`` 中对应密钥的数组索引
+
+私钥
+------
+私钥的保存使用了浏览器提供的 ``localStorage`` 和 ``sessionStorage`` ，具体结构与公钥相同
+
+设置的保存
+^^^^^^^^^^^
+设置的保存使用的是 ``localStorage`` ，所有的配置都以键值的方式保存在 ``localStorage.setting`` ，
+如果未定义则表示使用默认配置

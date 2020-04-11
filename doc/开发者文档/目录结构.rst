@@ -16,6 +16,7 @@ OpenPGP-Web 的目录结构
     |-index.html    首页
     |-js/   放置大部分独立的JavaScript文件
     |-keymanage/    密钥管理模块
+    |-setting/      设置模块
     |-LICENSE   许可证
     |-Makefile  Makefile文件，目前用来编译文档
     |-README.md 项目的简单介绍
