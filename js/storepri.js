@@ -68,10 +68,11 @@ async function  PriLocalSave(name,pri){
 //返回保存的id和密钥别名
 function PriReadIndex(){
 	if((typeof(localStorage.prikeys)!=="undefined")||(typeof(sessionStorage.prikeys)!=="undefined")){
-		if(localStorage.prikeys.length!==0){
+		var len=0;
+		var res=new Array();
+		if((typeof(localStorage.prikeys)!=="undefined")&&(localStorage.prikeys.length!==0)){
 			var localdata=JSON.parse(localStorage.prikeys);
-			var len=localdata.length;
-			var res=new Array();
+			len=localdata.length;
 			for(var i=0;i<len;++i){
 				res[i]=[i,localdata[i][0]];
 			}
@@ -90,8 +91,11 @@ function PriReadIndex(){
 }
 
 function PriRead(id){
-	var data=JSON.parse(localStorage.prikeys);
-	var len=data.length;
+	var len=0;
+	if(typeof(localStorage.prikeys)!=="undefined"){
+		var data=JSON.parse(localStorage.prikeys);
+		len=data.length;
+	}
 	if(id<len){
 		return data[id][1];
 	}else{
@@ -100,8 +104,11 @@ function PriRead(id){
 }
 
 function PriReadName(id){
-	var data=JSON.parse(localStorage.prikeys);
-	var len=data.length;
+	var len=0;
+	if(typeof(localStorage.prikeys)!=="undefined"){
+		var data=JSON.parse(localStorage.prikeys);
+		len=data.length;
+	}
 	if(id<len){
 		return data[id][0];
 	}else{
@@ -111,9 +118,12 @@ function PriReadName(id){
 
 function PriDel(id){
 	if(window.confirm("确认删除此私钥？")){
-		var data=JSON.parse(localStorage.prikeys);
-		var keysindex=JSON.parse(localStorage.prikeysidindex);
-		var len=data.length;
+		var len=0;
+		if(typeof(localStorage)!=="undefined"){
+			var data=JSON.parse(localStorage.prikeys);
+			var keysindex=JSON.parse(localStorage.prikeysidindex);
+			len=data.length;
+		}
 		if(id<len){
 			data[id]=data[len-1];
 			keysindex[id]=keysindex[len-1];
