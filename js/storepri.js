@@ -127,6 +127,7 @@ function PriDel(id){
 		if(id<len){
 			data[id]=data[len-1];
 			keysindex[id]=keysindex[len-1];
+			keysindex[id][1]=id;	//更新索引
 			data.pop();
 			keysindex.pop();
 			localStorage.prikeys=JSON.stringify(data);
@@ -137,6 +138,7 @@ function PriDel(id){
 			var sesslen=data.length;
 			data[id-len]=data[sesslen-1];
 			keysindex[id-len]=keysindex[sesslen-1];
+			keysindex[id-len][1]=id-len;	//更新索引
 			data.pop();
 			keysindex.pop();
 			sessionStorage.prikeys=JSON.stringify(data);

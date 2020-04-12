@@ -74,6 +74,7 @@ function PubDel(id){
 		var len=data.length;
 		data[id]=data[len-1];
 		keysindex[id]=keysindex[len-1];
+		keysindex[id][1]=id;	//更新索引
 		data.pop();
 		keysindex.pop();
 		localStorage.pubkeys=JSON.stringify(data);
