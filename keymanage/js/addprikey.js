@@ -13,9 +13,14 @@ function addpri(){
 		if(document.getElementById("onlocal").checked){
 			PriLocalSave(name,pri);
 		}else{
+			if(window.confirm("警告：你现在选择的是保存私钥到临时储存，关闭浏览器后此私钥会被清除，"+
+					"请确保私钥有备份"))
 			PriSessSave(name,pri);
+			else
+				return
 		}
 		$("#priaddalert").show("slow");
+		$("#btn-addpri").hide("slow");
 	}
 }
 //文本框的清理和隐藏

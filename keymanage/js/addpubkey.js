@@ -13,6 +13,7 @@ function addpub(){
 	} else {
 		PubSave(name,pub);
 		$("#pubaddalert").show("slow");
+		$("#btn-addpub").hide("slow");
 	}
 }
 //文本框的清理和隐藏
