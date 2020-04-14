@@ -1,6 +1,11 @@
 async function PriSessSave(name,pri){
 	if(typeof(Storage)!=="undefined"){
 		try{
+			var keydata=(await openpgp.key.readArmored(pri)).keys[0];
+			if(typeof(keydata.keyPacket.isEncrypted)!=="boolean"){	//判断密钥是否为私钥
+				alert("错误：此密钥不是私钥。");
+				return false;
+			}
 			if(typeof(sessionStorage.prikeys)!=="undefined"){
 				if(typeof(sessionStorage.prikeysidindex)==="undefined")
 					await PriGenIndex();
@@ -8,33 +13,40 @@ async function PriSessSave(name,pri){
 				var keysindex=JSON.parse(sessionStorage.prikeysidindex);
 				var len=data.length;
 				data[len]=[name,pri];
-				var keyidlen=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds().length;
+				var keyidlen=keydata.getKeyIds().length;
 				var keyid=new Array();
 				for(ii=0;ii<keyidlen;++ii)
-					keyid[ii]=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds()[ii].toHex();
+					keyid[ii]=keydata.getKeyIds()[ii].toHex();
 				keysindex[len]=[keyid,len];
 				sessionStorage.prikeys=JSON.stringify(data);
 				sessionStorage.prikeysidindex=JSON.stringify(keysindex);
 			}else{
 				sessionStorage.prikeys=JSON.stringify(new Array([name,pri]));
-				var keyidlen=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds().length;
+				var keyidlen=keydata.getKeyIds().length;
 				var keyid=new Array();
 				for(ii=0;ii<keyidlen;++ii)
-					keyid[ii]=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds()[ii].toHex();
+					keyid[ii]=keydata.getKeyIds()[ii].toHex();
 				sessionStorage.prikeysidindex=JSON.stringify(new Array([keyid,0]));
 			}
 		}catch(e){
 			alert("出错：\n调用函数：PriSessSave("+name+','+pri+")\n错误代码："+e);
-			throw new Error(e);
+			return false;
 		}
 	}else{
 		window.alert("您的浏览器不支持此功能，请更新浏览器");
+		return false;
 	}
+	return true;
 }
 
 async function  PriLocalSave(name,pri){
 	if(typeof(Storage)!=="undefined"){
 		try{
+			var keydata=(await openpgp.key.readArmored(pri)).keys[0];
+			if(typeof(keydata.keyPacket.isEncrypted)!=="boolean"){	//判断密钥是否为私钥
+				alert("错误：此密钥不是私钥。");
+				return false;
+			}
 			if(typeof(localStorage.prikeys)!=="undefined"){
 				if(typeof(localStorage.prikeysidindex)==="undefined")
 					await PriGenIndex();
@@ -42,27 +54,30 @@ async function  PriLocalSave(name,pri){
 				var keysindex=JSON.parse(localStorage.prikeysidindex);
 				var len=data.length;
 				data[len]=[name,pri];
-				var keyidlen=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds().length;
+				var keyidlen=keydata.getKeyIds().length;
 				var keyid=new Array();
 				for(ii=0;ii<keyidlen;++ii)
-					keyid[ii]=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds()[ii].toHex();
+					keyid[ii]=keydata.getKeyIds()[ii].toHex();
 				keysindex[len]=[keyid,len];
 				localStorage.prikeys=JSON.stringify(data);
 				localStorage.prikeysidindex=JSON.stringify(keysindex);
 			}else{
 				localStorage.prikeys=JSON.stringify(new Array([name,pri]));
-				var keyidlen=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds().length;
+				var keyidlen=keydata.getKeyIds().length;
 				var keyid=new Array();
 				for(ii=0;ii<keyidlen;++ii)
-					keyid[ii]=(await openpgp.key.readArmored(pri)).keys[0].getKeyIds()[ii].toHex();
+					keyid[ii]=keydata.getKeyIds()[ii].toHex();
 				localStorage.prikeysidindex=JSON.stringify(new Array([keyid,0]));
 			}
 		}catch(e){
 			alert("出错：\n调用函数：PriLocalSave("+name+','+pri+")\n错误代码："+e);
+			return false;
 		}
 	}else{
 		window.alert("您的浏览器不支持此功能，请更新浏览器");
+		return false;
 	}
+	return true;
 }
 
 //返回保存的id和密钥别名

@@ -72,5 +72,6 @@ function gen_save(){
 		PubSave(name,pub);
 		PriLocalSave(name,pri);
 		$("#gen_savealert").show("slow");
+		$("#btn-savekeys").hide("slow");
 	}
 }

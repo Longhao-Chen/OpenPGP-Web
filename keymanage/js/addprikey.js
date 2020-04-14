@@ -2,7 +2,7 @@ $(function(){
 	$("#primsg").hide();
 })
 
-function addpri(){
+async function addpri(){
 	var pri=document.getElementById("prikey").value;
 	var name=document.getElementById("prialias").value;
 	if(name===''){
@@ -11,12 +11,14 @@ function addpri(){
 		alert("私钥输入不能为空！");
 	} else {
 		if(document.getElementById("onlocal").checked){
-			PriLocalSave(name,pri);
+			if(!await PriLocalSave(name,pri))
+				return
 		}else{
 			if(window.confirm("警告：你现在选择的是保存私钥到临时储存，关闭浏览器后此私钥会被清除，"+
-					"请确保私钥有备份"))
-			PriSessSave(name,pri);
-			else
+					"请确保私钥有备份")){
+				if(!await PriSessSave(name,pri))
+					return
+			}else
 				return
 		}
 		$("#priaddalert").show("slow");

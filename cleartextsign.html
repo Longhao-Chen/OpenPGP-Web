@@ -28,12 +28,11 @@ async function sign(){
 	}
 	const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`;
 	var keyname=PriReadName(document.getElementById("pridata").value);
-	var pass=window.prompt("请输入密钥："+keyname+"的密码");
-	const passphrase = `${pass}`; // 私钥密码
 
 	const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
-	if(passphrase!=='')
+	if(privateKey.keyPacket.isEncrypted)
 		try{
+			const passphrase = `${window.prompt("请输入密钥："+keyname+"的密码")}`; // 私钥密码
 			await privateKey.decrypt(passphrase);
 		}catch(e){
 			window.alert("私钥密码错误！");

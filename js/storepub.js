@@ -2,6 +2,11 @@ async function PubSave(name,pub) {
 	if(typeof(Storage)!=="undefined")
 	{
 		try{
+			var keydata=(await openpgp.key.readArmored(pub)).keys[0];
+			if(typeof(keydata.keyPacket.isEncrypted)!=="undefined"){	//判断密钥是否为公钥
+				alert("错误：此密钥不是公钥。");
+				return false;
+			}
 			if(typeof(localStorage.pubkeys)!=="undefined"){
 				if(typeof(localStorage.pubkeysidindex)==="undefined")
 					await PubGenIndex();
@@ -9,7 +14,7 @@ async function PubSave(name,pub) {
 				var keysindex=JSON.parse(localStorage.pubkeysidindex);
 				var len=data.length;
 				data[len]=[name,pub];
-				var keyids=(await openpgp.key.readArmored(pub)).keys[0].getKeyIds();
+				var keyids=keydata.getKeyIds();
 				var keyidlen=keyids.length;
 				var keyid=new Array();
 				for(ii=0;ii<keyidlen;++ii)
@@ -19,7 +24,7 @@ async function PubSave(name,pub) {
 				localStorage.pubkeysidindex=JSON.stringify(keysindex);
 			}else{
 				localStorage.pubkeys=JSON.stringify(new Array([name,pub]));
-				var keyids=(await openpgp.key.readArmored(pub)).keys[0].getKeyIds();
+				var keyids=keydata.getKeyIds();
 				var keyidlen=keyids.length;
 				var keyid=new Array();
 				for(ii=0;ii<keyidlen;++ii)
@@ -28,10 +33,13 @@ async function PubSave(name,pub) {
 			}
 		}catch(e){
 			alert("出错：\n调用函数：PubSave("+name+','+pub+")\n错误代码："+e);
+			return false;
 		}
 	} else {
 		window.alert("您的浏览器不支持此功能，请更新浏览器");
+		return false;
 	}
+	return true;
 }
 
 function PubReadIndex(){

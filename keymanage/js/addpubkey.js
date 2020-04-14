@@ -3,7 +3,7 @@ $(function(){
 })
 
 //核心的一些处理函数
-function addpub(){
+async function addpub(){
 	var pub=document.getElementById("pubkey").value;
 	var name=document.getElementById("pubalias").value;
 	if(name===''){
@@ -11,9 +11,10 @@ function addpub(){
 	}else if(pub===''){
 		alert("公钥输入不能为空！");
 	} else {
-		PubSave(name,pub);
-		$("#pubaddalert").show("slow");
-		$("#btn-addpub").hide("slow");
+		if(await PubSave(name,pub)){
+			$("#pubaddalert").show("slow");
+			$("#btn-addpub").hide("slow");
+		}
 	}
 }
 //文本框的清理和隐藏

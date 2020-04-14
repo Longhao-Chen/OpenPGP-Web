@@ -36,8 +36,6 @@ async function encrypt(sign){
 	if(sign){
 		const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`; // encrypted private key
 		var keyname=PriReadName(document.getElementById("pridata").value);
-		var pass=window.prompt("请输入密钥："+keyname+"的密码");
-		const passphrase = `${pass}`; // 私钥密码
 
 		//是否加密到签名者
 		if(document.getElementById("entosigner").checked){
@@ -62,8 +60,9 @@ async function encrypt(sign){
 		}));
 
 		const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
-		if(passphrase!==``)
+		if(privateKey.keyPacket.isEncrypted)
 			try{
+				const passphrase = `${window.prompt("请输入密钥："+keyname+"的密码")}`; // 私钥密码
 				await privateKey.decrypt(passphrase);
 			}catch(e){
 				window.alert("私钥密码错误！");
