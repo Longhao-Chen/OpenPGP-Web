@@ -56,7 +56,7 @@ async function decrypt(){
 				await privateKey.decrypt(passphrase);
 			}catch(e){
 				window.alert("私钥密码错误");
-				throw new Error(e);
+				return
 			}
 	
 		try{
@@ -94,21 +94,21 @@ async function decrypt(){
 					}
 				}else{
 					$("#signmsg").hide();
-					alert("签名未验证\n没有找到已知的公钥");
+					alert("签名未验证\n没有找到已知的公钥\n所需公钥id有："+signkeyids);
 				}
 			}
 			document.getElementById("output").value=decrypted.data;
 		}catch(e){
 			window.alert("解密错误\n错误代码:"+e);
-			return -1;
+			return
 		}
 		await openpgp.destroyWorker();
 		$("#output").show("slow");
 		$("#copy").show("slow");
 
 	}else if(msgdata.getEncryptionKeyIds().length!==0){
-		alert("错误：没有找到解密的私钥.\n请导入私钥.");
-		throw new Error("错误：没有找到解密的私钥.\n请导入私钥.");
+		alert("错误：没有找到解密的私钥.\n请导入私钥.\n所需私钥id有："+enkeyids);
+		return
 	}else if(msgdata.getEncryptionKeyIds().length===0 && msgdata.getSigningKeyIds().length!==0){	//未加密，仅进行了签名
 		if(pubid!=-1){
 			const publicKeyArmored = `${PubRead(pubid)}`;
@@ -127,12 +127,12 @@ async function decrypt(){
 				}
 			}catch(e){
 				window.alert("明文签名验证错误\n错误代码:"+e);
-				throw new Error(e);
+				return
 			}
 			await openpgp.destroyWorker();
 		}else{
-			alert("错误：没有找到验证签名的公钥。\n请导入公钥。");
-			throw new Error("错误：没有找到验证签名的公钥。\n请导入公钥。");
+			alert("错误：没有找到验证签名的公钥。\n请导入公钥。\n所需公钥id有："+signkeyids);
+			return
 		}
 	}else if(msgdata.getEncryptionKeyIds().length===0 && msgdata.getSigningKeyIds().length===0){	//使用密码加密
 		const password = [window.prompt("请输入密码")];
@@ -149,14 +149,14 @@ async function decrypt(){
 				window.alert("密码错误或密文被篡改");
 			else
 				window.alert("解密错误\n错误代码:"+e);
-			throw new Error(e);
+			return
 		}
 		await openpgp.destroyWorker();
 		$("#output").show("slow");
 		$("#copy").show("slow");
 	}else{
 		alert("未知错误");
-		throw new Error("未知错误");
+		return
 	}
 }
 </script>
