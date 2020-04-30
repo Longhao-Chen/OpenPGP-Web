@@ -2,7 +2,7 @@ async function PriSessSave(name,pri){
 	if(typeof(Storage)!=="undefined"){
 		try{
 			var keydata=(await openpgp.key.readArmored(pri)).keys[0];
-			if(typeof(keydata.keyPacket.isEncrypted)!=="boolean"){	//判断密钥是否为私钥
+			if(!(keydata.isPrivate())){	//判断密钥是否为私钥
 				alert("错误：此密钥不是私钥。");
 				return false;
 			}
@@ -43,7 +43,7 @@ async function  PriLocalSave(name,pri){
 	if(typeof(Storage)!=="undefined"){
 		try{
 			var keydata=(await openpgp.key.readArmored(pri)).keys[0];
-			if(typeof(keydata.keyPacket.isEncrypted)!=="boolean"){	//判断密钥是否为私钥
+			if(!(keydata.isPrivate())){	//判断密钥是否为私钥
 				alert("错误：此密钥不是私钥。");
 				return false;
 			}
@@ -134,7 +134,7 @@ function PriReadName(id){
 function PriDel(id){
 	if(window.confirm("确认删除此私钥？")){
 		var len=0;
-		if(typeof(localStorage)!=="undefined"){
+		if(typeof(localStorage.prikeys)!=="undefined"){
 			var data=JSON.parse(localStorage.prikeys);
 			var keysindex=JSON.parse(localStorage.prikeysidindex);
 			len=data.length;

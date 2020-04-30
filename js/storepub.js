@@ -3,7 +3,7 @@ async function PubSave(name,pub) {
 	{
 		try{
 			var keydata=(await openpgp.key.readArmored(pub)).keys[0];
-			if(typeof(keydata.keyPacket.isEncrypted)!=="undefined"){	//判断密钥是否为公钥
+			if(!(keydata.isPublic())){	//判断密钥是否为公钥
 				alert("错误：此密钥不是公钥。");
 				return false;
 			}
