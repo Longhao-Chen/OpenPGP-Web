@@ -223,11 +223,10 @@ function PriSearchId(input){
 					return data[ii][1];
 			}
 			if(typeof(sessionStorage.prikeysidindex)!=="undefined"){
-				data=JSON.parse(sessionStorage.prikeysidindex);
-				for(var ii=0;i<data.length;++ii){
-					if(data[ii][0].includes(input[i])){
-						return data[ii][1];
-					}
+				var sessdata=JSON.parse(sessionStorage.prikeysidindex);
+				for(var ii=0;i<sessdata.length;++ii){
+					if(sessdata[ii][0].includes(input[i]))
+						return sessdata[ii][1];
 				}
 			}
 		}
