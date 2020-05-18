@@ -6,38 +6,32 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>添加私钥</title>
+<title>添加密钥</title>
 <link href="../css/style.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 <script src="https://cdn.staticfile.org/openpgp/4.6.2/openpgp.min.js" integrity="sha384-Y30HgcudZZNgdz+jIC/qf5wAUlGbAaP3xl3WYjunpHRhKOks614DbusUh7xwolxY" crossorigin="anonymous"></script>
 <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
 <script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 <script src="../js/dark.js"></script>
+<script src="../js/storepub.js"></script>
 <script src="../js/storepri.js"></script>
 <script src="../js/config.js"></script>
-<script src="js/addprikey.js"></script>
+<script src="js/addkey.js"></script>
 <script src="js/keymanage.js"></script>
 </head>
 <body class="container-fluid center">
-	<h1>添加私钥</h1>
-		<p>目前已保存的私钥</p>
-		<textarea id="prisaved" rows="5" class="textarea-inherit" readonly></textarea><br>
-		<textarea id='prikey' rows="10" class="textarea-inherit" placeholder="请在此粘贴私钥"></textarea><br>
-		<button onclick="priinfo('prikey','primsg')" class="btn btn-primary" >查看私钥信息</button>
-		<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
-		<textarea id="primsg" rows="4" class="textarea-inherit" readonly ></textarea><br>
-		<form>
-			<input class="input-inherit" id="prialias" placeholder="私钥别名"><br>
-			<div class="from-check">
-				<label class="from-check-label">
-					<input type="checkbox" id="onlocal">持久储存（如果选中此项则使用localStorage储存，否则使用sessionStorage储存<br>
-				</label>
-			</div>
-			</form>
-		<div class="alert alert-success alert-dismissible" id="priaddalert">
-			<button type="button" class="alertclose btn" onclick="$('#priaddalert').hide('fast')">&times;</button>
-			<strong>成功!</strong> 此私钥添加成功。
-		</div>
-		<button type="button" class="btn btn-primary" onclick="addpri()" id="btn-addpri">确认添加此私钥</button>
+	<h1>添加密钥</h1>
+	<textarea id='key' rows="10" class="textarea-inherit" placeholder="请在此粘贴密钥"></textarea><br>
+	<button type="button" class="btn btn-primary" onclick="keyinfo('key','keymsg')">查看密钥信息</button>
+	<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
+	<textarea id="keymsg" rows="4" class="textarea-inherit" readonly></textarea><br>
+	<form>
+		<input class="input-inherit" id="keyalias" placeholder="密钥别名"><br>
+	</form>
+	<div class="alert alert-success alert-dismissible" id="keyaddalert">
+		<button type="button" class="btn" onclick="$('#keyaddalert').hide('fast')">&times;</button>
+		<strong>成功!</strong> 此密钥添加成功。
+	</div>
+	<button type="button" class="btn btn-primary" onclick="addkey()" id="btn-addkey">添加此密钥</button>
 </body>
 </html>
