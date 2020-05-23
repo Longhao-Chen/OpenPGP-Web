@@ -13,8 +13,11 @@ async function addkey(){
 	} else {
 		try{
 			var keydata=(await openpgp.key.readArmored(key)).keys[0];
+			if(typeof(keydata)==="undefined")
+				throw new Error("密钥已损坏");
 		}catch(e){
 			alert("密钥读取错误！\n"+e);
+			return
 		}
 		if(keydata.isPublic()){
 			//公钥保存
@@ -36,6 +39,7 @@ async function addkey(){
 			}
 		}else{
 			alert("密钥损坏或不支持此类型");
+			return
 		}
 	}
 }
@@ -46,16 +50,17 @@ function cleanall(){
 	document.getElementById("keyalias").value='';
 	$("#keymsg").hide();
 	$("#keyaddalert").hide();
+	$("#btn-addkey").show();
 }
 
 async function keyinfo(input,msgbox) {
 	try{
 		const key=`${document.getElementById(input).value}`;
-		if(key===''){
-			alert("密钥为空！");
+		var keydata=(await openpgp.key.readArmored(key)).keys[0];
+		if(typeof(keydata)==="undefined"){
+			alert("密钥为空或密钥已损坏");
 			return
 		}
-		var keydata=(await openpgp.key.readArmored(key)).keys[0]
 		var msg="用户标识："+keydata.getUserIds().toString();
 		msg=msg+"\n密钥指纹："+keydata.getFingerprint().toString();
 		msg=msg+"\n创建时间："+keydata.getCreationTime().toString();
@@ -63,7 +68,6 @@ async function keyinfo(input,msgbox) {
 		$("#"+msgbox).show("fast");
 	}catch(e){
 		alert("出错："+e);
-		throw new Error(e);
 	}
 }
 $(function(){
