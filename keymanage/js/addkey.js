@@ -5,41 +5,45 @@ async function successalert(){	//保存成功后的回调函数
 
 async function addkey(){
 	var key=document.getElementById("key").value;	//要保存的密钥
-	var name=document.getElementById("keyalias").value;	//密钥别名
-	if(name===''){
-		alert("别名不能为空！");
-	}else if(key===''){
+	if(key===''){
 		alert("密钥输入不能为空！");
 	} else {
 		try{
-			var keydata=(await openpgp.key.readArmored(key)).keys[0];
-			if(typeof(keydata)==="undefined")
+			var keydata=(await openpgp.key.readArmored(key)).keys;
+			if(typeof(keydata[0])==="undefined")
 				throw new Error("密钥已损坏");
 		}catch(e){
 			alert("密钥读取错误！\n"+e);
 			return
 		}
-		if(keydata.isPublic()){
-			//公钥保存
-			if(window.confirm("确认添加公钥?\n密钥信息:\n"+keydata.getUserIds().toString()))
-			{
-				if(await PubSave(name,key))
-					successalert();
-			}
-		}else if(keydata.isPrivate()){
-			//私钥保存
-			if(window.confirm("确认添加私钥?\n密钥信息:\n"+keydata.getUserIds().toString())){
-				if(window.confirm("使用持久储存？\n如果选择取消，则将使用临时储存保存密钥，则关闭浏览器后此私钥会被清除")){
-					if(await PriLocalSave(name,key))
-						successalert();
-				}else{
-					if(await PriSessSave(name,key))
+		var len=keydata.length;
+		for(var i=0;i<len;++i){	//如果有多个密钥，则拆开保存
+			if(keydata[i].isPublic()){
+				//公钥保存
+				if(window.confirm("确认添加公钥?\n密钥信息:\n"+keydata[i].getUserIds().toString())){
+					var name=window.prompt("要保存的别名：",keydata[i].getUserIds().toString());
+					if(name==null || name=="")
+						continue;
+					if(await PubSave(name,keydata[i].armor()))
 						successalert();
 				}
+			}else if(keydata[i].isPrivate()){
+				//私钥保存
+				if(window.confirm("确认添加私钥?\n密钥信息:\n"+keydata[i].getUserIds().toString())){
+					var name=window.prompt("要保存的别名：",keydata[i].getUserIds().toString());
+					if(name==null || name=="")
+						continue;
+					if(window.confirm("使用持久储存？\n如果选择取消，则将使用临时储存保存密钥，则关闭浏览器后此私钥会被清除")){
+						if(await PriLocalSave(name,keydata[i].armor()))
+							successalert();
+					}else{
+						if(await PriSessSave(name,keydata[i].armor()))
+							successalert();
+					}
+				}
+			}else{
+				alert("密钥损坏或不支持此类型");
 			}
-		}else{
-			alert("密钥损坏或不支持此类型");
-			return
 		}
 	}
 }
@@ -56,14 +60,17 @@ function cleanall(){
 async function keyinfo(input,msgbox) {
 	try{
 		const key=`${document.getElementById(input).value}`;
-		var keydata=(await openpgp.key.readArmored(key)).keys[0];
-		if(typeof(keydata)==="undefined"){
+		var keydata=(await openpgp.key.readArmored(key)).keys;
+		if(typeof(keydata[0])==="undefined"){
 			alert("密钥为空或密钥已损坏");
 			return
 		}
-		var msg="用户标识："+keydata.getUserIds().toString();
-		msg=msg+"\n密钥指纹："+keydata.getFingerprint().toString();
-		msg=msg+"\n创建时间："+keydata.getCreationTime().toString();
+		var msg='';
+		for(var i=0;i<keydata.length;++i){
+			msg=msg+"用户标识："+keydata[i].getUserIds().toString();
+			msg=msg+"\n密钥指纹："+keydata[i].getFingerprint().toString();
+			msg=msg+"\n创建时间："+keydata[i].getCreationTime().toString()+'\n\n';
+		}
 		document.getElementById(msgbox).value=msg;
 		$("#"+msgbox).show("fast");
 	}catch(e){

@@ -25,9 +25,6 @@
 	<button type="button" class="btn btn-primary" onclick="keyinfo('key','keymsg')">查看密钥信息</button>
 	<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
 	<textarea id="keymsg" rows="4" class="textarea-inherit" readonly></textarea><br>
-	<form>
-		<input class="input-inherit" id="keyalias" placeholder="密钥别名"><br>
-	</form>
 	<div class="alert alert-success alert-dismissible" id="keyaddalert">
 		<button type="button" class="btn" onclick="$('#keyaddalert').hide('fast')">&times;</button>
 		<strong>成功!</strong> 此密钥添加成功。
