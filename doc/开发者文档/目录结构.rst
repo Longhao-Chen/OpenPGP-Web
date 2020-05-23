@@ -8,11 +8,11 @@ OpenPGP-Web 的目录结构
 
     .
     |-cleartextsign.html    创建明文签名模块
-    |-cleartextverify.html  验证明文签名模块
     |-css/   放置大部分独立的css文件
     |-decrypt.html  解密模块
     |-doc/   文档
     |-encrypt.html  加密模块
+    |-encrypt_password.html  密码加密模块
     |-index.html    首页
     |-js/   放置大部分独立的JavaScript文件
     |-keymanage/    密钥管理模块
@@ -42,3 +42,5 @@ js/
       |-config.js   配置文件
       |-storepri.js 对私钥的读取 储存 删除有关的函数
       |-storepub.js 对公钥的读取 储存 删除有关的函数
+      |-char_conv.js 用于转换特殊字符
+      |-dark.js 暗主题的核心文件

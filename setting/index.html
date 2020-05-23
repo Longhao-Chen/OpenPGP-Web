@@ -13,6 +13,8 @@
 <script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.bundle.js" integrity="sha384-FhLadiSx562CHg1MeZgAwnrYbHS58gnpCpvPQn6Sv7SqLRCyEKRXE1if+Zx36XNm" crossorigin="anonymous"></script>
 <script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 <script src="../js/dark.js"></script>
+<script src="../js/storepub.js"></script>
+<script src="../js/storepri.js"></script>
 <script>
 $(function(){
 	if(Setting.dark.mode===0)
@@ -55,7 +57,9 @@ function reset(){
 		</div>
 	</div>
 	<hr>
-	<button class="btn btn-danger" onclick="reset();">恢复默认设置</button>
+	<button class="btn btn-danger" onclick="reset();">恢复默认设置</button><hr>
+	<button class="btn btn-danger" onclick="PubDelAll()">删除所有公钥</button><hr>
+	<button class="btn btn-danger" onclick="PriDelAll()">删除所有私钥</button>
 </div>
 </body>
 </html>

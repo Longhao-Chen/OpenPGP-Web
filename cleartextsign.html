@@ -17,6 +17,7 @@
 <script src="js/storepub.js"></script>
 <script src="js/storepri.js"></script>
 <script src="js/config.js"></script>
+<script src="js/char_conv.js"></script>
 <script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" integrity="sha384-x6nRSkfSsKGBsvlLFHHNju+buS3zYUztVnTRz/0JKgOIk3ulS6bNce/vHOvYE2eY" crossorigin="anonymous"></script>
 </head>
 <body class="container-fluid center">
@@ -95,13 +96,13 @@ $(function(){
 		msg='<a class="dropdown-item" >无已保存的私钥，请添加私钥</a>'
 	}else{
 		for(var i=0;i<len;++i){
-			msg=msg+'<a class="dropdown-item" onclick="Pri('+res[i][0]+',\''+res[i][1]+'\');">'+res[i][1]+'</a>'
+			msg=msg+'<a class="dropdown-item" onclick="Pri('+res[i][0]+',\''+res[i][1]+'\');">'+char_conv(res[i][1])+'</a>'
 		}
 	}
 	document.getElementById("primenu").innerHTML=msg;
 });
 function Pri(id,name){
-	document.getElementById("primsg").innerHTML=name;
+	document.getElementById("primsg").innerHTML=char_conv(name);
 	document.getElementById("pridata").value=id;
 }
 </script>

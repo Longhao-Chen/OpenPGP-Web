@@ -23,24 +23,7 @@
 </head>
 <body class="container-fluid center">
 	<h1>导出密钥</h1>
-	<div class="dropdown">
-		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-			请选择要导出的公钥
-		</button>
-		<div class="dropdown-menu" id="exppubmenu">
-		</div>
-	</div>
-	<textarea id="exp_pubkey" rows="10" class="textarea-inherit exp_pubkey" readonly></textarea><br class="exp_pubkey">
-	<button class="exp_pubkey copy btn btn-primary" data-clipboard-target="#exp_pubkey">复制密钥</button>
-	<hr>
-	<div class="dropdown">
-		<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">
-			请选择要导出的私钥
-		</button>
-		<div class="dropdown-menu" id="expprimenu">
-		</div>
-	</div>
-	<textarea id="exp_prikey" rows="10" class="textarea-inherit exp_prikey" readonly></textarea><br class="exp_prikey">
-	<button class="exp_prikey copy btn btn-warning" data-clipboard-target="#exp_prikey">复制密钥</button>
+	<textarea id="exp_key" rows="10" class="textarea-inherit exp_key" readonly></textarea><br>
+	<button class="exp_key copy btn btn-primary" data-clipboard-target="#exp_key">复制密钥</button>
 </body>
 </html>

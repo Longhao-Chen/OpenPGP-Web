@@ -1,39 +1,15 @@
-$(function(){
-	$(".exp_prikey").hide();
-	$(".exp_pubkey").hide();
-})
-
 $(function (){
-	var res=PubReadIndex();
-	var len=res.length;
-	var msg='';
-	if(len===0){
-		msg='<a class="dropdown-item" >无已保存的公钥</a>'
-	}else{
-		for(var i=0;i<len;++i){
-			msg=msg+'<a class="dropdown-item pubdelreload" onclick="exppub('+res[i][0]+');">'+res[i][1]+'</a>'
-		}
-	}
-	document.getElementById("exppubmenu").innerHTML=msg;
-
-	var res=PriReadIndex();
-	var len=res.length;
-	var msg='';
-	if(len===0){
-		msg='<a class="dropdown-item" >无已保存的私钥</a>'
-	}else{
-		for(var i=0;i<len;++i){
-			msg=msg+'<a class="dropdown-item pubdelreload" onclick="exppri('+res[i][0]+');">'+res[i][1]+'</a>'
-		}
-	}
-	document.getElementById("expprimenu").innerHTML=msg;
+	var hash=window.location.hash.split("#");	//[0]是空的，有效字符从[1]开始
+	if(hash[1]==="pub")
+		exppub(hash[2]);
+	else
+		exppri(hash[2]);
 });
 
 function exppub(id){
-	document.getElementById("exp_pubkey").value=PubRead(id);
-	$(".exp_pubkey").show("slow");
+	document.getElementById("exp_key").value=PubRead(id);
 }
 function exppri(id){
-	document.getElementById("exp_prikey").value=PriRead(id);
-	$(".exp_prikey").show("slow");
+	alert("警告：你正在导出私钥，请确保你能明白此操作的后果");
+	document.getElementById("exp_key").value=PriRead(id);
 }
