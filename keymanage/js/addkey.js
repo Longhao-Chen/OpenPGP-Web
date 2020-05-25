@@ -20,26 +20,40 @@ async function addkey(){
 		for(var i=0;i<len;++i){	//如果有多个密钥，则拆开保存
 			if(keydata[i].isPublic()){
 				//公钥保存
-				if(window.confirm("确认添加公钥?\n密钥信息:\n"+keydata[i].getUserIds().toString())){
-					var name=window.prompt("要保存的别名：",keydata[i].getUserIds().toString());
-					if(name==null || name=="")
-						continue;
-					if(await PubSave(name,keydata[i].armor()))
-						successalert();
+				try{
+					if(window.confirm("确认添加公钥?\n密钥信息:\n"+keydata[i].getUserIds().toString())){
+						var name=window.prompt("要保存的别名：",keydata[i].getUserIds().toString());
+						if(name==null || name=="")
+							continue;
+						if(await PubSave(name,keydata[i].armor()))
+							successalert();
+					}
+				}catch(e){
+					alert("出现错误\n错误代码："+e);
 				}
 			}else if(keydata[i].isPrivate()){
 				//私钥保存
-				if(window.confirm("确认添加私钥?\n密钥信息:\n"+keydata[i].getUserIds().toString())){
-					var name=window.prompt("要保存的别名：",keydata[i].getUserIds().toString());
-					if(name==null || name=="")
-						continue;
-					if(window.confirm("使用持久储存？\n如果选择取消，则将使用临时储存保存密钥，则关闭浏览器后此私钥会被清除")){
-						if(await PriLocalSave(name,keydata[i].armor()))
-							successalert();
-					}else{
-						if(await PriSessSave(name,keydata[i].armor()))
-							successalert();
+				try{
+					if(window.confirm("确认添加私钥?\n密钥信息:\n"+keydata[i].getUserIds().toString())){
+						var name=window.prompt("要保存的别名：",keydata[i].getUserIds().toString());
+						if(name==null || name=="")
+							continue;
+						if(window.confirm("使用持久储存？\n如果选择取消，则将使用临时储存保存密钥，则关闭浏览器后此私钥会被清除")){
+							if(await PriLocalSave(name,keydata[i].armor()))
+								successalert();
+							if(window.confirm("是否保存公钥？")){
+								PubSave(name,keydata[i].toPublic().armor());	//获取公钥
+							}
+						}else{
+							if(await PriSessSave(name,keydata[i].armor()))
+								successalert();
+							if(window.confirm("是否保存公钥？")){
+								PubSave(name,keydata[i].toPublic().armor());	//获取公钥
+							}
+						}
 					}
+				}catch(e){
+					alert("出现错误\n错误代码："+e);
 				}
 			}else{
 				alert("密钥损坏或不支持此类型");
