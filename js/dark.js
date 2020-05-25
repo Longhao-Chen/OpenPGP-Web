@@ -1,10 +1,10 @@
-var runduck=function(){
+var rundark=function(){
 	if(typeof(localStorage.setting)!=="undefined"){
 		var darkmode=JSON.parse(localStorage.setting)['dark'];	//0为不启用暗模式，1为启用暗模式，2为启用随时间变化的暗模式
 		if(darkmode===0)
 			$("*[class!=no-dark]").removeClass("text-light bg-dark");
 		if(darkmode===1)
-			$("*[class!=no-dark]").addClass("text-light bg-dark")
+			$("*[class!=no-dark]").addClass("text-light bg-dark");
 		if(darkmode===2){
 			//先运行一遍
 			var hour=(new Date()).getHours();
@@ -45,11 +45,11 @@ Setting.dark={
 			var data={dark:mode};
 			localStorage.setting=JSON.stringify(data);
 		}
-		runduck();
+		rundark();
 		return mode;
 	}
 };
 
 $(function(){
-	runduck();
+	rundark();
 });
