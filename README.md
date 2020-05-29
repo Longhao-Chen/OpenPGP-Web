@@ -18,6 +18,7 @@ OpenPGP-Web 是一个完全运行在浏览器中的 OpenPGP 加密程序，所�
 ```
 Sphinx
 sphinx_rtd_theme
+jieba
 ```
 编译方法:
 直接在当前目录执行 `make`
