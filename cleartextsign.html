@@ -22,7 +22,7 @@
 </head>
 <body class="container-fluid center">
 <script>
-async function sign(){
+async function sign(modal){	//如果modal为true，则已运行模态框
 	if(document.getElementById("pridata").value===''){
 		window.alert("请选择密钥！");
 		throw new Error("请选择密钥！");
@@ -33,7 +33,12 @@ async function sign(){
 	const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
 	if(!privateKey.isDecrypted())
 		try{
-			const passphrase = `${window.prompt("请输入密钥："+keyname+"的密码")}`; // 私钥密码
+			if(modal!==true){	//如果没有运行模态框，则运行
+				document.getElementById("Modal_title").innerHTML="请输入密钥："+keyname+"的密码";
+				$("#Modal_password").modal("show");
+				return
+			}
+			const passphrase = `${document.getElementById("keypassword").value}`; // 私钥密码
 			await privateKey.decrypt(passphrase);
 		}catch(e){
 			window.alert("私钥密码错误！");
@@ -118,10 +123,35 @@ function Pri(id,name){
 <textarea id="pridata"></textarea>
 <textarea id="text" rows="10" class="textarea-inherit" placeholder="请输入要签名的信息"></textarea><br>
 <div class="row mx-auto" style="width: 95%;">
-	<button type="button" onclick="sign()" class="col btn btn-primary">签名</button>
+	<button type="button" onclick="sign(false)" class="col btn btn-primary">签名</button>
 	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button>
 	<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
 </div>
 <textarea id="output" rows="10" class="textarea-inherit" readonly></textarea>
+<!-- 用于输入密码的模态框 -->
+<div class="modal fade" id="Modal_password">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<!-- 模态框头部 -->
+			<div class="modal-header">
+			<h4 class="modal-title" id="Modal_title"></h4>
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+
+			<!-- 模态框主体 -->
+			<div class="modal-body">
+			<form>
+				<input type="password" class="input-inherit" id="keypassword">
+			</form>
+			</div>
+
+			<!-- 模态框底部 -->
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="sign(true)">确认</button>
+			</div>
+		</div>
+	</div>
+</div>
 </body>
 </html>

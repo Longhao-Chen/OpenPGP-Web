@@ -22,7 +22,7 @@
 <body class="container-fluid center">
 <script>
 //解密和签名部分
-async function decrypt(){
+async function decrypt(modal){	//如果modal为true，则已运行模态框
 	var enkeyids=new Array();
 	var signkeyids=new Array();
 	try{
@@ -52,7 +52,12 @@ async function decrypt(){
 		const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
 		if(!privateKey.isDecrypted())
 			try{
-				const passphrase = `${window.prompt("请输入密钥："+keyname+"的密码")}`; // 私钥密码
+				if(modal!==true){	//如果没有运行模态框，则运行
+					document.getElementById("Modal_title").innerHTML="请输入密钥："+keyname+"的密码";
+					$("#Modal_password").modal("show");
+					return
+				}
+				const passphrase = `${document.getElementById("keypassword").value}`; // 私钥密码
 				await privateKey.decrypt(passphrase);
 			}catch(e){
 				window.alert("私钥密码错误");
@@ -135,7 +140,12 @@ async function decrypt(){
 			return
 		}
 	}else if(msgdata.getEncryptionKeyIds().length===0 && msgdata.getSigningKeyIds().length===0){	//使用密码加密
-		const password = [window.prompt("请输入密码")];
+		if(modal!==true){	//如果没有运行模态框，则运行
+			document.getElementById("Modal_title").innerHTML="请输入密码";
+			$("#Modal_password").modal("show");
+			return
+		}
+		var password = [document.getElementById("keypassword").value];
 		try{
 			const { data: decrypted } = await openpgp.decrypt({
 				message: msgdata,	// input as Message object
@@ -197,7 +207,7 @@ $(function(){
 <h1>文本解密</h1>
 <textarea id="text" rows="10" class="textarea-inherit" placeholder="请粘贴密文或明文签名"></textarea><br>
 <div class="row mx-auto" style="width: 95%;">
-	<button type="button" onclick="decrypt(true)" class="col btn btn-primary">解密或验证签名</button>
+	<button type="button" onclick="decrypt(false)" class="col btn btn-primary">解密或验证签名</button>
 	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制明文</button>
 	<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
 	<a type="button" class="btn btn-light col-sm-3" href="encrypt.html">跳转到加密</a><br>
@@ -206,6 +216,31 @@ $(function(){
 <div class="alert alert-success alert-dismissible" id="signmsg">
 </div>
 <textarea id="output" rows="20" class="textarea-inherit" readonly></textarea>
+<!-- 用于输入密码的模态框 -->
+<div class="modal fade" id="Modal_password">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<!-- 模态框头部 -->
+			<div class="modal-header">
+			<h4 class="modal-title" id="Modal_title"></h4>
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+
+			<!-- 模态框主体 -->
+			<div class="modal-body">
+			<form>
+				<input type="password" class="input-inherit" id="keypassword">
+			</form>
+			</div>
+
+			<!-- 模态框底部 -->
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="decrypt(true)">确认</button>
+			</div>
+		</div>
+	</div>
+</div>
 </body>
 
 </html>
