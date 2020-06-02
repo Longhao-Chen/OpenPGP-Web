@@ -17,6 +17,7 @@
 <script src="js/storepub.js"></script>
 <script src="js/storepri.js"></script>
 <script src="js/config.js"></script>
+<script src="js/char_conv.js"></script>
 <script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" integrity="sha384-x6nRSkfSsKGBsvlLFHHNju+buS3zYUztVnTRz/0JKgOIk3ulS6bNce/vHOvYE2eY" crossorigin="anonymous"></script>
 </head>
 <body class="container-fluid center">
@@ -53,7 +54,7 @@ async function decrypt(modal){	//如果modal为true，则已运行模态框
 		if(!privateKey.isDecrypted())
 			try{
 				if(modal!==true){	//如果没有运行模态框，则运行
-					document.getElementById("Modal_title").innerHTML="请输入密钥："+keyname+"的密码";
+					document.getElementById("Modal_title").innerHTML="请输入密钥："+char_conv(keyname)+"的密码";
 					$("#Modal_password").modal("show");
 					return
 				}
@@ -91,7 +92,7 @@ async function decrypt(modal){	//如果modal为true，则已运行模态框
 							break;
 					}
 					if (valid) {
-						document.getElementById("signmsg").innerHTML="签名验证成功，信息未被篡改，由"+PubReadName(pubid)+"签署";
+						document.getElementById("signmsg").innerHTML="签名验证成功，信息未被篡改，由"+char_conv(PubReadName(pubid))+"签署";
 						$("#signmsg").show("slow");
 					} else {
 						$("#signmsg").hide();
@@ -124,7 +125,7 @@ async function decrypt(modal){	//如果modal为true，则已运行模态框
 				});
 				const { valid } = verified.signatures[0];
 				if (valid) {
-					document.getElementById("signmsg").innerHTML="签名验证成功，信息未被篡改，由"+PubReadName(pubid)+"签署";
+					document.getElementById("signmsg").innerHTML="签名验证成功，信息未被篡改，由"+char_conv(PubReadName(pubid))+"签署";
 					$("#signmsg").show("slow");
 				} else {
 					$("#signmsg").hide();

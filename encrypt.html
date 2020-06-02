@@ -64,7 +64,7 @@ async function encrypt(sign,modal){	//sign:true为启用签名，modal:true为�
 		if(!privateKey.isDecrypted())
 			try{
 				if(modal!==true){	//如果没有运行模态框，则运行
-					document.getElementById("Modal_title").innerHTML="请输入密钥："+keyname+"的密码";
+					document.getElementById("Modal_title").innerHTML="请输入密钥："+char_conv(keyname)+"的密码";
 					$("#Modal_password").modal("show");
 					return
 				}
