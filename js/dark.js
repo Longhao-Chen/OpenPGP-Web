@@ -21,6 +21,8 @@ var rundark=function(){
 					$("*[class!=no-dark]").removeClass("text-light bg-dark");
 			},30000);	//每30s检查一次时间
 		}
+	}else{	//默认启用暗主题
+		$("*[class!=no-dark]").addClass("text-light bg-dark");
 	}
 }
 
