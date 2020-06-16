@@ -35,7 +35,7 @@ Setting.dark={
 			if(typeof(darkmode)!=="undefined")
 				return darkmode;
 		}else
-			return 0;
+			return 1;
 	}(),
 
 	set:function(mode){
