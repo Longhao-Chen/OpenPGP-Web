@@ -22,6 +22,12 @@
 </head>
 <body class="container-fluid center">
 <script>
+	$(function(){
+		$(".loader").fadeOut("slow");
+	});
+</script>
+<div class="loader"></div>
+<script>
 //加密和签名部分
 async function encrypt(sign,modal){	//sign:true为启用签名，modal:true为从模态框运行
 	//判断是否选择了密钥

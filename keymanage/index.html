@@ -19,6 +19,12 @@
 <script src="js/index.js"></script>
 </head>
 <body class="container-fluid center">
+	<script>
+		$(function(){
+			$(".loader").fadeOut("slow");
+		});
+	</script>
+	<div class="loader"></div>
 	<h1>密钥管理</h1>
 	<div class="row mx-auto" style="width: 100%;">
 		<a type="button" class="col-4 col-sm-2 offset-1 offset-sm-2 btn btn-light" style="font-size: small;" href="genkey.html">生成密钥对</a>

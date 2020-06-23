@@ -22,6 +22,12 @@
 </head>
 <body class="container-fluid center">
 <script>
+	$(function(){
+		$(".loader").fadeOut("slow");
+	});
+</script>
+<div class="loader"></div>
+<script>
 //解密和签名部分
 async function decrypt(modal){	//如果modal为true，则已运行模态框
 	var enkeyids=new Array();

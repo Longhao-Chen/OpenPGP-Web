@@ -22,6 +22,12 @@
 </head>
 <body class="container-fluid center">
 <script>
+	$(function(){
+		$(".loader").fadeOut("slow");
+	});
+</script>
+<div class="loader"></div>
+<script>
 async function sign(modal){	//如果modal为true，则已运行模态框
 	if(document.getElementById("pridata").value===''){
 		window.alert("请选择密钥！");

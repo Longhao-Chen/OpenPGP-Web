@@ -20,6 +20,12 @@
 <script src="js/keymanage.js"></script>
 </head>
 <body class="container-fluid center">
+	<script>
+		$(function(){
+			$(".loader").fadeOut("slow");
+		});
+	</script>
+	<div class="loader"></div>
 	<h1>添加密钥</h1>
 	<textarea id='key' rows="10" class="textarea-inherit" placeholder="请在此粘贴密钥"></textarea><br>
 	<button type="button" class="btn btn-primary" onclick="keyinfo('key','keymsg')">查看密钥信息</button>
