@@ -188,6 +188,9 @@ async function PriGenIndex(){
 					Index[i]=[keyid,i];
 				}
 				localStorage.prikeysidindex=JSON.stringify(Index);
+			}else{	//防止在未使用持久存储时所产生的未定义错误
+				var Index=new Array();
+				localStorage.prikeysidindex=JSON.stringify(Index);
 			}
 			if(typeof(sessionStorage.prikeys)!=="undefined"){
 				var Index1=new Array();
