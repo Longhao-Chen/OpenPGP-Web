@@ -43,15 +43,16 @@
 		</div>
 	</form>
 	<div id="gen_adv">
-		<p>密钥尺寸（位）：</p>
+		<p>密钥类型：</p>
 		<div class="dropdown">
-			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="keybit">
-				2048
+			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="keytype">
+				2048位RSA
 			</button>
 			<div class="dropdown-menu">
-				<a class="dropdown-item" onclick="setbit(2048)">2048</a>
-				<a class="dropdown-item" onclick="setbit(3072)">3072</a>
-				<a class="dropdown-item" onclick="setbit(4096)">4096</a>
+				<a class="dropdown-item" onclick="settype('2048位RSA')">2048位RSA</a>
+				<a class="dropdown-item" onclick="settype('3072位RSA')">3072位RSA</a>
+				<a class="dropdown-item" onclick="settype('4096位RSA')">4096位RSA</a>
+				<a class="dropdown-item" onclick="settype('curve25519')">curve25519</a>
 			</div>
 		</div>
 		<p>关于密钥尺寸请参考说明文档。</p>

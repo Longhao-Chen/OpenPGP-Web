@@ -38,12 +38,23 @@ async function genkey(){
 		throw new Error("姓名为空");
 	}else{
 		$("#gen_alert").show("slow");
+		var type=document.getElementById("keytype").innerHTML.trim();
 		try{
-			const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
-				userIds: [{ name: document.getElementById("gen_name").value, email: document.getElementById("gen_mail").value }], // you can pass multiple user IDs
-				rsaBits: document.getElementById("keybit").innerHTML,                                              // RSA key size
-				passphrase: document.getElementById("gen_passwd").value           // protects the private key
-			});
+			if(type.match("RSA") != null){
+				var { privateKeyArmored, publicKeyArmored } = await openpgp.generateKey({
+					userIds: [{ name: document.getElementById("gen_name").value, email: document.getElementById("gen_mail").value }], // you can pass multiple user IDs
+					rsaBits: type.substr(0,4),	// RSA key size
+					passphrase: document.getElementById("gen_passwd").value	// protects the private key
+				});
+			}
+			if(type == "curve25519"){
+				var { privateKeyArmored, publicKeyArmored } = await openpgp.generateKey({
+					userIds: [{ name: document.getElementById("gen_name").value, email: document.getElementById("gen_mail").value }],	// you can pass multiple user IDs
+					curve: 'curve25519',	// ECC curve name
+					passphrase: document.getElementById("gen_passwd").value	// protects the private key
+				});
+			}
+
 			document.getElementById("gen_pub").value=publicKeyArmored;
 			document.getElementById("gen_pri").value=privateKeyArmored;
 			$(".gen_keys").show("slow");
@@ -57,8 +68,8 @@ async function genkey(){
 }
 
 //设定密钥位数
-function setbit(bit){
-	document.getElementById("keybit").innerHTML=bit;
+function settype(type){
+	document.getElementById("keytype").innerHTML=type;
 }
 
 //保存生成的密钥

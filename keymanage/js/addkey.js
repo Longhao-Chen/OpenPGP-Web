@@ -65,7 +65,6 @@ async function addkey(){
 //文本框的清理和隐藏
 function cleanall(){
 	document.getElementById("key").value='';
-	document.getElementById("keyalias").value='';
 	$("#keymsg").hide();
 	$("#keyaddalert").hide();
 	$("#btn-addkey").show();
@@ -83,6 +82,10 @@ async function keyinfo(input,msgbox) {
 		for(var i=0;i<keydata.length;++i){
 			msg=msg+"用户标识："+keydata[i].getUserIds().toString();
 			msg=msg+"\n密钥指纹："+keydata[i].getFingerprint().toString();
+			msg=msg+"\n算法信息：算法："+keydata[i].getAlgorithmInfo()['algorithm'];
+			if(typeof(keydata[i].getAlgorithmInfo()['bits'])!=="undefined")	//ECC没有位数
+				msg+='，位数：'+keydata[i].getAlgorithmInfo()['bits'];
+
 			msg=msg+"\n创建时间："+keydata[i].getCreationTime().toString()+'\n\n';
 		}
 		document.getElementById(msgbox).value=msg;
