@@ -64,7 +64,9 @@ OpenPGP-Web 使用方法
 
 6.关于密钥尺寸
 ^^^^^^^^^^^^^^
-密钥尺寸越大在私钥不泄露的情况下安全期限就越长，但加密解密的速度也就越慢，密钥的大小也越大。通常情况下2048位的密钥已经够用了。
+.. note:: 对RSA来说，密钥尺寸越大在私钥不泄露的情况下安全期限就越长，但加密解密的速度也就越慢，密钥的大小也越大。通常情况下2048位的密钥已经够用了。
+
+.. warning:: curve25519 是基于椭圆曲线的密码，现在的兼容性还不是很好（本程序已全面兼容）
 
 密钥与安全期限的关系：
 
@@ -112,9 +114,9 @@ curve25519       在2040年之后若干年内也被认为是安全的
 ====================================== ======================================= =============
 -----BEGIN PGP PUBLIC KEY BLOCK-----    -----END PGP PUBLIC KEY BLOCK-----       公钥
 -----BEGIN PGP PRIVATE KEY BLOCK-----   -----END PGP PRIVATE KEY BLOCK-----      私钥
------BEGIN PGP MESSAGE-----             -----END PGP MESSAGE-----               加密信息
------BEGIN PGP SIGNED MESSAGE-----      -----END PGP SIGNED MESSAGE-----        签名信息
------BEGIN PGP SIGNATURE-----           -----END PGP SIGNATURE-----             签名
+-----BEGIN PGP MESSAGE-----             -----END PGP MESSAGE-----                加密信息
+-----BEGIN PGP SIGNED MESSAGE-----      -----END PGP SIGNED MESSAGE-----         签名信息
+-----BEGIN PGP SIGNATURE-----           -----END PGP SIGNATURE-----              签名
 ====================================== ======================================= =============
 
 关于本程序的安全性
