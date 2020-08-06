@@ -3,161 +3,175 @@
 <meta name='apple-mobile-web-app-capable' content='yes'>
 <meta name='apple-mobile-web-app-status-bar-style' content='black'>
 <meta name='format-detection' content='telephone=no'>
-<html>
-<head>
 <meta charset="utf-8">
-<title>创建明文签名</title>
-<link href="css/style.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
-<script src="https://cdn.staticfile.org/openpgp/4.10.4/openpgp.min.js" integrity="sha384-/N1ZJTH7aZFvzCM9Jy9dQmQzroYQpB5L2qrNPgYpg1/tbwVDvaqWwGHfHeFhSpcn" crossorigin="anonymous"></script>
-<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js" integrity="sha384-1CmrxMRARb6aLqgBO7yyAxTOQE2AKb9GfXnEo760AUcUmFx3ibVJJAzGytlQcNXd" crossorigin="anonymous"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-<script src="js/dark.js"></script>
-<script src="js/storepub.js"></script>
-<script src="js/storepri.js"></script>
-<script src="js/config.js"></script>
-<script src="js/char_conv.js"></script>
-<script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" integrity="sha384-x6nRSkfSsKGBsvlLFHHNju+buS3zYUztVnTRz/0JKgOIk3ulS6bNce/vHOvYE2eY" crossorigin="anonymous"></script>
+<html>
+
+<head>
+	<title>创建明文签名</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/openpgp/4.10.4/openpgp.min.js"
+		integrity="sha384-/N1ZJTH7aZFvzCM9Jy9dQmQzroYQpB5L2qrNPgYpg1/tbwVDvaqWwGHfHeFhSpcn"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"
+		integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"
+		integrity="sha384-1CmrxMRARb6aLqgBO7yyAxTOQE2AKb9GfXnEo760AUcUmFx3ibVJJAzGytlQcNXd"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"
+		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+		crossorigin="anonymous"></script>
+	<script src="js/dark.js"></script>
+	<script src="js/storepub.js"></script>
+	<script src="js/storepri.js"></script>
+	<script src="js/config.js"></script>
+	<script src="js/char_conv.js"></script>
+	<script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"
+		integrity="sha384-x6nRSkfSsKGBsvlLFHHNju+buS3zYUztVnTRz/0JKgOIk3ulS6bNce/vHOvYE2eY"
+		crossorigin="anonymous"></script>
 </head>
+
 <body class="container-fluid center">
-<script>
-	$(function(){
-		$(".loader").fadeOut("slow");
-	});
-</script>
-<div class="loader"></div>
-<script>
-async function sign(modal){	//如果modal为true，则已运行模态框
-	if(document.getElementById("pridata").value===''){
-		window.alert("请选择密钥！");
-		throw new Error("请选择密钥！");
-	}
-	const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`;
-	var keyname=PriReadName(document.getElementById("pridata").value);
-
-	const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
-	if(!privateKey.isDecrypted())
-		try{
-			if(modal!==true){	//如果没有运行模态框，则运行
-				document.getElementById("Modal_title").innerHTML="请输入密钥："+char_conv(keyname)+"的密码";
-				$("#Modal_password").modal("show");
-				return
-			}
-			const passphrase = `${document.getElementById("keypassword").value}`; // 私钥密码
-			await privateKey.decrypt(passphrase);
-		}catch(e){
-			window.alert("私钥密码错误！");
-			throw new Error(e);
-		}
-
-	try{
-		const { data: cleartext } = await openpgp.sign({
-			message: openpgp.cleartext.fromText(document.getElementById("text").value), // CleartextMessage or Message object
-			privateKeys: [privateKey]                             // for signing
+	<script>
+		$(function () {
+			$(".loader").fadeOut("slow");
 		});
-		document.getElementById("output").value=cleartext;
-	}catch(e){
-		window.alert("签名错误\n错误代码:"+e);
-		throw new Error(e);
-	}
-	await openpgp.destroyWorker();
-	$("#output").show("slow");
-	$("#copy").show("slow");
-}
-</script>
-<script>
-//复制部分的代码
-$(function(){
-	var clipboard = new ClipboardJS('#copy');
-	clipboard.on('success', function(e) {
-		e.clearSelection();
-		document.getElementById("copy").innerHTML="已复制";
-		setTimeout(function(){document.getElementById("copy").innerHTML="复制输出";},2000);
-	});
-	clipboard.on('error', function(e) {
-		alert('复制失败，您的浏览器不支持！');
-	});
-});
-</script>
-<script>
-//元素显示和隐藏
-$(function(){
-	$("#pridata").hide();
-	$("#output").hide();
-	$("#copy").hide();
-})
-</script>
-<script>
-//清空和隐藏文本框
-function cleanall(){
-	document.getElementById("text").value='';
-	document.getElementById("output").value=''
-	$("#output").hide();
-	$("#copy").hide();
-}
-</script>
-<script>
-//密钥选择部分
-$(function(){
-	var res=PriReadIndex();
-	var len=res.length;
-	var msg='';
-	if(len===0){
-		msg='<a class="dropdown-item" >无已保存的私钥，请添加私钥</a>'
-	}else{
-		for(var i=0;i<len;++i){
-			msg=msg+'<a class="dropdown-item" onclick="Pri('+res[i][0]+',\''+res[i][1]+'\');">'+char_conv(res[i][1])+'</a>'
+	</script>
+	<div class="loader"></div>
+	<script>
+		async function sign(modal) {	//如果modal为true，则已运行模态框
+			if (document.getElementById("pridata").value === '') {
+				window.alert("请选择密钥！");
+				throw new Error("请选择密钥！");
+			}
+			const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`;
+			var keyname = PriReadName(document.getElementById("pridata").value);
+
+			const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
+			if (!privateKey.isDecrypted())
+				try {
+					if (modal !== true) {	//如果没有运行模态框，则运行
+						document.getElementById("Modal_title").innerHTML = "请输入密钥：" + char_conv(keyname) + "的密码";
+						$("#Modal_password").modal("show");
+						return
+					}
+					const passphrase = `${document.getElementById("keypassword").value}`; // 私钥密码
+					await privateKey.decrypt(passphrase);
+				} catch (e) {
+					window.alert("私钥密码错误！");
+					throw new Error(e);
+				}
+
+			try {
+				const { data: cleartext } = await openpgp.sign({
+					message: openpgp.cleartext.fromText(document.getElementById("text").value), // CleartextMessage or Message object
+					privateKeys: [privateKey]                             // for signing
+				});
+				document.getElementById("output").value = cleartext;
+			} catch (e) {
+				window.alert("签名错误\n错误代码:" + e);
+				throw new Error(e);
+			}
+			await openpgp.destroyWorker();
+			$("#output").show("slow");
+			$("#copy").show("slow");
 		}
-	}
-	document.getElementById("primenu").innerHTML=msg;
-});
-function Pri(id,name){
-	document.getElementById("primsg").innerHTML=char_conv(name);
-	document.getElementById("pridata").value=id;
-}
-</script>
-<h1>创建明文签名</h1>
-<div class="dropdown">
-	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="primsg">
-		请选择私钥
-	</button>
-	<div class="dropdown-menu" id="primenu">
+	</script>
+	<script>
+		//复制部分的代码
+		$(function () {
+			var clipboard = new ClipboardJS('#copy');
+			clipboard.on('success', function (e) {
+				e.clearSelection();
+				document.getElementById("copy").innerHTML = "已复制";
+				setTimeout(function () { document.getElementById("copy").innerHTML = "复制输出"; }, 2000);
+			});
+			clipboard.on('error', function (e) {
+				alert('复制失败，您的浏览器不支持！');
+			});
+		});
+	</script>
+	<script>
+		//元素显示和隐藏
+		$(function () {
+			$("#pridata").hide();
+			$("#output").hide();
+			$("#copy").hide();
+		})
+	</script>
+	<script>
+		//清空和隐藏文本框
+		function cleanall() {
+			document.getElementById("text").value = '';
+			document.getElementById("output").value = ''
+			$("#output").hide();
+			$("#copy").hide();
+		}
+	</script>
+	<script>
+		//密钥选择部分
+		$(function () {
+			var res = PriReadIndex();
+			var len = res.length;
+			var msg = '';
+			if (len === 0) {
+				msg = '<a class="dropdown-item" >无已保存的私钥，请添加私钥</a>'
+			} else {
+				for (var i = 0; i < len; ++i) {
+					msg = msg + '<a class="dropdown-item" onclick="Pri(' + res[i][0] + ',\'' + res[i][1] + '\');">' + char_conv(res[i][1]) + '</a>'
+				}
+			}
+			document.getElementById("primenu").innerHTML = msg;
+		});
+		function Pri(id, name) {
+			document.getElementById("primsg").innerHTML = char_conv(name);
+			document.getElementById("pridata").value = id;
+		}
+	</script>
+	<h1>创建明文签名</h1>
+	<div class="dropdown">
+		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="primsg">
+			请选择私钥
+		</button>
+		<div class="dropdown-menu" id="primenu">
+		</div>
 	</div>
-</div>
-<!-- 下面仅用于保存数据 -->
-<textarea id="pridata"></textarea>
-<textarea id="text" rows="10" class="textarea-inherit" placeholder="请输入要签名的信息"></textarea><br>
-<div class="row mx-auto" style="width: 95%;">
-	<button type="button" onclick="sign(false)" class="col btn btn-primary">签名</button>
-	<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button>
-	<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
-</div>
-<textarea id="output" rows="10" class="textarea-inherit" readonly></textarea>
-<!-- 用于输入密码的模态框 -->
-<div class="modal fade" id="Modal_password">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<!-- 模态框头部 -->
-			<div class="modal-header">
-			<h4 class="modal-title" id="Modal_title"></h4>
-			<button type="button" class="close" data-dismiss="modal">&times;</button>
-			</div>
+	<!-- 下面仅用于保存数据 -->
+	<textarea id="pridata"></textarea>
+	<textarea id="text" rows="10" class="textarea-inherit" placeholder="请输入要签名的信息"></textarea><br>
+	<div class="row mx-auto" style="width: 95%;">
+		<button type="button" onclick="sign(false)" class="col btn btn-primary">签名</button>
+		<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button>
+		<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
+	</div>
+	<textarea id="output" rows="10" class="textarea-inherit" readonly></textarea>
+	<!-- 用于输入密码的模态框 -->
+	<div class="modal fade" id="Modal_password">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<!-- 模态框头部 -->
+				<div class="modal-header">
+					<h4 class="modal-title" id="Modal_title"></h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
 
-			<!-- 模态框主体 -->
-			<div class="modal-body">
-			<form>
-				<input type="password" class="input-inherit" id="keypassword">
-			</form>
-			</div>
+				<!-- 模态框主体 -->
+				<div class="modal-body">
+					<form>
+						<input type="password" class="input-inherit" id="keypassword">
+					</form>
+				</div>
 
-			<!-- 模态框底部 -->
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-				<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="sign(true)">确认</button>
+				<!-- 模态框底部 -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						onclick="sign(true)">确认</button>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 </body>
+
 </html>

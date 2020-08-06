@@ -3,27 +3,39 @@
 <meta name='apple-mobile-web-app-capable' content='yes'>
 <meta name='apple-mobile-web-app-status-bar-style' content='black'>
 <meta name='format-detection' content='telephone=no'>
-<html>
-<head>
 <meta charset="utf-8">
-<title>生成一个密钥对</title>
-<link href="../css/style.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
-<script src="https://cdn.staticfile.org/openpgp/4.10.4/openpgp.min.js" integrity="sha384-/N1ZJTH7aZFvzCM9Jy9dQmQzroYQpB5L2qrNPgYpg1/tbwVDvaqWwGHfHeFhSpcn" crossorigin="anonymous"></script>
-<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script>
-<script src="../js/storepub.js"></script>
-<script src="../js/storepri.js"></script>
-<script src="../js/config.js"></script>
-<script src="js/genkey.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js" integrity="sha384-1CmrxMRARb6aLqgBO7yyAxTOQE2AKb9GfXnEo760AUcUmFx3ibVJJAzGytlQcNXd" crossorigin="anonymous"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-<script src="../js/dark.js"></script>
-<script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" integrity="sha384-x6nRSkfSsKGBsvlLFHHNju+buS3zYUztVnTRz/0JKgOIk3ulS6bNce/vHOvYE2eY" crossorigin="anonymous"></script>
-<script src="js/keymanage.js"></script>
+<html>
+
+<head>
+	<title>生成一个密钥对</title>
+	<link href="../css/style.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/openpgp/4.10.4/openpgp.min.js"
+		integrity="sha384-/N1ZJTH7aZFvzCM9Jy9dQmQzroYQpB5L2qrNPgYpg1/tbwVDvaqWwGHfHeFhSpcn"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"
+		integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
+		crossorigin="anonymous"></script>
+	<script src="../js/storepub.js"></script>
+	<script src="../js/storepri.js"></script>
+	<script src="../js/config.js"></script>
+	<script src="js/genkey.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"
+		integrity="sha384-1CmrxMRARb6aLqgBO7yyAxTOQE2AKb9GfXnEo760AUcUmFx3ibVJJAzGytlQcNXd"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"
+		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+		crossorigin="anonymous"></script>
+	<script src="../js/dark.js"></script>
+	<script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"
+		integrity="sha384-x6nRSkfSsKGBsvlLFHHNju+buS3zYUztVnTRz/0JKgOIk3ulS6bNce/vHOvYE2eY"
+		crossorigin="anonymous"></script>
+	<script src="js/keymanage.js"></script>
 </head>
+
 <body class="container-fluid center">
 	<script>
-		$(function(){
+		$(function () {
 			$(".loader").fadeOut("slow");
 		});
 	</script>
@@ -45,7 +57,8 @@
 	<div id="gen_adv">
 		<p>密钥类型：</p>
 		<div class="dropdown">
-			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="keytype">
+			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+				id="keytype">
 				2048位RSA
 			</button>
 			<div class="dropdown-menu">
@@ -57,7 +70,7 @@
 		</div>
 		<p>关于密钥尺寸请参考说明文档。</p>
 	</div>
-	<button type="button" class="btn btn-primary" onclick="genkey();"id="gen_gen">确认生成此密钥</button>
+	<button type="button" class="btn btn-primary" onclick="genkey();" id="gen_gen">确认生成此密钥</button>
 	<div class="alert alert-success alert-dismissible" id="gen_alert">
 		<p>注意：生成密钥需要较长的时间以得到足够的熵，请耐心等待。</p>
 	</div>
@@ -66,13 +79,17 @@
 	<p class="gen_keys">生成的私钥:</p>
 	<textarea readonly rows="10" class="textarea-inherit gen_keys" id="gen_pri"></textarea><br class="gen_keys">
 	<div class="row">
-		<button type="button" class="btn btn-primary col gen_keys copy" data-clipboard-target="#gen_pub">复制生成的公钥</button>
-		<button type="button" class="btn btn-primary col gen_keys copy" data-clipboard-target="#gen_pri">复制生成的私钥</button>
+		<button type="button" class="btn btn-primary col gen_keys copy"
+			data-clipboard-target="#gen_pub">复制生成的公钥</button>
+		<button type="button" class="btn btn-primary col gen_keys copy"
+			data-clipboard-target="#gen_pri">复制生成的私钥</button>
 	</div>
 	<div class="alert alert-success alert-dismissible" id="gen_savealert">
 		<button type="button" class="btn" onclick="$('#gen_savealert').hide('fast')">&times;</button>
 		<strong>成功!</strong> 密钥对保存成功。
 	</div>
-	<button type="button" class="btn btn-primary gen_keys" onclick="gen_save()" id="btn-savekeys">将密钥对保存到浏览器（使用localStorage）</button>
+	<button type="button" class="btn btn-primary gen_keys" onclick="gen_save()"
+		id="btn-savekeys">将密钥对保存到浏览器（使用localStorage）</button>
 </body>
+
 </html>

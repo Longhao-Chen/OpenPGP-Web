@@ -3,32 +3,42 @@
 <meta name='apple-mobile-web-app-capable' content='yes'>
 <meta name='apple-mobile-web-app-status-bar-style' content='black'>
 <meta name='format-detection' content='telephone=no'>
-<html>
-<head>
 <meta charset="utf-8">
-<title>密钥管理</title>
-<link href="../css/style.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
-<script src="https://cdn.staticfile.org/openpgp/4.10.4/openpgp.min.js" integrity="sha384-/N1ZJTH7aZFvzCM9Jy9dQmQzroYQpB5L2qrNPgYpg1/tbwVDvaqWwGHfHeFhSpcn" crossorigin="anonymous"></script>
-<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-<script src="../js/dark.js"></script>
-<script src="../js/storepub.js"></script>
-<script src="../js/storepri.js"></script>
-<script src="../js/char_conv.js"></script>
-<script src="js/index.js"></script>
+<html>
+
+<head>
+	<title>密钥管理</title>
+	<link href="../css/style.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/openpgp/4.10.4/openpgp.min.js"
+		integrity="sha384-/N1ZJTH7aZFvzCM9Jy9dQmQzroYQpB5L2qrNPgYpg1/tbwVDvaqWwGHfHeFhSpcn"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"
+		integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"
+		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+		crossorigin="anonymous"></script>
+	<script src="../js/dark.js"></script>
+	<script src="../js/storepub.js"></script>
+	<script src="../js/storepri.js"></script>
+	<script src="../js/char_conv.js"></script>
+	<script src="js/index.js"></script>
 </head>
+
 <body class="container-fluid center">
 	<script>
-		$(function(){
+		$(function () {
 			$(".loader").fadeOut("slow");
 		});
 	</script>
 	<div class="loader"></div>
 	<h1>密钥管理</h1>
 	<div class="row mx-auto" style="width: 100%;">
-		<a type="button" class="col-4 col-sm-2 offset-1 offset-sm-2 btn btn-light" style="font-size: small;" href="genkey.html">生成密钥对</a>
-		<a type="button" class="col-4 col-sm-2 offset-2 offset-sm-3 btn btn-light" style="font-size: small;" href="addkey.html">添加密钥</a>
+		<a type="button" class="col-4 col-sm-2 offset-1 offset-sm-2 btn btn-light" style="font-size: small;"
+			href="genkey.html">生成密钥对</a>
+		<a type="button" class="col-4 col-sm-2 offset-2 offset-sm-3 btn btn-light" style="font-size: small;"
+			href="addkey.html">添加密钥</a>
 	</div>
 	<h2>已保存的公钥</h2>
 	<table class="table table-striped table-bordered table-responsive-md">
@@ -56,4 +66,5 @@
 		</tbody>
 	</table>
 </body>
+
 </html>
