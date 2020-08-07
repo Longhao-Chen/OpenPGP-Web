@@ -60,10 +60,10 @@
 				//读取所有签名的私钥id
 				for (var i = 0; i < msgdata.getSigningKeyIds().length; ++i)
 					signkeyids[i] = msgdata.getSigningKeyIds()[i].toHex();
-				var pubid = PubSearchId(signkeyids);	//第一个找到的已知公钥id
+				var pubid = await PubSearchId(signkeyids);	//第一个找到的已知公钥id
 			}
 
-			var priid = PriSearchId(enkeyids);	//第一个找到的已知私钥id
+			var priid = await PriSearchId(enkeyids);	//第一个找到的已知私钥id
 			if (priid !== -1) {
 				const privateKeyArmored = `${PriRead(priid)}`; // 用作解密的私钥
 				var keyname = PriReadName(priid);
@@ -93,7 +93,7 @@
 					if (decrypted.signatures.length !== 0) {
 						for (var i = 0; i < decrypted.signatures.length; ++i)
 							signkeyids[i] = decrypted.signatures[i].keyid.toHex();
-						pubid = PubSearchId(signkeyids);	//第一个找到的已知公钥id
+						pubid = await PubSearchId(signkeyids);	//第一个找到的已知公钥id
 						if (pubid !== -1) {
 							var msg = openpgp.cleartext.fromText(decrypted.data);
 							var pub = (await openpgp.key.readArmored(PubRead(pubid))).keys;

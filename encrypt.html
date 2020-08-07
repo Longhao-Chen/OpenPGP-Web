@@ -62,7 +62,7 @@
 					var keyid = new Array();
 					for (var ii = 0; ii < keyidlen; ++ii)
 						keyid[ii] = (await openpgp.key.readArmored(privateKeyArmored)).keys[0].getKeyIds()[ii].toHex();
-					var pubid = PubSearchId(keyid);	//搜索签名者的公钥
+					var pubid = await PubSearchId(keyid);	//搜索签名者的公钥
 					if (pubid === -1) {
 						alert("没有找到签名者的公钥\n信息将不会加密到签名者");
 						var pubkeytmp = [`${publicKeyArmored}`];

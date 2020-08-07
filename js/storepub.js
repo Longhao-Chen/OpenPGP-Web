@@ -123,10 +123,10 @@ async function PubGenIndex() {
 }
 
 //从密钥id搜索保存id
-function PubSearchId(input) {
+async function PubSearchId(input) {
 	if (typeof (localStorage.pubkeys) !== "undefined") {
 		if (typeof (localStorage.pubkeysidindex) === "undefined")
-			PubGenIndex();
+			await PubGenIndex();
 		var data = JSON.parse(localStorage.pubkeysidindex);
 		for (i = 0; i < input.length; ++i) {
 			for (ii = 0; ii < data.length; ++ii) {
