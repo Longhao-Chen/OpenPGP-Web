@@ -217,7 +217,7 @@ async function PriGenIndex() {
 //从密钥id搜索保存id
 async function PriSearchId(input) {
 	if (typeof (localStorage.prikeys) !== "undefined" || typeof (sessionStorage.prikeys) !== "undefined") {
-		if (typeof (localStorage.prikeysidindex) === "undefined" && typeof (sessionStorage.prikeysidindex) === "undefined") {
+		if (typeof (localStorage.prikeysidindex) === "undefined") {
 			await PriGenIndex();
 		}
 		var data = JSON.parse(localStorage.prikeysidindex);
