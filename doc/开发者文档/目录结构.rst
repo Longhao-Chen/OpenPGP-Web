@@ -44,3 +44,4 @@ js/
       |-storepub.js 对公钥的读取 储存 删除有关的函数
       |-char_conv.js 用于转换特殊字符
       |-dark.js 暗主题的核心文件
+      |-loader.js 加载完成后隐藏加载动画
