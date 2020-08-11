@@ -61,6 +61,7 @@
 
 			var priid = await PriSearchId(enkeyids);	//第一个找到的已知私钥id
 			if (priid !== -1) {
+				//文本被加密
 				const privateKeyArmored = `${PriRead(priid)}`; // 用作解密的私钥
 				var keyname = PriReadName(priid);
 
@@ -80,7 +81,7 @@
 					}
 
 				try {
-					const decrypted = await openpgp.decrypt({
+					var decrypted = await openpgp.decrypt({
 						message: msgdata,	// 要解密的信息
 						privateKeys: [privateKey]	//解密用的私钥
 					});
@@ -91,20 +92,23 @@
 							signkeyids[i] = decrypted.signatures[i].keyid.toHex();
 						pubid = await PubSearchId(signkeyids);	//第一个找到的已知公钥id
 						if (pubid !== -1) {
-							var msg = openpgp.cleartext.fromText(decrypted.data);
 							var pub = (await openpgp.key.readArmored(PubRead(pubid))).keys;
 
-							for (var i = 0; i < decrypted.signatures.length; ++i) {	//可能存在多个签名
-								verified = await openpgp.verify({
-									message: msg,
-									signature: decrypted.signatures[i].signature,
-									publicKeys: pub // for verification
-								});
-								var valid = false;
-								valid = verified.signatures[0].valid;
+							//这是为了解决在某种情况下，GPG使用ECC加密和签名，签名验证失败的问题(疑似换行符问题)
+							decrypted = await openpgp.decrypt({
+								//上面解密的时候会修改msgdata，所以不得不重新读一遍
+								message: (await openpgp.message.readArmored(document.getElementById("text").value)),
+								privateKeys: [privateKey],
+								publicKeys: pub
+							});
+
+							var valid = false;
+							for (var i = 0; i < decrypted.signatures.length; ++i) {
+								valid = decrypted.signatures[i].valid;
 								if (valid)
 									break;
 							}
+
 							if (valid) {
 								document.getElementById("signmsg").innerHTML = "签名验证成功，信息未被篡改，由" + char_conv(PubReadName(pubid)) + "签署";
 								$("#signmsg").show("slow");
@@ -133,8 +137,13 @@
 				if (pubid != -1) {
 					const publicKeyArmored = `${PubRead(pubid)}`;
 					try {
+
+						//判断是一般签名还是明文签名，这是一个临时解决方案
+						if (msgdata.packets[0].packets.length === 0)
+							msgdata = await openpgp.cleartext.readArmored(document.getElementById("text").value);	//如果是明文签名，则使用这个读取
+
 						const verified = await openpgp.verify({
-							message: await openpgp.cleartext.readArmored(document.getElementById("text").value),           // parse armored message
+							message: msgdata,           // parse armored message
 							publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys // for verification
 						});
 						const { valid } = verified.signatures[0];
@@ -146,7 +155,7 @@
 							alert("签名验证失败\n信息被篡改");
 						}
 					} catch (e) {
-						window.alert("明文签名验证错误\n错误代码:" + e);
+						window.alert("签名验证错误\n错误代码:" + e);
 						return
 					}
 					await openpgp.destroyWorker();
@@ -220,7 +229,8 @@
 		});
 	</script>
 	<h1>文本解密</h1>
-	<textarea id="text" rows="10" class="textarea-inherit" placeholder="请粘贴密文或明文签名" autofocus="autofocus"></textarea><br>
+	<textarea id="text" rows="10" class="textarea-inherit" placeholder="请粘贴密文或签名"
+		autofocus="autofocus"></textarea><br>
 	<div class="row mx-auto" style="width: 95%;">
 		<button type="button" onclick="decrypt(false)" class="col btn btn-primary">解密或验证签名</button>
 		<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制明文</button>
