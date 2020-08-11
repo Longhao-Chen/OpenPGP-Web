@@ -220,7 +220,7 @@
 		});
 	</script>
 	<h1>文本解密</h1>
-	<textarea id="text" rows="10" class="textarea-inherit" placeholder="请粘贴密文或明文签名"></textarea><br>
+	<textarea id="text" rows="10" class="textarea-inherit" placeholder="请粘贴密文或明文签名" autofocus="autofocus"></textarea><br>
 	<div class="row mx-auto" style="width: 95%;">
 		<button type="button" onclick="decrypt(false)" class="col btn btn-primary">解密或验证签名</button>
 		<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制明文</button>
@@ -243,7 +243,7 @@
 
 				<!-- 模态框主体 -->
 				<div class="modal-body">
-					<form>
+					<form onsubmit="return false">
 						<input type="password" class="input-inherit" id="keypassword">
 					</form>
 				</div>
