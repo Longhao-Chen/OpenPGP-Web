@@ -7,7 +7,7 @@
 <html>
 
 <head>
-	<title>密钥管理</title>
+	<title>从服务器上导入密钥</title>
 	<link href="../css/style.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
 	<script src="https://cdn.staticfile.org/openpgp/4.10.4/openpgp.min.js"
@@ -22,49 +22,28 @@
 	<script src="../js/dark.js" defer></script>
 	<script src="../js/storepub.js" defer></script>
 	<script src="../js/storepri.js" defer></script>
-	<script src="../js/char_conv.js" defer></script>
+	<script src="../js/config.js" defer></script>
 	<script src="../js/loader.js" defer></script>
-	<script src="js/index.js" defer></script>
+	<script src="../js/searchkey.js" defer></script>
+	<script src="js/searchkey.js" defer></script>
+	<script src="js/keymanage.js" defer></script>
 </head>
 
 <body class="container-fluid center">
 	<div class="loader"></div>
-	<h1>密钥管理</h1>
+	<h1>从服务器上导入密钥</h1>
 	<hr>
-	<div class="row mx-auto" style="width: 100%;">
-		<a type="button" class="col-6 col-sm-2 offset-3 offset-sm-1 btn btn-light" style="font-size: small;"
-			href="genkey.html">生成密钥对</a>
-		<a type="button" class="col-6 col-sm-2 offset-3 offset-sm-2 btn btn-light" style="font-size: small;"
-			href="addkey.html">添加密钥</a>
-		<a type="button" class="col-6 col-sm-2 offset-3 offset-sm-2 btn btn-light" style="font-size: small;"
-			href="searchkey.html">从服务器上导入密钥</a>
+	<form onsubmit="return false">
+		<input class="input-inherit" id="email" placeholder="请输入要导入密钥的邮件地址" autofocus="autofocus">
+	</form>
+	<div class="alert alert-success alert-dismissible" id="searching_alert">
+		<p>正在搜索密钥，请耐心等待，通常会在1分钟内完成。</p>
 	</div>
-	<hr>
-	<h2>已保存的公钥</h2>
-	<table class="table table-striped table-bordered table-responsive-md">
-		<thead>
-			<tr>
-				<th>保存的别名</th>
-				<th>用户ID</th>
-				<th>更多操作</th>
-			</tr>
-		</thead>
-		<tbody id="pubsavedkeystable">
-		</tbody>
-	</table>
-	<hr>
-	<h2>已保存的私钥</h2>
-	<table class="table table-striped table-bordered table-responsive-md">
-		<thead>
-			<tr>
-				<th>保存的别名</th>
-				<th>用户ID</th>
-				<th>更多操作</th>
-			</tr>
-		</thead>
-		<tbody id="prisavedkeystable">
-		</tbody>
-	</table>
+	<div class="alert alert-success alert-dismissible" id="keyaddalert">
+		<button type="button" class="btn" onclick="$('#keyaddalert').hide('fast')">&times;</button>
+		<strong>成功!</strong> 此密钥添加成功。
+	</div>
+	<button type="button" class="btn btn-primary" onclick="searchkey()" id="btn-addkey">搜索此密钥</button>
 </body>
 
 </html>

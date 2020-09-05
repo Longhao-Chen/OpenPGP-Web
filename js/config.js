@@ -7,4 +7,7 @@ $(function () {
 
 	//使用压缩
 	openpgp.config.compression = openpgp.enums.compression.zlib;
+
+	//密钥服务器
+	openpgp.config.keyserver = "https://keys.openpgp.org"
 })
