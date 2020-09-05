@@ -5,7 +5,7 @@ async function searchById(keyid) {
 	var hkp = new openpgp.HKP();
 	try {
 		var publicKeyArmored = await hkp.lookup({
-			keyID: keyid
+			keyId: keyid
 		});
 	} catch (e) {
 		alert("搜索密钥时出现错误，错误代码:\n" + e);

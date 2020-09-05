@@ -28,6 +28,7 @@
 	<script src="js/config.js" defer></script>
 	<script src="js/char_conv.js" defer></script>
 	<script src="js/loader.js" defer></script>
+	<script src="js/searchkey.js" defer></script>
 	<script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"
 		integrity="sha384-x6nRSkfSsKGBsvlLFHHNju+buS3zYUztVnTRz/0JKgOIk3ulS6bNce/vHOvYE2eY"
 		crossorigin="anonymous" defer></script>
@@ -36,6 +37,41 @@
 <body class="container-fluid center">
 	<div class="loader"></div>
 	<script>
+		//搜索并导入公钥
+		async function importKey(keyid) {
+			$(".loader").fadeIn();
+			var pub = await searchById(keyid);
+			$(".loader").fadeOut();
+			if (typeof (pub) === "undefined") {
+				alert("没有在服务器上找到此公钥");
+				return
+			}
+
+			try {
+				var keydata = (await openpgp.key.readArmored(pub)).keys;
+				if (typeof (keydata[0]) === "undefined")
+					throw new Error("密钥已损坏");
+			} catch (e) {
+				alert("密钥读取错误！\n" + e);
+				return
+			}
+
+			var len = keydata.length;
+			for (var i = 0; i < len; ++i) {	//如果有多个密钥，则拆开保存
+				try {
+					if (window.confirm("确认添加公钥?\n密钥信息:\n" + keydata[i].getUserIds().toString())) {
+						var name = window.prompt("要保存的别名：", keydata[i].getUserIds().toString());
+						if (name == null || name == "")
+							continue;
+						if (await PubSave(name, keydata[i].armor()))
+							alert("添加成功!");
+					}
+				} catch (e) {
+					alert("出现错误\n错误代码：" + e);
+				}
+			}
+		}
+
 		//解密和签名部分
 		async function decrypt(modal) {	//如果modal为true，则已运行模态框
 			var enkeyids = new Array();
@@ -161,6 +197,8 @@
 					await openpgp.destroyWorker();
 				} else {
 					alert("错误：没有找到验证签名的公钥。\n请导入公钥。\n所需公钥id有：" + signkeyids);
+					if (window.confirm("是否在服务器上搜索并导入此公钥？"))
+						await importKey(signkeyids);
 					return
 				}
 			} else if (msgdata.getEncryptionKeyIds().length === 0 && msgdata.getSigningKeyIds().length === 0) {	//使用密码加密
