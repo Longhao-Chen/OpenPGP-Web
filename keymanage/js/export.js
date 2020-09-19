@@ -9,7 +9,27 @@ $(function () {
 function exppub(id) {
 	document.getElementById("exp_key").value = PubRead(id);
 }
-function exppri(id) {
+
+async function exppri(id) {
+	//修改背景
+	$("*").addClass("bg-danger");
+	$("*").removeClass("bg-dark");
+
 	alert("警告：你正在导出私钥，请确保你能明白此操作的后果");
-	document.getElementById("exp_key").value = PriRead(id);
+
+	//对有密码的先进行密码验证
+	var privateKeyArmored = PriRead(id);
+	const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
+	if (privateKey.isDecrypted())
+		document.getElementById("exp_key").value = privateKeyArmored;
+	else {
+		try {
+			var passphrase = window.prompt("请输入此密钥的口令以进行身份验证");
+			await privateKey.decrypt(passphrase);
+		} catch (e) {
+			alert("密码错误，导出失败！");
+			return
+		}
+		document.getElementById("exp_key").value = privateKeyArmored;
+	}
 }
