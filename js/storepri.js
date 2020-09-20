@@ -172,7 +172,7 @@ function PriDelAll() {
 	}
 }
 
-//生成密钥id到保存id的索引，主要是保证向前
+//生成密钥id到保存id的索引，主要是保证向前兼容
 async function PriGenIndex() {
 	if (typeof (Storage) !== "undefined") {
 		try {
@@ -237,4 +237,24 @@ async function PriSearchId(input) {
 		return -1;
 	} else
 		return -1;
+}
+
+//用data覆盖指定id号的私钥
+function PriCover(id, data) {
+	//反止localStorage未使用时出现错误
+	if (typeof (localStorage.prikeys) !== "undefined")
+		var key = JSON.parse(localStorage.prikeys);
+	else
+		var key = new Array();
+
+	if (id < key.length) {
+		//持久存储
+		key[id][1] = data;
+		localStorage.prikeys = JSON.stringify(key);
+	} else {
+		var i = id - key.length;
+		key = JSON.parse(sessionStorage.prikeys);
+		key[id][1] = data;
+		sessionStorage.prikeys = JSON.stringify(key);
+	}
 }

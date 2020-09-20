@@ -1,4 +1,5 @@
 $(load = async function () {
+	//公钥部分
 	var index = PubReadIndex();
 	if (index.length !== 0) {
 		var msg = "";
@@ -19,6 +20,7 @@ $(load = async function () {
 	}
 	document.getElementById("pubsavedkeystable").innerHTML = msg;
 
+	//私钥部分
 	index = PriReadIndex();
 	if (index.length !== 0) {
 		msg = "";
@@ -30,6 +32,7 @@ $(load = async function () {
 			msg = msg + "<tr><td>" + index[i][1] + "</td><td>" + userid + "</td><td>" +
 				'<a type="button" href="export.html#pri#' + index[i][0] + '">导出此密钥</a><br>' +
 				'<a type="button" href="showkey.html#pri#' + index[i][0] + '">查看密钥详情</a><br>' +
+				'<a type="button" href="password.html#' + index[i][0] + '">修改私钥密码</a><br>' +
 				'<a type="button" onclick="PriDel(' + index[i][0] + ');load();" class="btn-danger">删除此密钥</a>' +
 				"</td></tr>";
 		}
