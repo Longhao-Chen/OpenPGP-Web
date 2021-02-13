@@ -124,4 +124,4 @@ curve25519       在2040年之后若干年内也被认为是安全的
 	本程序的加密解密以及签名操作使用的是 OpenPGP.js 库，这个库经过了多次的安全审核，安全性是可以保证的。
 
 	本程序的其他部分是由我编写的，所有的操作和数据均在你使用的浏览器中保存，不会有任何数据被上传到网络，
-	程序的源代码都可以在 https://github.com/chenlhlinux/OpenPGP-Web 找到，欢迎进行审核。
+	程序的源代码都可以在 https://github.com/Longhao-Chen/OpenPGP-Web 找到，欢迎进行审核。
