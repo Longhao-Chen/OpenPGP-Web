@@ -29,6 +29,7 @@
 	<script src="js/char_conv.js" defer></script>
 	<script src="js/loader.js" defer></script>
 	<script src="js/searchkey.js" defer></script>
+	<script src="js/blob.js" defer></script>
 	<script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"
 		integrity="sha384-x6nRSkfSsKGBsvlLFHHNju+buS3zYUztVnTRz/0JKgOIk3ulS6bNce/vHOvYE2eY"
 		crossorigin="anonymous" defer></script>
@@ -72,7 +73,7 @@
 			}
 		}
 
-		//解密和签名部分
+		//解密和签名部分（文本文件）
 		async function decrypt(modal) {	//如果modal为true，则已运行模态框
 			var enkeyids = new Array();
 			var signkeyids = new Array();
@@ -231,6 +232,151 @@
 				return
 			}
 		}
+
+		//解密和签名部分（二进制文件）
+		async function decrypt_bin(modal) {	//如果modal为true，则已运行模态框
+			var enkeyids = new Array();
+			var signkeyids = new Array();
+			try {
+				var msgdata = (await openpgp.message.readArmored(document.getElementById("text").value));
+			} catch (e) {
+				alert("数据读取出错，请检查密文是否粘贴完整");
+				throw new Error(e);
+			}
+
+			//读取所有加密的公钥id
+			for (var i = 0; i < msgdata.getEncryptionKeyIds().length; ++i)
+				enkeyids[i] = msgdata.getEncryptionKeyIds()[i].toHex();
+
+			//已加密的信息签名需要解密后才能验证
+			if (msgdata.getEncryptionKeyIds().length === 0) {
+				//读取所有签名的私钥id
+				for (var i = 0; i < msgdata.getSigningKeyIds().length; ++i)
+					signkeyids[i] = msgdata.getSigningKeyIds()[i].toHex();
+				var pubid = await PubSearchId(signkeyids);	//第一个找到的已知公钥id
+			}
+
+			var priid = await PriSearchId(enkeyids);	//第一个找到的已知私钥id
+			if (priid !== -1) {
+				//被加密
+				const privateKeyArmored = `${PriRead(priid)}`; // 用作解密的私钥
+				var keyname = PriReadName(priid);
+
+				const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
+				if (!privateKey.isDecrypted())
+					try {
+						if (modal !== true) {	//如果没有运行模态框，则运行
+							document.getElementById("Modal_title").innerHTML = "请输入密钥：" + char_conv(keyname) + "的密码";
+							document.getElementById("Modal_btn").onclick = Function("decrypt_bin(true)");
+							$("#Modal_password").modal("show");
+							return
+						}
+						const passphrase = `${document.getElementById("keypassword").value}`; // 私钥密码
+						await privateKey.decrypt(passphrase);
+					} catch (e) {
+						window.alert("私钥密码错误");
+						return
+					}
+
+				try {
+					var decrypted = await openpgp.decrypt({
+						message: msgdata,	// 要解密的信息
+						privateKeys: [privateKey],	//解密用的私钥
+						format: 'binary'
+					});
+
+					//判断是否有签名
+					if (decrypted.signatures.length !== 0) {
+						for (var i = 0; i < decrypted.signatures.length; ++i)
+							signkeyids[i] = decrypted.signatures[i].keyid.toHex();
+						pubid = await PubSearchId(signkeyids);	//第一个找到的已知公钥id
+						if (pubid !== -1) {
+							var pub = (await openpgp.key.readArmored(PubRead(pubid))).keys;
+
+							//这是为了解决在某种情况下，GPG使用ECC加密和签名，签名验证失败的问题(疑似换行符问题)
+							const { data: decrypted } = await openpgp.decrypt({
+								//上面解密的时候会修改msgdata，所以不得不重新读一遍
+								message: (await openpgp.message.readArmored(document.getElementById("text").value)),
+								privateKeys: [privateKey],
+								publicKeys: pub,
+								format: 'binary'
+							});
+
+							var valid = false;
+							for (var i = 0; i < decrypted.signatures.length; ++i) {
+								valid = decrypted.signatures[i].valid;
+								if (valid)
+									break;
+							}
+
+							if (valid) {
+								document.getElementById("signmsg").innerHTML = "签名验证成功，信息未被篡改，由" + char_conv(PubReadName(pubid)) + "签署";
+								$("#signmsg").show("slow");
+							} else {
+								$("#signmsg").hide();
+								alert("签名验证失败\n信息被篡改");
+							}
+						} else {
+							$("#signmsg").hide();
+							alert("签名未验证\n没有找到已知的公钥\n所需公钥id有：" + signkeyids);
+						}
+					}
+					download_bin(decrypted.data, decrypted.filename);
+				} catch (e) {
+					window.alert("解密错误\n错误代码:" + e);
+					return
+				}
+				await openpgp.destroyWorker();
+			} else if (msgdata.getEncryptionKeyIds().length !== 0) {
+				alert("错误：没有找到解密的私钥.\n请导入私钥.\n所需私钥id有：" + enkeyids);
+				return
+			} else if (msgdata.getEncryptionKeyIds().length === 0 && msgdata.getSigningKeyIds().length === 0) {	//使用密码加密
+				if (modal !== true) {	//如果没有运行模态框，则运行
+					document.getElementById("Modal_title").innerHTML = "请输入密码";
+					document.getElementById("Modal_btn").onclick = Function("decrypt_bin(true)");
+					$("#Modal_password").modal("show");
+					return
+				}
+				var password = [document.getElementById("keypassword").value];
+				try {
+					const decrypted = await openpgp.decrypt({
+						message: msgdata,	// input as Message object
+						passwords: password,
+						format: 'binary'
+					});
+					download_bin(decrypted.data, decrypted.filename);
+				} catch (e) {
+					if (e == "Error: Error decrypting message: Session key decryption failed.")
+						window.alert("密码错误");
+					else if (e == "Error: Error decrypting message: Modification detected.")
+						window.alert("密码错误或密文被篡改");
+					else
+						window.alert("解密错误\n错误代码:" + e);
+					return
+				}
+				await openpgp.destroyWorker();
+			} else {
+				alert("未知错误");
+				return
+			}
+		}
+		function download_bin(data, filename) {
+			$("#download").show("slow");
+			var url = Uint8Array2blobUrl(data);
+			document.getElementById("show_file").href = url;
+			document.getElementById("download_file").href = url;
+			document.getElementById("download_file").download = filename;
+		}
+		function clean_bin() {
+			var url = document.getElementById("download_file").href;
+			if (url != '') {
+				window.URL.revokeObjectURL(url);
+				document.getElementById("show_file").href = '';
+				document.getElementById("download_file").href = '';
+				document.getElementById("download_file").download = '';
+			}
+			$("#download").hide("slow");
+		}
 	</script>
 	<script>
 		//元素显示和隐藏部分
@@ -238,6 +384,7 @@
 			$("#output").hide();
 			$("#signmsg").hide();
 			$("#copy").hide();
+			$("#download").hide("slow");
 		});
 	</script>
 	<script>
@@ -246,6 +393,7 @@
 			if (window.confirm("确认清空文本框？")) {
 				document.getElementById("text").value = '';
 				document.getElementById("output").value = ''
+				clean_bin();
 				$("#output").hide();
 				$("#signmsg").hide();
 				$("#copy").hide();
@@ -270,13 +418,18 @@
 	<textarea id="text" rows="10" class="textarea-inherit" placeholder="请粘贴密文或签名"
 		autofocus="autofocus"></textarea><br>
 	<div class="row mx-auto" style="width: 95%;">
-		<button type="button" onclick="decrypt(false)" class="col btn btn-primary">解密或验证签名</button>
+		<button type="button" onclick="decrypt(false)" class="col btn btn-primary">解密或验证签名（文本）</button>
+		<button type="button" onclick="decrypt_bin(false)" class="col btn btn-primary">解密或验证签名（二进制）</button>
 		<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制明文</button>
 		<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
 		<a type="button" class="btn btn-light col-sm-3" href="encrypt.html">跳转到加密</a><br>
 		<a type="button" class="btn btn-light col-sm-3" href="encrypt_password.html">跳转到使用密码加密</a><br>
 	</div>
-	<div class="alert alert-success alert-dismissible mx-auto" id="signmsg" style="width: 95%;"></div>
+	<div class="alert alert-success alert-dismissible mx-auto" id="signmsg" style="width: 95%;"></div><br>
+	<div id="download" class="row mx-auto" style="width: 95%;">
+		<a type="button" class="btn btn-primary col-sm-3 offset-sm-3" href="" id="show_file">查看文件</a>
+		<a type="button" class="btn btn-primary col-sm-3" href="" id="download_file">下载文件</a>
+	</div>
 	<textarea id="output" rows="20" class="textarea-inherit" readonly></textarea>
 	<!-- 用于输入密码的模态框 -->
 	<div class="modal fade" id="Modal_password">
@@ -298,7 +451,7 @@
 				<!-- 模态框底部 -->
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal"
+					<button type="button" class="btn btn-primary" data-dismiss="modal" id="Modal_btn"
 						onclick="decrypt(true)">确认</button>
 				</div>
 			</div>
