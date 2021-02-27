@@ -191,8 +191,9 @@
 					throw new Error(e);
 				}
 			}
-			$("#output").show();
 			await openpgp.destroyWorker();
+			$("#output").show("slow");
+			$("#copy").show("slow");
 		}
 
 		//读取文件，返回Message对象，从全局变量window.bin_file
