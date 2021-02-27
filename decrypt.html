@@ -294,7 +294,7 @@
 							var pub = (await openpgp.key.readArmored(PubRead(pubid))).keys;
 
 							//这是为了解决在某种情况下，GPG使用ECC加密和签名，签名验证失败的问题(疑似换行符问题)
-							const { data: decrypted } = await openpgp.decrypt({
+							const decrypted = await openpgp.decrypt({
 								//上面解密的时候会修改msgdata，所以不得不重新读一遍
 								message: (await openpgp.message.readArmored(document.getElementById("text").value)),
 								privateKeys: [privateKey],
@@ -414,7 +414,7 @@
 			});
 		});
 	</script>
-	<h1>文本解密</h1>
+	<h1>解密</h1>
 	<textarea id="text" rows="10" class="textarea-inherit" placeholder="请粘贴密文或签名"
 		autofocus="autofocus"></textarea><br>
 	<div class="row mx-auto" style="width: 95%;">
