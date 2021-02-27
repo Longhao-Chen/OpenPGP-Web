@@ -225,7 +225,8 @@
 		function cleanall() {
 			if (window.confirm("确认清空文本框？")) {
 				document.getElementById("text").value = '';
-				document.getElementById("output").value = ''
+				document.getElementById("output").value = '';
+				window.bin_file = undefined;
 				$("#output").hide();
 				$("#copy").hide();
 			}
@@ -241,7 +242,7 @@
 		//元素显示和隐藏部分
 		$(function () {
 			//判断是否是二进制数据
-			if (document.getElementById("bin_date").checked) {
+			if (document.getElementById("bin_data").checked) {
 				document.getElementById("Modal_btn").onclick = Function("encrypt_bin(true, true)");
 				document.getElementById("encrypt_sign_btn").onclick = Function("encrypt_bin(true, false)");
 				document.getElementById("encrypt_btn").onclick = Function("encrypt_bin(false, false)");
@@ -254,8 +255,8 @@
 				$("#text").show();
 				$("#file").hide();
 			}
-			$("#bin_date").click(function () {
-				if (document.getElementById("bin_date").checked) {
+			$("#bin_data").click(function () {
+				if (document.getElementById("bin_data").checked) {
 					document.getElementById("Modal_btn").onclick = Function("encrypt_bin(true, true)");
 					document.getElementById("encrypt_sign_btn").onclick = Function("encrypt_bin(true, false)");
 					document.getElementById("encrypt_btn").onclick = Function("encrypt_bin(false, false)");
@@ -341,7 +342,7 @@
 	<form>
 		<div class="from-check">
 			<label class="from-check-label">
-				<input type="checkbox" id="bin_date">二进制数据<br>
+				<input type="checkbox" id="bin_data">二进制数据<br>
 			</label>
 			<label class="from-check-label">
 				<input type="checkbox" id="nosign">禁用签名<br>
