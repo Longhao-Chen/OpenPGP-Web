@@ -36,7 +36,7 @@
 <body class="container-fluid center">
 	<div class="loader"></div>
 	<script>
-		//加密和签名部分
+		//加密和签名部分(文本)
 		async function encrypt(sign, modal) {	//sign:true为启用签名，modal:true为从模态框运行
 			//判断是否选择了密钥
 			if (document.getElementById("pubdata").value === '' || (sign && document.getElementById("pridata") === '')) {
@@ -115,6 +115,109 @@
 			$("#output").show("slow");
 			$("#copy").show("slow");
 		}
+
+		//加密和签名部分(二进制)
+		async function encrypt_bin(sign, modal) {	//sign:true为启用签名，modal:true为从模态框运行
+			//判断是否选择了密钥
+			if (document.getElementById("pubdata").value === '' || (sign && document.getElementById("pridata") === '')) {
+				window.alert("请选择密钥！");
+				throw new Error("请选择密钥！");
+			}
+
+			// put keys in backtick (``) to avoid errors caused by spaces or tabs
+			const publicKeyArmored = `${PubRead(document.getElementById("pubdata").value)}`;
+
+			//判断是否启用签名
+			if (sign) {
+				const privateKeyArmored = `${PriRead(document.getElementById("pridata").value)}`; // encrypted private key
+				var keyname = PriReadName(document.getElementById("pridata").value);
+
+				//是否加密到签名者
+				if (document.getElementById("entosigner").checked) {
+					var keyidlen = (await openpgp.key.readArmored(privateKeyArmored)).keys[0].getKeyIds().length;
+					var keyid = new Array();
+					for (var ii = 0; ii < keyidlen; ++ii)
+						keyid[ii] = (await openpgp.key.readArmored(privateKeyArmored)).keys[0].getKeyIds()[ii].toHex();
+					var pubid = await PubSearchId(keyid);	//搜索签名者的公钥
+					if (pubid === -1) {
+						alert("没有找到签名者的公钥\n信息将不会加密到签名者");
+						var pubkeytmp = [`${publicKeyArmored}`];
+					} else {
+						var pubkeytmp = [`${publicKeyArmored}`, `${PubRead(pubid)}`];
+					}
+				} else {
+					var pubkeytmp = [`${publicKeyArmored}`];
+				}
+
+				//这一段是按照官方文档来的
+				const pubkey = await Promise.all(pubkeytmp.map(async (key) => {
+					return (await openpgp.key.readArmored(key)).keys[0];
+				}));
+
+				const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
+				if (!privateKey.isDecrypted())
+					try {
+						if (modal !== true) {	//如果没有运行模态框，则运行
+							document.getElementById("Modal_title").innerHTML = "请输入密钥：" + char_conv(keyname) + "的密码";
+							$("#Modal_password").modal("show");
+							return
+						}
+						const passphrase = `${document.getElementById("keypassword").value}`; // 私钥密码
+						await privateKey.decrypt(passphrase);
+					} catch (e) {
+						window.alert("私钥密码错误！");
+						throw new Error(e);
+					}
+				try {
+					const { data: encrypted } = await openpgp.encrypt({
+						message: await readBin_data(),	// input as Message object
+						publicKeys: pubkey,	// for encryption
+						privateKeys: [privateKey]
+					});
+					document.getElementById("output").value = encrypted;
+				} catch (e) {
+					window.alert("加密和签名错误\n错误代码:" + e);
+					throw new Error(e);
+				}
+			} else {
+				try {
+					const { data: encrypted } = await openpgp.encrypt({
+						message: await readBin_data(),	// input as Message object
+						publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys	// for encryption
+					});
+					document.getElementById("output").value = encrypted;
+				} catch (e) {
+					window.alert("加密错误\n错误代码:" + e);
+					throw new Error(e);
+				}
+			}
+			$("#output").show();
+			await openpgp.destroyWorker();
+		}
+
+		//读取文件，返回Message对象，从全局变量window.bin_file
+		function readBin_data() {
+			return new Promise(async (resolve, reject) => {
+				if (typeof (window.bin_file) != undefined) {
+					var reader = new FileReader();
+					reader.onload = (async () => {
+						var u8 = new Uint8Array(reader.result)
+						msg = await openpgp.message.fromBinary(
+							u8,
+							window.bin_file.name
+						);
+						resolve(msg);
+					});
+					reader.onerror = () => {
+						throw new Error("读取文件出错");
+					}
+					reader.readAsArrayBuffer(window.bin_file);
+				} else {
+					throw new Error("未上传文件");
+				}
+			});
+
+		}
 	</script>
 	<script>
 		//清空和隐藏文本框
@@ -128,8 +231,44 @@
 		}
 	</script>
 	<script>
+		//保存文件信息到全局变量
+		function saveFiles(file) {
+			window.bin_file = file[0];
+		}
+	</script>
+	<script>
 		//元素显示和隐藏部分
 		$(function () {
+			//判断是否是二进制数据
+			if (document.getElementById("bin_date").checked) {
+				document.getElementById("Modal_btn").onclick = Function("encrypt_bin(true, true)");
+				document.getElementById("encrypt_sign_btn").onclick = Function("encrypt_bin(true, false)");
+				document.getElementById("encrypt_btn").onclick = Function("encrypt_bin(false, false)");
+				$("#text").hide();
+				$("#file").show();
+			} else {
+				document.getElementById("Modal_btn").onclick = Function("encrypt(true, true)");
+				document.getElementById("encrypt_sign_btn").onclick = Function("encrypt(true, false)");
+				document.getElementById("encrypt_btn").onclick = Function("encrypt(false, false)");
+				$("#text").show();
+				$("#file").hide();
+			}
+			$("#bin_date").click(function () {
+				if (document.getElementById("bin_date").checked) {
+					document.getElementById("Modal_btn").onclick = Function("encrypt_bin(true, true)");
+					document.getElementById("encrypt_sign_btn").onclick = Function("encrypt_bin(true, false)");
+					document.getElementById("encrypt_btn").onclick = Function("encrypt_bin(false, false)");
+					$("#text").hide("slow");
+					$("#file").show("slow");
+				} else {
+					document.getElementById("Modal_btn").onclick = Function("encrypt(true, true)");
+					document.getElementById("encrypt_sign_btn").onclick = Function("encrypt(true, false)");
+					document.getElementById("encrypt_btn").onclick = Function("encrypt(false, false)");
+					$("#text").show("slow");
+					$("#file").hide("slow");
+				}
+			});
+
 			if (document.getElementById("nosign").checked) {
 				$(".onlysign").hide();
 			} else {
@@ -201,6 +340,9 @@
 	<form>
 		<div class="from-check">
 			<label class="from-check-label">
+				<input type="checkbox" id="bin_date">二进制数据<br>
+			</label>
+			<label class="from-check-label">
 				<input type="checkbox" id="nosign">禁用签名<br>
 			</label>
 			<label class="from-check-label onlysign">
@@ -225,10 +367,13 @@
 	<!-- 下面这两项仅用于保存数据 -->
 	<textarea id="pubdata"></textarea>
 	<textarea id="pridata"></textarea>
-	<textarea id="text" rows="10" class="textarea-inherit" placeholder="请输入要加密的信息"></textarea><br>
+	<textarea id="text" rows="10" class="textarea-inherit" placeholder="请输入要加密的信息"></textarea>
+	<input type="file" id="file" onchange="saveFiles(this.files)" /><br>
 	<div class="row mx-auto" style="width: 95%;">
-		<button type="button" onclick="encrypt(true,false)" class="onlysign col btn btn-primary">加密和签名</button>
-		<button type="button" onclick="encrypt(false,false)" class="onlyencript col btn btn-primary">加密</button>
+		<button type="button" onclick="encrypt(true,false)" class="onlysign col btn btn-primary"
+			id="encrypt_sign_btn">加密和签名</button>
+		<button type="button" onclick="encrypt(false,false)" class="onlyencript col btn btn-primary"
+			id="encrypt_btn">加密</button>
 		<button data-clipboard-target="#output" id="copy" class="col btn btn-primary">复制输出</button>
 		<button type="button" class="btn btn-danger" onclick="cleanall()">清空文本框</button><br>
 		<a type="button" class="btn btn-light col-sm-3" href="decrypt.html">跳转到解密或验证</a><br>
@@ -255,7 +400,7 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
 					<button type="button" class="btn btn-primary" data-dismiss="modal"
-						onclick="encrypt(true,true)">确认</button>
+						id="Modal_btn" onclick="encrypt(true,true)">确认</button>
 				</div>
 			</div>
 		</div>
